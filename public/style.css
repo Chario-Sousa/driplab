@@ -1,0 +1,49 @@
+/* DripLab — estilos compartilhados (home + coleções) */
+:root{
+  --bg:#050505; --glass:rgba(255,255,255,.06); --line:rgba(255,255,255,.22);
+  --orange:#f08a24; --orange-2:#c96a10; --muted:rgba(255,255,255,.65);
+  --display:'Unbounded','Arial Black',sans-serif; --body:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;font-family:var(--body);line-height:1.5}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+.wrap{width:min(1200px,92%);margin-inline:auto}
+.accent{color:var(--orange)}
+.eyebrow{font-family:var(--display);font-size:.8rem;color:var(--orange);text-transform:uppercase}
+h1,h2{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:1.05}
+h1{font-size:clamp(2.4rem,6vw,4.4rem)} h2{font-size:clamp(1.8rem,4vw,3rem)}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;gap:.9rem;padding:.75rem 1.5rem;border-radius:999px;
+  border:1.5px solid var(--orange);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  background:linear-gradient(90deg,rgba(240,138,36,.35),transparent);transition:.25s;cursor:pointer;color:#fff}
+.btn:hover{background:var(--orange);color:#000;transform:translateY(-2px)}
+.btn.sm{padding:.4rem 1rem;font-size:.65rem}
+.circle{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:none;color:#fff;display:grid;place-items:center;cursor:pointer;transition:.2s}
+.circle:hover{background:var(--orange);border-color:var(--orange);color:#000}
+
+/* header (pílula de vidro) */
+.header{position:sticky;top:1rem;z-index:20;width:min(1420px,94%);margin:1rem auto 0;
+  display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.6rem;
+  border:1px solid var(--line);border-radius:22px;background:rgba(15,15,15,.55);backdrop-filter:blur(16px)}
+.logo{display:flex;align-items:center;gap:.6rem;font-family:var(--display);font-weight:800;font-size:1.4rem;color:var(--orange)}
+.sun{width:44px;height:44px;flex:none;border-radius:50%;background:
+  radial-gradient(circle,#0b0b0b 34%,transparent 35%),
+  conic-gradient(from 0deg,var(--orange) 0 8%,transparent 8% 16%,var(--orange) 16% 24%,transparent 24% 32%,var(--orange) 32% 40%,transparent 40% 48%,var(--orange) 48% 56%,transparent 56% 64%,var(--orange) 64% 72%,transparent 72% 80%,var(--orange) 80% 88%,transparent 88%)}
+.menu{display:flex;gap:2.6rem;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
+.menu a{color:var(--muted);padding-bottom:3px;border-bottom:1px solid transparent}
+.menu a:hover{color:#fff}
+.menu a.on{color:#fff;border-color:var(--orange)}
+.actions{display:flex;gap:.7rem}
+.actions .circle{width:40px;height:40px;font-size:1rem}
+
+/* rodapé */
+.footer{border-top:1px solid var(--line);padding:1.6rem 0 1rem}
+.footer .row{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.footer .menu{gap:2rem;font-size:.65rem}
+.social{display:flex;gap:1.2rem;font-size:1.3rem}
+.footer .legal{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted)}
+
+@media(max-width:860px){ .menu{display:none} .header{padding:.6rem 1rem} }

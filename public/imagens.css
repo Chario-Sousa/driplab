@@ -1,0 +1,54 @@
+/* ==========================================================================
+   DRIPLAB — MAPA DE IMAGENS
+   Único lugar para trocar as imagens do projeto.
+   Para substituir: salve o arquivo exportado do Figma com o MESMO NOME
+   na pasta indicada (ou altere o caminho url(...) abaixo).
+   Enquanto o arquivo não existir, o site mostra um degradê no lugar.
+   Todos os nomes são em minúsculas.
+   ========================================================================== */
+:root{
+
+  /* ---------- HOME (index.html) — pasta imagens/hero/ ---------- */
+  --img-hero-1:        url("imagens/hero/hero-1.jpg");        /* foto da modelo com grafite (slide 1) — 1920x900 */
+  --img-hero-2:        url("imagens/hero/hero-2.jpg");        /* slide 2 — 1920x900 */
+  --img-hero-3:        url("imagens/hero/hero-3.jpg");        /* slide 3 — 1920x900 */
+  --img-drop-1:        url("imagens/hero/drop-1.png");        /* card "Drop 01" (PNG sem fundo) — 400x300 */
+  --img-drop-2:        url("imagens/hero/drop-2.png");        /* card "Drop 02" — 400x300 */
+  --img-drop-3:        url("imagens/hero/drop-3.png");        /* card "Drop 03" (camiseta branca) — 400x300 */
+
+  /* ---------- COMUNIDADE — pasta imagens/comunidade/ ---------- */
+  --img-comunidade-1:  url("imagens/comunidade/post-1.jpg");  /* post @yungleall — 400x460 */
+  --img-comunidade-2:  url("imagens/comunidade/post-2.jpg");  /* post @majorrd — 400x460 */
+
+  /* ---------- PRODUTOS — pasta imagens/produtos/ (PNG com fundo transparente, 600x600) ---------- */
+  --img-prod-moletom-essential: url("imagens/produtos/moletom-essential.png");
+  --img-prod-moletom-oversized: url("imagens/produtos/moletom-oversized.png");
+  --img-prod-moletom-tech:      url("imagens/produtos/moletom-tech.png");
+  --img-prod-moletom-logo:      url("imagens/produtos/moletom-logo.png");
+  --img-prod-tshirt-logo:       url("imagens/produtos/tshirt-logo.png");
+  --img-prod-cargo-pants:       url("imagens/produtos/cargo-pants.png");
+  --img-prod-bone:              url("imagens/produtos/bone-driplab.png");
+  --img-prod-jaqueta-tech:      url("imagens/produtos/jaqueta-tech.png");
+
+  /* ---------- COLEÇÕES (colecoes.html) — pasta imagens/colecoes/ (800x880) ---------- */
+  --img-colecao-1:     url("imagens/colecoes/essentials.jpg");
+  --img-colecao-2:     url("imagens/colecoes/caps-collection.jpg");
+  --img-colecao-3:     url("imagens/colecoes/zona-norte.jpg");
+  --img-colecao-4:     url("imagens/colecoes/summer-vibes.jpg");
+  --img-colecao-5:     url("imagens/colecoes/archive-01.jpg");
+  --img-colecao-6:     url("imagens/colecoes/rio-capital.jpg");
+  --img-colecao-7:     url("imagens/colecoes/blackout.jpg");
+  --img-colecao-8:     url("imagens/colecoes/all-black.jpg");
+  --img-banner-colecoes: url("imagens/colecoes/banner.jpg");   /* banner de destaque — 1400x420 */
+
+  /* ---------- LOGIN / CADASTRO — pasta imagens/fundos/ ---------- */
+  --img-fundo-auth:    url("imagens/fundos/fundo-auth.jpg");  /* beco/escada escura com luz laranja — 1920x1080 */
+
+  /* ---------- PERFIL (perfil.html) — pasta imagens/perfil/ ---------- */
+  --img-avatar:        url("imagens/perfil/avatar.jpg");      /* foto do usuário — 200x200 */
+  --img-banner-perfil: url("imagens/perfil/banner-perfil.jpg"); /* fundo do cartão "Olá, ALENCAR" — 1000x400 */
+
+  /* ---------- BUSCA (modal) — pasta imagens/busca/ ---------- */
+  --img-busca-promo:   url("imagens/busca/promo-moletons.jpg"); /* card "Moletons exclusivos" — 400x600 */
+  --img-busca-colecao: url("imagens/busca/colecao-essentials.jpg"); /* miniatura "Drip Essentials" — 120x120 */
+}
