@@ -2,7 +2,43 @@
   const container = document.getElementById('produtos-api');
 
   if (!container) return;
-
+    const produtosEstaticos = [
+    {
+      id_produto: 1,
+      nome_produto: 'T-Shirt Logo',
+      imagem_url: null,
+      preco: 159.90,
+      nome_categoria: 'Camisetas',
+    },
+    {
+      id_produto: 2,
+      nome_produto: 'Moletom Essential',
+      imagem_url: null,
+      preco: 349.90,
+      nome_categoria: 'Moletons',
+    },
+    {
+      id_produto: 3,
+      nome_produto: 'Cargo Pants',
+      imagem_url: null,
+      preco: 299.90,
+      nome_categoria: 'Calças',
+    },
+    {
+      id_produto: 4,
+      nome_produto: 'Boné DripLab',
+      imagem_url: null,
+      preco: 129.90,
+      nome_categoria: 'Acessórios',
+    },
+    {
+      id_produto: 5,
+      nome_produto: 'Jaqueta Tech',
+      imagem_url: null,
+      preco: 399.90,
+      nome_categoria: 'Jaquetas',
+    },
+  ];
   const formatarPreco = (valor) =>
     new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -80,8 +116,8 @@
 
       container.replaceChildren(...produtos.map(criarCard));
     } catch (erro) {
-      console.error(erro);
-      container.textContent = 'Não foi possível carregar os produtos.';
+      console.warn('API indisponível; exibindo catálogo estático.', erro);
+      container.replaceChildren(...produtosEstaticos.map(criarCard));
     }
   }
 
