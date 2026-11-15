@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="imagens.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="auth-page">
+<!-- IMAGEM: fundo da página → imagens/fundos/fundo-auth.jpg (definida em imagens.css: --img-fundo-auth) -->
+<main class="auth">
+    <section class="auth-marca">
+      <a class="logo" href="index.html" aria-label="DripLab — início"><span class="sun"></span>DRIP LAB</a>
+      <div>
+        <h1>Bem-vindo<br>de <span class="accent">volta</span></h1>
+        <p>Entre na sua conta para acessar drops exclusivos, recompensas e a comunidade.</p>
+      </div>
+      <ul class="beneficios">
+        <li><i data-ic="shirt"></i>Acesso<br>aos drops</li>
+        <li><i data-ic="trophy"></i>Recompensas<br>exclusivas</li>
+        <li><i data-ic="users"></i>Comunidade<br>ativa</li>
+        <li><i data-ic="gamepad"></i>Gamificação<br>e níveis</li>
+      </ul>
+      <div class="auth-rodape"><span><b>DRIP LAB © 2026</b>Streetwear digital-first</span><span>A Drip Lab te espera.<i class="seta">—</i></span></div>
+    </section>
+    <form class="painel" data-auth="login" novalidate>
+      <h2>Entrar</h2>
+      <p>Acesse sua conta DripLab.</p>
+        <label class="campo"><i data-ic="user"></i><input type="text" name="usuario" placeholder="E-mail ou usuário" aria-label="E-mail ou usuário" autocomplete="username" required></label>
+        <p class="msg-erro">Informe seu e-mail ou usuário.</p>
+        <label class="campo"><i data-ic="lock"></i><input type="password" name="senha" placeholder="Senha" aria-label="Senha" autocomplete="current-password" required><button class="olho" type="button" aria-label="Mostrar senha"><i data-ic="eye"></i></button></label>
+        <p class="msg-erro">Informe sua senha.</p>
+        <div class="linha">
+          <label class="check"><input type="checkbox" name="manter"> Manter conectado</label>
+          <a class="link" href="#">Esqueceu a senha?</a>
+        </div>
+        <button class="btn-grande" type="submit">Entrar <i data-ic="arrow"></i></button>
+        <div class="divisor">ou continue com</div>
+        <div class="sociais">
+          <button type="button" aria-label="Entrar com Google">G</button>
+          <button type="button" aria-label="Entrar com Apple">A</button>
+          <button type="button" aria-label="Entrar com X">X</button>
+        </div>
+        <p class="troca">Não tem uma conta? <a href="cadastro.html">Cadastre-se →</a></p>
+    </form>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

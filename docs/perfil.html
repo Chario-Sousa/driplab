@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meu perfil — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="imagens.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><span class="sun"></span>DRIP LAB</a>
+  <nav class="menu">
+    <a href="index.html">Início</a><a href="index.html#drops">Shop</a><a href="index.html#drops">Novidades</a>
+    <a href="colecoes.html">Coleções</a><a href="index.html#sobre">Sobre</a>
+  </nav>
+  <div class="actions">
+    <button class="circle" aria-label="Buscar"><i data-ic="search"></i></button>
+    <button class="circle" aria-label="Perfil"><i data-ic="user"></i></button>
+    <button class="circle" aria-label="Favoritos"><i data-ic="star"></i></button>
+    <button class="circle" aria-label="Carrinho"><i data-ic="cart"></i></button>
+  </div>
+</header>
+
+<div class="perfil">
+
+  <!-- ===== MENU LATERAL ===== -->
+  <aside class="lateral glass">
+    <div class="usuario">
+      <!-- IMAGEM: foto do usuário → imagens/perfil/avatar.jpg -->
+      <div class="avatar foto" style="--foto:var(--img-avatar)" role="img" aria-label="Foto de @alencarx"></div>
+      <div><b>@alencarx</b><small class="ver">● VERIFICADO</small><small>Membro desde 2023</small></div>
+    </div>
+    <nav aria-label="Menu do perfil">
+      <a class="on" href="perfil.html"><i data-ic="home"></i>Visão Geral</a>
+      <a href="#pedidos"><i data-ic="bag"></i>Meus pedidos</a>
+      <a href="#favoritos"><i data-ic="star"></i>Favoritos</a>
+      <a href="#"><i data-ic="users"></i>Comunidade</a>
+      <a href="#conquistas"><i data-ic="trophy"></i>Conquistas</a>
+      <a href="#recompensas"><i data-ic="award"></i>Recompensas</a>
+      <a href="#"><i data-ic="sliders"></i>Configurações</a>
+    </nav>
+    <a class="sair" href="login.html" style="display:flex;gap:.9rem;align-items:center;padding:.8rem .9rem;font-size:.75rem;font-weight:600"><i data-ic="logout"></i>Sair</a>
+  </aside>
+
+  <!-- ===== COLUNA CENTRAL ===== -->
+  <main class="col">
+    <!-- IMAGEM: fundo do cartão de boas-vindas → imagens/perfil/banner-perfil.jpg -->
+    <section class="cartao boas-vindas">
+      <div>
+        <h1><span>Olá,</span>Alencar</h1>
+        <small>Sua jornada na DripLab continua...</small>
+      </div>
+      <div class="nivel">
+        <span class="sun" role="img" aria-label="Logo DripLab"></span>
+        <div class="xp"><b>NÍVEL 04</b>Streetwear Rookie
+          <div class="barra"><i style="--p:64%"></i></div><small>1.280 / 2.000 XP</small></div>
+        <div class="prox"><i data-ic="bolt"></i><div><b>Próximo nível</b>Acesso a drops exclusivos</div></div>
+      </div>
+    </section>
+
+    <section class="cartao">
+      <div class="cartao-t"><i data-ic="crown"></i><h3>Drops exclusivos<small>Acesso antecipado aos lançamentos mais brabos.</small></h3><a class="todos" href="colecoes.html">Ver todos <i data-ic="arrow"></i></a></div>
+      <div class="drop-ex">
+        <div><span class="tag">Drop exclusivo</span><h4>Coleção Outono 2026</h4><p>Apenas para membros da comunidade.</p><a class="btn mini" href="colecoes.html">Acessar →</a></div>
+        <!-- troque a data no atributo data-contagem (AAAA-MM-DDTHH:MM) -->
+        <div class="cont" data-contagem="" aria-label="Tempo para o drop"></div>
+      </div>
+    </section>
+
+    <section class="cartao" id="pedidos">
+      <div class="cartao-t"><i data-ic="bag"></i><h3>Meus pedidos<small>Acompanhe o status das suas compras.</small></h3><a class="todos" href="#">Ver todos <i data-ic="arrow"></i></a></div>
+      <div class="pedidos">
+          <article class="pedido"><div class="foto" style="--foto:var(--img-prod-moletom-essential)" role="img" aria-label="Moletom"></div><div><b>#DRP1258</b><small>12/10/2026</small><span class="status prep">Em preparo</span></div></article>
+          <article class="pedido"><div class="foto" style="--foto:var(--img-prod-tshirt-logo)" role="img" aria-label="T-Shirt"></div><div><b>#DRP1247</b><small>05/10/2026</small><span class="status tr">Em trânsito</span></div></article>
+          <article class="pedido"><div class="foto" style="--foto:var(--img-prod-cargo-pants)" role="img" aria-label="Cargo"></div><div><b>#DRP1220</b><small>28/09/2026</small><span class="status ent">Entregue</span></div></article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== COLUNA DIREITA ===== -->
+  <aside class="col">
+    <section class="cartao">
+      <div class="cartao-t"><i data-ic="coupon"></i><h3>Seus pontos</h3></div>
+      <div class="pontos"><i data-ic="award"></i>2.450</div>
+      <a class="btn mini" href="#recompensas">Ver recompensas →</a>
+    </section>
+
+    <section class="cartao" id="conquistas">
+      <div class="cartao-t"><i data-ic="trophy"></i><h3>Conquistas<small>4/12 desbloqueadas</small></h3><a class="todos" href="#">Ver todas <i data-ic="arrow"></i></a></div>
+      <ul class="conq">
+            <li><i data-ic="shirt"></i>Primeiro<br>Drop</li>
+            <li><i data-ic="user"></i>Cliente<br>Fiel</li>
+            <li><i data-ic="users"></i>Amigo<br>da Marca</li>
+            <li><i data-ic="star"></i>Comentarista</li>
+      </ul>
+    </section>
+
+    <section class="cartao" id="recompensas">
+      <div class="cartao-t"><i data-ic="award"></i><h3>Recompensas<small>Troque seus pontos.</small></h3><a class="todos" href="#">Ver todas <i data-ic="arrow"></i></a></div>
+      <ul class="lista">
+            <li><i data-ic="truck"></i><div>Frete grátis<small>500 pts</small></div><i class="ir" data-ic="chev"></i></li>
+            <li><i data-ic="tag"></i><div>Desconto na próxima compra<small>1.000 pts</small></div><i class="ir" data-ic="chev"></i></li>
+            <li><i data-ic="lockopen"></i><div>Acesso a drop exclusivo<small>2.000 pts</small></div><i class="ir" data-ic="chev"></i></li>
+      </ul>
+    </section>
+
+    <section class="cartao" id="favoritos">
+      <div class="cartao-t"><i data-ic="star"></i><h3>Favoritos<small>Seus produtos salvos.</small></h3><button class="todos" style="background:none;border:0;color:#fff;cursor:pointer" onclick="document.querySelector('.header [aria-label=Favoritos]').click()">Ver todos <i data-ic="arrow"></i></button></div>
+    </section>
+  </aside>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
