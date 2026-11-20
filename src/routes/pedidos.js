@@ -64,6 +64,8 @@ const inteiroPositivo = valor => Number.isInteger(valor) && valor > 0 && valor <
 const conflitos = {
   estoque_insuficiente: 'Estoque insuficiente para um dos produtos do carrinho.',
   produto_nao_encontrado: 'Um dos produtos não está mais disponível.',
+  drop_fora_do_periodo: 'Um dos drops do carrinho está fora do período de venda.',
+  limite_do_drop: 'A quantidade no carrinho supera o limite restante de um dos drops.',
   solicitacao_ja_utilizada: 'Essa tentativa já foi usada com outro carrinho.',
 };
 

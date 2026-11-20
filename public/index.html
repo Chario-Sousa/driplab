@@ -51,6 +51,8 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .drops .top{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.5rem}
 .count .lbl{letter-spacing:.14em;font-size:.8rem;margin-bottom:1rem;text-align:center}
 .count .row{display:flex;gap:1.2rem;font-family:var(--display);font-size:2.2rem;color:var(--orange);text-align:center}
+.count .row[hidden],.count .drop-info[hidden]{display:none}
+.drop-info{margin-top:.8rem;text-align:center}
 .count small{display:block;font:500 .65rem var(--body);color:#fff;letter-spacing:.1em}
 .count .sep{color:#fff}
 .carousel{display:flex;align-items:center;gap:1rem}
@@ -155,18 +157,19 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
       <div class="top">
         <div>
           <span class="eyebrow">Drops</span>
-          <h2 style="margin-top:.6rem">Lançamentos<br>em breve</h2>
+          <h2 data-drop-titulo style="margin-top:.6rem">Lançamentos</h2>
           <p>Fique ligado. Nossos drops são limitados e somem rápido. Seja um dos primeiros a garantir o seu.</p>
           <a class="btn" href="colecoes.html">Ver todos os drops →</a>
         </div>
-        <div class="count">
-          <div class="lbl">PRÓXIMO <span class="accent">DROP</span></div>
-          <div class="row">
-            <div><span id="d">05</span><small>DIAS</small></div><span class="sep">:</span>
-            <div><span id="h">18</span><small>HORAS</small></div><span class="sep">:</span>
+        <div class="count" data-drop>
+          <div class="lbl accent" data-drop-estado role="status">Carregando drop…</div>
+          <div class="row" data-drop-contagem hidden>
+            <div><span id="d">00</span><small>DIAS</small></div><span class="sep">:</span>
+            <div><span id="h">00</span><small>HORAS</small></div><span class="sep">:</span>
             <div><span id="m">00</span><small>MIN</small></div><span class="sep">:</span>
-            <div><span id="s">06</span><small>SEG</small></div>
+            <div><span id="s">00</span><small>SEG</small></div>
           </div>
+          <small class="drop-info" data-drop-info hidden></small>
         </div>
       </div>
       <div class="carousel">
@@ -234,13 +237,9 @@ function ir(i){ atual=(i+slides.length)%slides.length;
 function auto(){ clearInterval(timer); timer=setInterval(()=>ir(atual+1),5000); }
 dots.forEach((d,n)=>d.addEventListener('click',()=>{ir(n);auto();})); auto();
 
-// Contagem regressiva — troque pela data do próximo drop
-const alvo=Date.now()+(5*86400+18*3600+6)*1000, pad=n=>String(n).padStart(2,'0');
-function tick(){ const t=Math.max(0,Math.floor((alvo-Date.now())/1000)), set=(id,v)=>document.getElementById(id).textContent=pad(v);
-  set('d',Math.floor(t/86400)); set('h',Math.floor(t%86400/3600)); set('m',Math.floor(t%3600/60)); set('s',t%60); }
-tick(); setInterval(tick,1000);
 </script>
 <script src="catalogo.js"></script>
 <script src="app.js"></script>
+<script src="drops.js"></script>
 </body>
 </html>

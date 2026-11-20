@@ -22,6 +22,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Telas de coleções, cadastro, login e perfil.
 - Cadastro e login por e-mail, sessão persistente e perfil com dados da conta via Supabase Auth na versão Express.
 - Finalização do carrinho e histórico de pedidos da conta no perfil da versão Express.
+- Contagem regressiva, período de venda e limite de peças por drop na versão Express.
 - API local para verificar a conexão com o banco e consultar produtos.
 
 ### Limitações atuais
@@ -54,6 +55,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 
 - [Migração do catálogo para PostgreSQL e dados de exemplo](sql/catalogo_postgres.sql)
 - [Migração de pedidos e baixa de estoque](sql/pedidos_postgres.sql)
+- [Migração dos períodos e limites de drops](sql/drops_postgres.sql)
 - [Criação do banco original no MySQL](sql/criar_banco.sql)
 - [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
 
@@ -68,7 +70,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 ## Execução com Supabase
 
 1. Instale as dependências com `npm ci`.
-2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql` e depois `sql/pedidos_postgres.sql`. Execute cada migração uma vez.
+2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql` e `sql/drops_postgres.sql`, nessa ordem.
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
 5. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
@@ -88,6 +90,12 @@ Com a confirmação de e-mail ativada, use um endereço da equipe para testar co
 Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finalizar compra**. O pedido aparece como **Pendente** no perfil. O total corresponde aos produtos. Estoque, preços e identidade do cliente são conferidos pelo servidor.
 
 `POST /api/pedidos` recebe `chave_solicitacao` (UUID) e `itens` com `id_produto` e `quantidade`. Reenvie a mesma chave ao repetir a tentativa com os mesmos itens. `GET /api/pedidos` retorna o histórico do usuário autenticado. As duas rotas exigem o token de acesso do Supabase Auth no cabeçalho `Authorization: Bearer`.
+
+### Drops
+
+`GET /api/drops` retorna as datas e as peças restantes de cada drop anunciado. A página inicial usa esses dados para mostrar quando abre ou encerra a venda.
+
+Defina o início, o encerramento opcional e o limite de peças na tabela `colecao`. Na migração, as datas antigas passaram a usar o fuso `America/Sao_Paulo`. O limite é compartilhado entre os produtos da coleção. Pedidos pendentes e confirmados ocupam esse limite.
 
 ## Execução local com o MySQL original
 

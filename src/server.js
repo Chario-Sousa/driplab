@@ -21,6 +21,7 @@ app.get('/api/produtos', async (req, res) => {
   }
 
   try {
+    const postgres = sequelize.getDialect() === 'postgres';
     const [produtos] = await sequelize.query(`
       SELECT
         p.id_produto,
@@ -31,11 +32,13 @@ app.get('/api/produtos', async (req, res) => {
         p.estoque,
         c.nome_categoria,
         co.nome_colecao
+        ${postgres ? ', d.estado as estado_drop' : ''}
       FROM produto AS p
       JOIN categoria AS c
         ON c.id_categoria = p.fk_categoria_id_categoria
       LEFT JOIN colecao AS co
         ON co.id_colecao = p.fk_colecao_id_colecao
+      ${postgres ? 'LEFT JOIN public.disponibilidade_drop AS d ON d.id_colecao = co.id_colecao' : ''}
       ORDER BY p.id_produto;
     `);
 
@@ -43,6 +46,26 @@ app.get('/api/produtos', async (req, res) => {
   } catch (erro) {
     console.error('Falha na consulta de produtos:', erro.name);
     res.status(500).json({ erro: 'Não foi possível buscar os produtos.' });
+  }
+});
+
+app.get('/api/drops', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  if (sequelize?.getDialect() !== 'postgres') {
+    return res.status(503).json({ erro: 'Drops indisponíveis neste ambiente.' });
+  }
+
+  try {
+    const [[disponibilidade]] = await sequelize.query(`
+      select clock_timestamp() as agora,
+        coalesce(jsonb_agg(to_jsonb(d) order by d.data_lancamento, d.id_colecao), '[]'::jsonb) as drops
+      from public.disponibilidade_drop d
+      where d.estado <> 'inativo'
+    `);
+    res.json(disponibilidade);
+  } catch (erro) {
+    console.error('Falha na consulta de drops:', erro.name);
+    res.status(500).json({ erro: 'Não foi possível carregar os drops.' });
   }
 });
 

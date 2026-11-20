@@ -45,6 +45,13 @@
       currency: 'BRL',
     }).format(Number(valor));
 
+  const mensagens = {
+    agendado: 'Em breve',
+    esgotado: 'Drop esgotado',
+    encerrado: 'Drop encerrado',
+    inativo: 'Indisponível',
+  };
+
   function criarCard(produto, compravel) {
     const card = document.createElement('article');
     card.className = 'prod';
@@ -77,14 +84,22 @@
     preco.textContent = formatarPreco(produto.preco);
 
     informacoes.append(nome, preco);
+    const estado = mensagens[produto.estado_drop] || (produto.estoque === 0 ? 'Sem estoque' : '');
+    if (estado) {
+      const aviso = document.createElement('small');
+      aviso.className = 'produto-indisponivel';
+      aviso.textContent = estado;
+      informacoes.append(aviso);
+    }
 
     const adicionar = document.createElement('button');
     adicionar.className = 'circle';
     adicionar.type = 'button';
     adicionar.textContent = '+';
+    adicionar.disabled = Boolean(estado);
     adicionar.setAttribute(
       'aria-label',
-      `Adicionar ${produto.nome_produto} ao carrinho`
+      estado ? `${produto.nome_produto}: ${estado}` : `Adicionar ${produto.nome_produto} ao carrinho`
     );
 
     adicionar.addEventListener('click', () => {
@@ -101,7 +116,7 @@
 
   async function carregarProdutos() {
     try {
-      const resposta = await fetch('/api/produtos');
+      const resposta = await fetch('/api/produtos', { cache: 'no-store' });
 
       if (!resposta.ok) {
         throw new Error('Falha ao buscar produtos.');
@@ -121,5 +136,6 @@
     }
   }
 
+  document.addEventListener('driplab:drops-alterados', carregarProdutos);
   carregarProdutos();
 })();
