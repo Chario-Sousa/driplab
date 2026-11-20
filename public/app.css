@@ -19,8 +19,7 @@
 .auth-page::before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.2) 50%,rgba(0,0,0,.65));pointer-events:none}
 .auth{position:relative;min-height:100vh;width:min(1320px,92%);margin:auto;display:grid;grid-template-columns:1.1fr 480px;gap:4rem;align-items:center;padding:2rem 0}
 .auth-marca{display:flex;flex-direction:column;gap:2.4rem;align-self:stretch;justify-content:space-between;padding:1rem 0}
-.auth-marca .logo{font-size:3.4rem}
-.auth-marca .logo .sun{width:96px;height:96px}
+.auth-marca .logo img{width:min(320px,100%);height:auto}
 .auth-marca h1{font-size:clamp(1.8rem,3.4vw,2.8rem);margin-bottom:1rem}
 .auth-marca p{color:var(--muted);max-width:38ch}
 .beneficios{display:flex;gap:1.6rem;flex-wrap:wrap}
@@ -194,7 +193,8 @@
 }
 @media(max-width:900px){
   .auth{grid-template-columns:1fr;gap:2rem}
-  .auth-marca{gap:1.4rem}.auth-marca .logo{font-size:2.2rem}.auth-marca .logo .sun{width:64px;height:64px}
+  .auth-marca{gap:1.4rem}
+  .auth-marca .logo img{width:min(240px,100%)}
   .auth-marca .beneficios,.auth-marca>p{display:none}
   .perfil{grid-template-columns:1fr}
   .perfil .lateral{position:static;min-height:0}

@@ -16,10 +16,6 @@
   --img-drop-2:        url("imagens/hero/drop-2.png");        /* card "Drop 02" — 400x300 */
   --img-drop-3:        url("imagens/hero/drop-3.png");        /* card "Drop 03" (camiseta branca) — 400x300 */
 
-  /* ---------- COMUNIDADE — pasta imagens/comunidade/ ---------- */
-  --img-comunidade-1:  url("imagens/comunidade/post-1.jpg");  /* post @yungleall — 400x460 */
-  --img-comunidade-2:  url("imagens/comunidade/post-2.jpg");  /* post @majorrd — 400x460 */
-
   /* ---------- PRODUTOS — pasta imagens/produtos/ (PNG com fundo transparente, 600x600) ---------- */
   --img-prod-moletom-essential: url("imagens/produtos/moletom-essential.png");
   --img-prod-moletom-oversized: url("imagens/produtos/moletom-oversized.png");
@@ -39,10 +35,10 @@
   --img-colecao-6:     url("imagens/colecoes/rio-capital.jpg");
   --img-colecao-7:     url("imagens/colecoes/blackout.jpg");
   --img-colecao-8:     url("imagens/colecoes/all-black.jpg");
-  --img-banner-colecoes: url("imagens/colecoes/banner.jpg");   /* banner de destaque — 1400x420 */
+  --img-banner-colecoes: url("imagens/colecoes/banner.webp");
 
   /* ---------- LOGIN / CADASTRO — pasta imagens/fundos/ ---------- */
-  --img-fundo-auth:    url("imagens/fundos/fundo-auth.jpg");  /* beco/escada escura com luz laranja — 1920x1080 */
+  --img-fundo-auth:    url("imagens/fundos/fundo-auth.webp");
 
   /* ---------- PERFIL (perfil.html) — pasta imagens/perfil/ ---------- */
   --img-avatar:        url("imagens/perfil/avatar.jpg");      /* foto do usuário — 200x200 */

@@ -40,7 +40,7 @@
 /* seções */
 section{padding:6rem 0;border-top:1px solid var(--line)}
 .about .wrap{display:grid;grid-template-columns:.9fr 1.4fr .9fr;gap:3rem;align-items:center}
-.about .big{width:min(260px,100%);aspect-ratio:1;margin:auto}
+.about .simbolo{display:block;width:min(260px,100%);height:auto;margin:auto}
 .about p,.community p,.drops p{margin:1.2rem 0 1.6rem;max-width:42ch}
 .feats{display:grid;gap:1.4rem;padding-left:2rem;border-left:1px solid var(--line)}
 .feats li{display:flex;gap:1rem;align-items:center}
@@ -65,10 +65,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 
 .community .wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
 .posts{display:flex;gap:1.4rem;align-items:center;justify-content:flex-end}
-.post{width:200px;height:230px;border-radius:22px;border:1px solid var(--line);padding:1rem;display:flex;flex-direction:column;justify-content:flex-end;font-size:.7rem;position:relative;overflow:hidden;--reserva:linear-gradient(135deg,#7a2a2a,#2a2a35)}
-.post::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.85),transparent 60%)}
-.post>*{position:relative}
-.post span{color:var(--muted);margin-top:.4rem}
+.post{display:block;flex:none;width:min(200px,52vw);height:auto}
 
 .news{background:linear-gradient(180deg,#120904,#3a1a08 75%,#0a0503)}
 .news .wrap{display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap}
@@ -95,7 +92,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 </svg>
 
 <header class="header">
-  <a class="logo" href="index.html"><span class="sun"></span>DRIP LAB</a>
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
   <nav class="menu">
     <a class="on" href="index.html">Início</a>
     <a href="#drops">Shop</a>
@@ -136,7 +133,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 
   <section class="about" id="sobre">
     <div class="wrap">
-      <span class="sun big" role="img" aria-label="Logo DripLab"></span>
+      <img class="simbolo" src="imagens/marca/simbolo-driplab.png" width="900" height="810" alt="" loading="lazy">
       <div>
         <span class="eyebrow">Sobre a DripLab</span>
         <h2 style="margin-top:.6rem">Mais que roupas, uma comunidade.</h2>
@@ -195,8 +192,8 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
       </div>
       <div class="posts">
         <button class="circle" aria-label="Anterior">←</button>
-        <div class="post foto" style="--foto:var(--img-comunidade-1)"><!-- IMAGEM: imagens/comunidade/post-1.jpg -->@yungleall<span>Essa da DripLab tá chave, pprt!<br>♡ 12.8k &nbsp; ✉ 239</span></div>
-        <div class="post foto" style="--foto:var(--img-comunidade-2)"><!-- IMAGEM: imagens/comunidade/post-2.jpg -->@majorrd<span>De hoje com a peita da DripLab ♥<br>♡ 16.3k &nbsp; ✉ 418</span></div>
+        <img class="post" src="imagens/comunidade/post-1.webp" width="460" height="520" alt="Post da comunidade DripLab em um show" loading="lazy">
+        <img class="post" src="imagens/comunidade/post-2.webp" width="460" height="520" alt="Post da comunidade DripLab ao ar livre" loading="lazy">
       </div>
     </div>
   </section>
@@ -219,7 +216,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 <footer class="footer">
   <div class="wrap">
     <div class="row">
-      <a class="logo" href="index.html"><span class="sun"></span>DRIP LAB</a>
+      <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab" loading="lazy"></a>
       <nav class="menu"><a class="on" href="index.html">Início</a><a href="#drops">Shop</a><a href="#drops">Novidades</a><a href="colecoes.html">Coleções</a><a href="#sobre">Sobre</a></nav>
       <div class="social"><a href="#" aria-label="Instagram"><img src="imagens/instagram.svg" alt=""></a><a href="#" aria-label="TikTok"><img src="imagens/tiktok.svg" alt=""></a><a href="#" aria-label="YouTube"><img src="imagens/youtube.svg" alt=""></a><a href="#" aria-label="X"><img src="imagens/x.svg" alt=""></a></div>
     </div>
