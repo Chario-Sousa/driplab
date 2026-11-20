@@ -7,6 +7,7 @@ const sequelize = require('./config/database');
 const app = express();
 
 app.use(express.json());
+app.use('/api/auth', require('./auth'));
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/api/produtos', async (req, res) => {

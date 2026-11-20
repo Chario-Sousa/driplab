@@ -28,25 +28,25 @@
       </ul>
       <div class="auth-rodape"><span><b>DRIP LAB © 2026</b>Streetwear digital-first</span><span>A Drip Lab te espera.<i class="seta">—</i></span></div>
     </section>
-    <form class="painel" data-auth="cadastro" novalidate>
+    <form class="painel" data-auth="cadastro" method="post">
       <h2>Criar conta</h2>
       <p>Leva menos de um minuto.</p>
-        <label class="campo"><i data-ic="user"></i><input type="text" name="nome" placeholder="Nome completo" aria-label="Nome completo" autocomplete="name" required></label>
+        <label class="campo"><i data-ic="user"></i><input type="text" name="nome" placeholder="Nome completo" aria-label="Nome completo" autocomplete="name" maxlength="120" required></label>
         <p class="msg-erro">Informe seu nome.</p>
-        <label class="campo"><i data-ic="user"></i><input type="text" name="usuario" placeholder="Nome do usuário" aria-label="Nome do usuário" autocomplete="username" required></label>
-        <p class="msg-erro">Escolha um nome de usuário.</p>
-        <label class="campo"><i data-ic="mail"></i><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required></label>
+        <label class="campo"><i data-ic="mail"></i><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" maxlength="255" required></label>
         <p class="msg-erro">Informe um e-mail válido.</p>
-        <label class="campo"><i data-ic="lock"></i><input type="password" name="senha" placeholder="Senha" aria-label="Senha" autocomplete="new-password" required><button class="olho" type="button" aria-label="Mostrar senha"><i data-ic="eye"></i></button></label>
+        <label class="campo"><i data-ic="lock"></i><input type="password" name="senha" placeholder="Senha" aria-label="Senha" autocomplete="new-password" minlength="8" maxlength="128" required><button class="olho" type="button" aria-label="Mostrar senha"><i data-ic="eye"></i></button></label>
         <p class="msg-erro">A senha precisa ter ao menos 8 caracteres.</p>
-        <label class="campo"><i data-ic="lock"></i><input type="password" name="confirmar" placeholder="Confirmar senha" aria-label="Confirmar senha" autocomplete="new-password" required><button class="olho" type="button" aria-label="Mostrar senha"><i data-ic="eye"></i></button></label>
+        <label class="campo"><i data-ic="lock"></i><input type="password" name="confirmar" placeholder="Confirmar senha" aria-label="Confirmar senha" autocomplete="new-password" minlength="8" maxlength="128" required><button class="olho" type="button" aria-label="Mostrar senha"><i data-ic="eye"></i></button></label>
         <p class="msg-erro">As senhas não conferem.</p>
         <label class="check"><input type="checkbox" name="termos" required> <span>Li e aceito os <a class="link" href="#">Termos de Uso</a> e a <a class="link" href="#">Política de Privacidade</a>.</span></label>
+        <div class="auth-erro" data-auth-erro role="alert"></div>
         <button class="btn-grande" type="submit">Criar a minha conta <i data-ic="arrow"></i></button>
         <div class="divisor">Já faz parte?</div>
         <p class="troca"><a href="login.html">Entre na sua conta →</a></p>
     </form>
 </main>
 <script src="app.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>

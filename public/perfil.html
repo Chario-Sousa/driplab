@@ -26,14 +26,15 @@
   </div>
 </header>
 
-<div class="perfil">
+<div class="perfil-status" data-perfil-status role="status">Carregando perfil…</div>
+<div class="perfil" data-perfil hidden>
 
   <!-- ===== MENU LATERAL ===== -->
   <aside class="lateral glass">
     <div class="usuario">
       <!-- IMAGEM: foto do usuário → imagens/perfil/avatar.jpg -->
-      <div class="avatar foto" style="--foto:var(--img-avatar)" role="img" aria-label="Foto de @alencarx"></div>
-      <div><b>@alencarx</b><small class="ver">● VERIFICADO</small><small>Membro desde 2023</small></div>
+      <div class="avatar foto" style="--foto:var(--img-avatar)" aria-hidden="true"></div>
+      <div><b data-nome></b><small data-email></small></div>
     </div>
     <nav aria-label="Menu do perfil">
       <a class="on" href="perfil.html"><i data-ic="home"></i>Visão Geral</a>
@@ -44,7 +45,7 @@
       <a href="#recompensas"><i data-ic="award"></i>Recompensas</a>
       <a href="#"><i data-ic="sliders"></i>Configurações</a>
     </nav>
-    <a class="sair" href="login.html" style="display:flex;gap:.9rem;align-items:center;padding:.8rem .9rem;font-size:.75rem;font-weight:600"><i data-ic="logout"></i>Sair</a>
+    <a class="sair" data-logout href="login.html" style="display:flex;gap:.9rem;align-items:center;padding:.8rem .9rem;font-size:.75rem;font-weight:600"><i data-ic="logout"></i>Sair</a>
   </aside>
 
   <!-- ===== COLUNA CENTRAL ===== -->
@@ -52,14 +53,12 @@
     <!-- IMAGEM: fundo do cartão de boas-vindas → imagens/perfil/banner-perfil.jpg -->
     <section class="cartao boas-vindas">
       <div>
-        <h1><span>Olá,</span>Alencar</h1>
+        <h1><span>Olá,</span><strong data-saudacao></strong></h1>
         <small>Sua jornada na DripLab continua...</small>
       </div>
       <div class="nivel">
         <span class="sun" role="img" aria-label="Logo DripLab"></span>
-        <div class="xp"><b>NÍVEL 04</b>Streetwear Rookie
-          <div class="barra"><i style="--p:64%"></i></div><small>1.280 / 2.000 XP</small></div>
-        <div class="prox"><i data-ic="bolt"></i><div><b>Próximo nível</b>Acesso a drops exclusivos</div></div>
+        <div class="xp"><b>Experiência</b><small data-xp></small></div>
       </div>
     </section>
 
@@ -74,11 +73,7 @@
 
     <section class="cartao" id="pedidos">
       <div class="cartao-t"><i data-ic="bag"></i><h3>Meus pedidos<small>Acompanhe o status das suas compras.</small></h3><a class="todos" href="#">Ver todos <i data-ic="arrow"></i></a></div>
-      <div class="pedidos">
-          <article class="pedido"><div class="foto" style="--foto:var(--img-prod-moletom-essential)" role="img" aria-label="Moletom"></div><div><b>#DRP1258</b><small>12/10/2026</small><span class="status prep">Em preparo</span></div></article>
-          <article class="pedido"><div class="foto" style="--foto:var(--img-prod-tshirt-logo)" role="img" aria-label="T-Shirt"></div><div><b>#DRP1247</b><small>05/10/2026</small><span class="status tr">Em trânsito</span></div></article>
-          <article class="pedido"><div class="foto" style="--foto:var(--img-prod-cargo-pants)" role="img" aria-label="Cargo"></div><div><b>#DRP1220</b><small>28/09/2026</small><span class="status ent">Entregue</span></div></article>
-      </div>
+      <p>O histórico de pedidos estará disponível após a integração do carrinho.</p>
     </section>
   </main>
 
@@ -86,18 +81,13 @@
   <aside class="col">
     <section class="cartao">
       <div class="cartao-t"><i data-ic="coupon"></i><h3>Seus pontos</h3></div>
-      <div class="pontos"><i data-ic="award"></i>2.450</div>
+      <div class="pontos"><i data-ic="award"></i><span data-pontos></span></div>
       <a class="btn mini" href="#recompensas">Ver recompensas →</a>
     </section>
 
     <section class="cartao" id="conquistas">
-      <div class="cartao-t"><i data-ic="trophy"></i><h3>Conquistas<small>4/12 desbloqueadas</small></h3><a class="todos" href="#">Ver todas <i data-ic="arrow"></i></a></div>
-      <ul class="conq">
-            <li><i data-ic="shirt"></i>Primeiro<br>Drop</li>
-            <li><i data-ic="user"></i>Cliente<br>Fiel</li>
-            <li><i data-ic="users"></i>Amigo<br>da Marca</li>
-            <li><i data-ic="star"></i>Comentarista</li>
-      </ul>
+      <div class="cartao-t"><i data-ic="trophy"></i><h3>Conquistas</h3><a class="todos" href="#">Ver todas <i data-ic="arrow"></i></a></div>
+      <p>As conquistas aparecerão aqui quando a gamificação estiver disponível.</p>
     </section>
 
     <section class="cartao" id="recompensas">
@@ -116,5 +106,6 @@
 </div>
 
 <script src="app.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>

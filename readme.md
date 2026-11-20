@@ -19,14 +19,13 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Adição de produtos ao carrinho.
 - Alteração de quantidades e remoção de itens.
 - Cálculo do subtotal, frete e total do carrinho.
-- Telas de coleções, cadastro, login e perfil.
+- Página de coleções e fluxo local de cadastro, login, perfil e saída com sessão no MySQL.
 - API local para verificar a conexão com o banco e consultar produtos.
 
 ### Limitações atuais
 
 - No site publicado, os produtos são estáticos e não vêm do banco de dados.
-- A API local possui os endpoints `GET /api/health` e `GET /api/produtos`.
-- O cadastro e o login são protótipos de interface; ainda não autenticam pela API.
+- A demonstração no GitHub Pages mantém as telas estáticas. A autenticação integrada está disponível no site servido pelo Express.
 - O carrinho não cria nem salva pedidos no banco de dados.
 - Votação, comentários e gamificação estão representados na proposta e nas telas, mas não estão integrados à API.
 
@@ -44,7 +43,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 
 ## Banco de dados e modelagem
 
-O banco de dados chama-se `driplab_db` e contém 14 tabelas:
+O banco `driplab_db` possui 14 tabelas de negócio e a tabela técnica `sessao_usuario`:
 
 `usuario`, `colecao`, `categoria`, `conquista`, `votacao`, `recompensa`, `produto`, `pedido`, `comentario`, `favorita`, `ganha`, `contem`, `participa` e `resgate`.
 
@@ -52,6 +51,7 @@ O banco de dados chama-se `driplab_db` e contém 14 tabelas:
 
 - [Criação do banco e das tabelas](sql/criar_banco.sql)
 - [Inserção dos dados de teste](sql/inserir_dados.sql)
+- [Criação da tabela de sessões](sql/criar_sessoes.sql)
 
 ### Modelagem
 
@@ -88,6 +88,9 @@ No MySQL Workbench, execute os scripts nesta ordem, em um banco vazio:
 
 1. `sql/criar_banco.sql`
 2. `sql/inserir_dados.sql`
+3. `sql/criar_sessoes.sql`
+
+Se o banco já estiver criado e populado, execute apenas `sql/criar_sessoes.sql` para habilitar a autenticação.
 
 Execute o script de inserção apenas uma vez para evitar registros duplicados.
 
@@ -121,6 +124,17 @@ Acesse no navegador:
 - Site local: [http://localhost:3000/](http://localhost:3000/)
 - Verificar API e conexão com o banco: [http://localhost:3000/api/health](http://localhost:3000/api/health)
 - Consultar produtos no MySQL: [http://localhost:3000/api/produtos](http://localhost:3000/api/produtos)
+
+## Autenticação local
+
+Abra o site em http://localhost:3000/ e use o botão de perfil para entrar ou criar uma conta com e-mail e senha. Após o cadastro, o site abre o perfil da conta. Use o botão de saída para encerrar a sessão.
+
+| Rota | Operação |
+| --- | --- |
+| `POST /api/auth/cadastro` | Cria a conta e inicia uma sessão. Recebe `nome`, `email`, `senha` e `termos`. |
+| `POST /api/auth/login` | Inicia uma sessão com `email`, `senha` e a opção `manter`. |
+| `GET /api/auth/perfil` | Retorna os dados da conta associada ao cookie de sessão. |
+| `POST /api/auth/logout` | Encerra a sessão. Envie um objeto JSON vazio. |
 
 ## Estrutura principal do projeto
 

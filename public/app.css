@@ -190,3 +190,7 @@
   .pedidos{grid-template-columns:1fr}
   .busca-corpo{grid-template-columns:1fr}
 }
+
+.auth-erro{color:#ff9ba7;font-size:.85rem;margin:.5rem 0}
+.auth-erro:empty,.perfil[hidden],.perfil-status:empty{display:none}
+.perfil-status{width:min(1420px,94%);margin:1.2rem auto}
