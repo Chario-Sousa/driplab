@@ -7,7 +7,7 @@ Plataforma web de streetwear digital-first, com catálogo de produtos, drops e r
 - **Site publicado:** [https://chario-sousa.github.io/driplab/](https://chario-sousa.github.io/driplab/)
 - **Repositório GitHub:** [https://github.com/Chario-Sousa/driplab](https://github.com/Chario-Sousa/driplab)
 
-> **Sobre a demonstração publicada:** o GitHub Pages publica uma versão estática do site. O catálogo dessa versão usa dados demonstrativos, e o carrinho funciona no navegador. Essa demonstração não consulta o MySQL. Para executar localmente a integração da API com o banco, siga as instruções abaixo.
+> **Sobre a demonstração publicada:** o catálogo do GitHub Pages usa dados demonstrativos e o carrinho funciona no navegador. A versão integrada usa a API Express com o PostgreSQL do Supabase.
 
 ## Objetivo do sistema
 
@@ -25,7 +25,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 ### Limitações atuais
 
 - No site publicado, os produtos são estáticos e não vêm do banco de dados.
-- A API local possui os endpoints `GET /api/health` e `GET /api/produtos`.
+- A API possui os endpoints `GET /api/health` e `GET /api/produtos`.
 - O cadastro e o login são protótipos de interface; ainda não autenticam pela API.
 - O carrinho não cria nem salva pedidos no banco de dados.
 - Votação, comentários e gamificação estão representados na proposta e nas telas, mas não estão integrados à API.
@@ -37,21 +37,22 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - JavaScript
 - Node.js
 - Express
-- Sequelize
-- MySQL e `mysql2`
+- Sequelize e PostgreSQL no Supabase
+- MySQL e `mysql2` para execução local com o banco original
 - Git e GitHub
 - GitHub Pages para publicação da demonstração estática
 
 ## Banco de dados e modelagem
 
-O banco de dados chama-se `driplab_db` e contém 14 tabelas:
+O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. O modelo completo do banco original MySQL `driplab_db` contém 14 tabelas:
 
 `usuario`, `colecao`, `categoria`, `conquista`, `votacao`, `recompensa`, `produto`, `pedido`, `comentario`, `favorita`, `ganha`, `contem`, `participa` e `resgate`.
 
 ### Scripts SQL
 
-- [Criação do banco e das tabelas](sql/criar_banco.sql)
-- [Inserção dos dados de teste](sql/inserir_dados.sql)
+- [Migração do catálogo para PostgreSQL e dados de exemplo](sql/catalogo_postgres.sql)
+- [Criação do banco original no MySQL](sql/criar_banco.sql)
+- [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
 
 ### Modelagem
 
@@ -61,7 +62,17 @@ O banco de dados chama-se `driplab_db` e contém 14 tabelas:
 
 ![Diagrama Entidade-Relacionamento do banco DripLab](docs/der.png)
 
-## Instalação e execução local
+## Execução com Supabase
+
+1. Instale as dependências com `npm ci`.
+2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql` uma vez. Se o catálogo já estiver no banco, siga para a configuração da conexão.
+3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
+4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
+5. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
+
+Para publicar na Vercel, importe o repositório como um projeto Express e configure `DATABASE_URL` como variável privada no ambiente usado pelo deploy. Teste `/api/health` e `/api/produtos` no endereço publicado antes de validar o catálogo no navegador.
+
+## Execução local com o MySQL original
 
 ### Requisitos
 
@@ -104,7 +115,7 @@ DB_PASSWORD=sua_senha_mysql
 PORT=3000
 ```
 
-Substitua `seu_usuario_mysql` e `sua_senha_mysql` pelos dados da sua instalação local do MySQL.
+Substitua `seu_usuario_mysql` e `sua_senha_mysql` pelos dados da sua instalação local do MySQL. O Express usa as variáveis `DB_*` para MySQL quando `DATABASE_URL` está ausente na execução local.
 
 **Não envie o arquivo `.env` ao GitHub.** Ele contém credenciais; o `.gitignore` do projeto deve mantê-lo fora do repositório.
 
@@ -134,4 +145,4 @@ Acesse no navegador:
 
 Acesse [https://chario-sousa.github.io/driplab/](https://chario-sousa.github.io/driplab/) para visualizar a demonstração estática. No catálogo, é possível adicionar produtos ao carrinho e testar os controles disponíveis na interface.
 
-Para testar a consulta de produtos integrada ao MySQL, execute a aplicação localmente seguindo as instruções deste documento.
+Para testar a consulta integrada ao Supabase, use a rota `/api/produtos` na execução local ou em um deploy da Vercel com `DATABASE_URL` configurada.
