@@ -1,12 +1,12 @@
-export const supabaseUrl = 'https://djfvjwwlbpdblwsotjbs.supabase.co';
-export const supabaseChavePublica = 'sb_publishable_qfXmJzme2wPQRXc2ZrLdYg_nyYyMAiW';
-
 let cliente;
-let carregando;
 
-export async function obterAuth() {
+async function criarCliente() {
+  const resposta = await fetch(new URL('./auth-config.json', import.meta.url));
+  if (!resposta.ok) throw new Error('Configuração do Supabase indisponível.');
+  const { url, chavePublica } = await resposta.json();
+
   if (!globalThis.supabase) {
-    carregando ??= new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = new URL('./supabase.js', import.meta.url);
       script.onload = resolve;
@@ -15,13 +15,16 @@ export async function obterAuth() {
         reject(new Error('Não foi possível carregar o Supabase Auth.'));
       };
       document.head.append(script);
-    }).catch(erro => {
-      carregando = null;
-      throw erro;
     });
-    await carregando;
   }
 
-  cliente ??= globalThis.supabase.createClient(supabaseUrl, supabaseChavePublica);
-  return cliente.auth;
+  return globalThis.supabase.createClient(url, chavePublica).auth;
+}
+
+export function obterAuth() {
+  cliente ??= criarCliente().catch(erro => {
+    cliente = null;
+    throw erro;
+  });
+  return cliente;
 }

@@ -1,12 +1,8 @@
 const { Router } = require('express');
-const { createClient } = require('@supabase/supabase-js');
-const { supabaseUrl, supabaseChavePublica } = require('../../public/sessao.mjs');
+const { url, chavePublica } = require('../../public/auth-config.json');
 const sequelize = require('../config/database');
 
 const pedidos = Router();
-const { auth } = createClient(supabaseUrl, supabaseChavePublica, {
-  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-});
 
 pedidos.use(async (req, res, next) => {
   res.set('Cache-Control', 'no-store');
@@ -14,12 +10,22 @@ pedidos.use(async (req, res, next) => {
   if (!token) return res.status(401).json({ erro: 'Entre na sua conta para continuar.' });
 
   try {
-    const { data, error } = await auth.getUser(token);
-    if (error && ![400, 401, 403].includes(error.status)) {
+    const resposta = await fetch(new URL('/auth/v1/user', url), {
+      headers: { apikey: chavePublica, Authorization: 'Bearer ' + token },
+      signal: AbortSignal.timeout(8000),
+      redirect: 'error',
+    });
+    if ([400, 401, 403].includes(resposta.status)) {
+      return res.status(401).json({ erro: 'Sua sessão expirou. Entre novamente.' });
+    }
+    if (!resposta.ok) {
       return res.status(503).json({ erro: 'Não foi possível validar sua sessão. Tente novamente.' });
     }
-    if (!data?.user || error) return res.status(401).json({ erro: 'Sua sessão expirou. Entre novamente.' });
-    req.idUsuario = data.user.id;
+    const usuario = await resposta.json();
+    if (typeof usuario.id !== 'string' || !uuid.test(usuario.id)) {
+      return res.status(401).json({ erro: 'Sua sessão expirou. Entre novamente.' });
+    }
+    req.idUsuario = usuario.id;
   } catch {
     return res.status(503).json({ erro: 'Não foi possível validar sua sessão. Tente novamente.' });
   }
