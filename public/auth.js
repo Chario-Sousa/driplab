@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   const formulario = document.querySelector('form[data-auth]');
   const perfil = document.querySelector('[data-perfil]');
   const retorno = document.querySelector('[data-auth-retorno]');
@@ -19,15 +19,14 @@
     retorno.hidden = !mensagem;
   }
 
-  if (!window.supabase) {
+  let auth;
+  try {
+    const { obterAuth } = await import('./sessao.mjs');
+    auth = await obterAuth();
+  } catch {
     informar('Não foi possível carregar a autenticação. Atualize a página.', true);
     return;
   }
-
-  const { auth } = window.supabase.createClient(
-    'https://djfvjwwlbpdblwsotjbs.supabase.co',
-    'sb_publishable_qfXmJzme2wPQRXc2ZrLdYg_nyYyMAiW'
-  );
 
   function validar() {
     const senha = formulario.elements.senha;
@@ -74,7 +73,8 @@
 
       if (error) throw error;
       if (data.session) {
-        location.replace('perfil.html');
+        const voltouDoCarrinho = new URLSearchParams(location.search).get('voltar') === 'carrinho';
+        location.replace(!cadastro && voltouDoCarrinho ? 'index.html?carrinho=1' : 'perfil.html');
         return;
       }
 
@@ -140,8 +140,55 @@
       });
       informar('');
       perfil.hidden = false;
+      carregarPedidos();
     } catch {
       informar('Não foi possível carregar sua conta. Atualize a página.', true);
+    }
+  }
+
+  async function carregarPedidos() {
+    const lista = perfil.querySelector('[data-lista-pedidos]');
+    const estado = perfil.querySelector('[data-pedidos-retorno]');
+    const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const dataPedido = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' });
+    const situacoes = { pendente: 'Pendente', confirmado: 'Confirmado', cancelado: 'Cancelado' };
+    try {
+      const { data, error } = await auth.getSession();
+      if (error || !data.session) throw error || new Error('Sessão ausente');
+
+      const resposta = await fetch('/api/pedidos', {
+        headers: { Authorization: 'Bearer ' + data.session.access_token },
+      });
+      if (!resposta.ok) throw new Error('Falha ao consultar pedidos');
+
+      const pedidos = await resposta.json();
+      for (const pedido of pedidos) {
+        const cartao = document.createElement('article');
+        cartao.className = 'pedido';
+        const titulo = document.createElement('b');
+        titulo.textContent = 'Pedido #' + pedido.id_pedido;
+        const data = document.createElement('small');
+        data.textContent = dataPedido.format(new Date(pedido.data_pedido));
+        const status = document.createElement('span');
+        status.className = 'status prep';
+        status.textContent = situacoes[pedido.status] || pedido.status;
+        const itens = document.createElement('ul');
+        for (const item of pedido.itens) {
+          const linha = document.createElement('li');
+          linha.textContent = `${item.quantidade} × ${item.nome_produto} · ${moeda.format(Number(item.preco_unitario))}`;
+          itens.append(linha);
+        }
+        const total = document.createElement('b');
+        total.textContent = 'Total dos produtos ' + moeda.format(Number(pedido.valor_total));
+        cartao.append(titulo, data, status, itens, total);
+        lista.append(cartao);
+      }
+      estado.textContent = pedidos.length ? '' : 'Você ainda não tem pedidos.';
+      estado.hidden = Boolean(pedidos.length);
+      if (location.hash === '#pedidos') lista.closest('section').scrollIntoView();
+    } catch {
+      estado.textContent = 'Não foi possível carregar seus pedidos. Atualize a página.';
+      estado.classList.add('erro');
     }
   }
 

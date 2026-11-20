@@ -45,7 +45,7 @@
       currency: 'BRL',
     }).format(Number(valor));
 
-  function criarCard(produto) {
+  function criarCard(produto, compravel) {
     const card = document.createElement('article');
     card.className = 'prod';
 
@@ -89,7 +89,7 @@
 
     adicionar.addEventListener('click', () => {
       document.dispatchEvent(
-        new CustomEvent('driplab:add-to-cart', { detail: produto })
+        new CustomEvent('driplab:add-to-cart', { detail: { ...produto, compravel } })
       );
     });
 
@@ -114,10 +114,10 @@
         return;
       }
 
-      container.replaceChildren(...produtos.map(criarCard));
+      container.replaceChildren(...produtos.map(produto => criarCard(produto, true)));
     } catch (erro) {
       console.warn('API indisponível; exibindo catálogo estático.', erro);
-      container.replaceChildren(...produtosEstaticos.map(criarCard));
+      container.replaceChildren(...produtosEstaticos.map(produto => criarCard(produto, false)));
     }
   }
 

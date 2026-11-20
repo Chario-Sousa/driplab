@@ -21,6 +21,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Cálculo do subtotal, frete e total do carrinho.
 - Telas de coleções, cadastro, login e perfil.
 - Cadastro e login por e-mail, sessão persistente e perfil com dados da conta via Supabase Auth na versão Express.
+- Finalização do carrinho e histórico de pedidos da conta no perfil da versão Express.
 - API local para verificar a conexão com o banco e consultar produtos.
 
 ### Limitações atuais
@@ -28,7 +29,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - No site publicado, os produtos são estáticos e não vêm do banco de dados.
 - A API possui os endpoints `GET /api/health` e `GET /api/produtos`.
 - A demonstração do GitHub Pages usa as telas estáticas de cadastro e login.
-- O carrinho não cria nem salva pedidos no banco de dados.
+- O carrinho da demonstração do GitHub Pages funciona só no navegador.
 - Votação, comentários e gamificação estão representados na proposta e nas telas, mas não estão integrados à API.
 
 ## Tecnologias utilizadas
@@ -45,13 +46,14 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 
 ## Banco de dados e modelagem
 
-O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. O modelo completo do banco original MySQL `driplab_db` contém 14 tabelas:
+O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As tabelas `pedido` e `item_pedido` registram os pedidos vinculados ao Supabase Auth e preservam o preço de cada item. A função `criar_pedido` usa o estoque e os preços do banco ao registrar o pedido. O modelo completo do banco original MySQL `driplab_db` contém 14 tabelas:
 
 `usuario`, `colecao`, `categoria`, `conquista`, `votacao`, `recompensa`, `produto`, `pedido`, `comentario`, `favorita`, `ganha`, `contem`, `participa` e `resgate`.
 
 ### Scripts SQL
 
 - [Migração do catálogo para PostgreSQL e dados de exemplo](sql/catalogo_postgres.sql)
+- [Migração de pedidos e baixa de estoque](sql/pedidos_postgres.sql)
 - [Criação do banco original no MySQL](sql/criar_banco.sql)
 - [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
 
@@ -66,7 +68,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. O mod
 ## Execução com Supabase
 
 1. Instale as dependências com `npm ci`.
-2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql` uma vez. Se o catálogo já estiver no banco, siga para a configuração da conexão.
+2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql` e depois `sql/pedidos_postgres.sql`. Execute cada migração uma vez.
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
 5. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
@@ -80,6 +82,12 @@ O `npm ci` prepara o SDK do Supabase para as páginas de autenticação. O login
 Em **Authentication → URL Configuration** no Supabase, configure o endereço principal do site como **Site URL** e adicione o endereço completo de `perfil.html` à lista **Redirect URLs**. Para testar no navegador local, adicione também `http://localhost:3000/perfil.html`.
 
 Com a confirmação de e-mail ativada, use um endereço da equipe para testar com o serviço de e-mail padrão do Supabase. Configure [SMTP próprio](https://supabase.com/docs/guides/auth/auth-smtp) para enviar confirmações a clientes de fora da equipe.
+
+### Pedidos
+
+Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finalizar compra**. O pedido aparece como **Pendente** no perfil. O total corresponde aos produtos. Estoque, preços e identidade do cliente são conferidos pelo servidor.
+
+`POST /api/pedidos` recebe `chave_solicitacao` (UUID) e `itens` com `id_produto` e `quantidade`. Reenvie a mesma chave ao repetir a tentativa com os mesmos itens. `GET /api/pedidos` retorna o histórico do usuário autenticado. As duas rotas exigem o token de acesso do Supabase Auth no cabeçalho `Authorization: Bearer`.
 
 ## Execução local com o MySQL original
 

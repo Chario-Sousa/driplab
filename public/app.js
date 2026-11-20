@@ -43,7 +43,7 @@
 
   $$('[data-ic]').forEach(el => { el.outerHTML = ic(el.dataset.ic, el.className); });
 
-  let produtos = [
+  const produtos = [
     { id: 'moletom-essential', nome: 'Moletom Essential', variante: 'Preto / G', preco: 349.90, img: '--img-prod-moletom-essential', info: 'Moletom / Preto' },
     { id: 'tshirt-logo', nome: 'T-Shirt Logo', variante: 'Oversized / Branco / G', preco: 159.90, img: '--img-prod-tshirt-logo', info: 'Branco / M' },
     { id: 'cargo-pants', nome: 'Cargo Pants', variante: 'Preto / G', preco: 299.90, img: '--img-prod-cargo-pants', info: 'Preto / G' },
@@ -60,10 +60,38 @@
   const foto = (v, cls = '') => `<div class="foto ${cls}" style="--foto:var(${v})" role="img" aria-label="Imagem do produto"></div>`;
 
   let favoritos = produtos.slice(0, 5).map(p => p.id);
-  let carrinho = [];
-  const frete = 15;
-  let desconto = 0;
+  const chaveCarrinho = 'driplab:carrinho';
+  const rascunho = lerCarrinho();
+  let carrinho = rascunho.itens;
+  let tentativa = rascunho.tentativa;
+  let finalizando = false;
   const prod = id => produtos.find(p => p.id === id);
+  const textoSeguro = texto => texto.replace(/[&<>"']/g, caractere => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[caractere]);
+
+  function lerCarrinho() {
+    try {
+      const dados = JSON.parse(sessionStorage.getItem(chaveCarrinho));
+      const itens = Array.isArray(dados?.itens) ? dados.itens.filter(item =>
+        typeof item?.id === 'string' && /^[a-z\d-]+$/i.test(item.id)
+        && typeof item.nome === 'string' && typeof item.variante === 'string'
+        && typeof item.img === 'string' && /^--img-prod-[a-z\d-]+$/i.test(item.img)
+        && Number.isFinite(item.preco) && Number.isInteger(item.q) && item.q > 0
+      ) : [];
+      return { itens, tentativa: dados?.tentativa };
+    } catch {
+      return { itens: [] };
+    }
+  }
+
+  function salvarCarrinho() {
+    try {
+      sessionStorage.setItem(chaveCarrinho, JSON.stringify({ itens: carrinho, tentativa }));
+    } catch {
+      return;
+    }
+  }
 
 
   document.body.insertAdjacentHTML('beforeend', `
@@ -99,10 +127,9 @@
     <aside class="gaveta" id="g-cart" aria-label="Carrinho" aria-hidden="true">
       <div class="g-topo">${ic('cart')}<div><h2>Carrinho</h2><small id="cart-n"></small></div><button class="circle fechar" data-fechar aria-label="Fechar">${ic('close')}</button></div>
       <div class="g-lista" id="cart-lista"></div>
-      <div class="cupom"><span>${ic('coupon')} Cupom de desconto</span>
-        <form id="cupom-f"><input id="cupom-in" placeholder="Digite seu cupom" aria-label="Cupom"><button>APLICAR</button></form></div>
       <div class="totais" id="cart-tot"></div>
-      <button class="btn-cheio" type="button">${ic('bag')} Finalizar compra ${ic('arrow')}</button>
+      <p class="auth-retorno" id="cart-retorno" role="status" hidden></p>
+      <button class="btn-cheio" id="finalizar-compra" type="button">${ic('bag')} Finalizar compra ${ic('arrow')}</button>
     </aside>`);
 
   const veu = $('#veu');
@@ -146,71 +173,132 @@
         <div class="fim"><button data-fav-rm="${id}" aria-label="Remover">${ic('trash')}</button><button data-fav-add="${id}" aria-label="Adicionar ao carrinho">${ic('cart')}</button></div>
       </div>`; }).join('') : '<p class="vazio">Você ainda não favoritou nada.</p>';
     $$('[data-fav-rm]').forEach(b => b.onclick = () => { favoritos = favoritos.filter(x => x !== b.dataset.favRm); renderFav(); });
-    $$('[data-fav-add]').forEach(b => b.onclick = () => { const i = carrinho.find(c => c.id === b.dataset.favAdd); i ? i.q++ : carrinho.push({ id: b.dataset.favAdd, q: 1 }); renderCart(); abrir('cart'); });
+    $$('[data-fav-add]').forEach(b => b.onclick = () => adicionarAoCarrinho(prod(b.dataset.favAdd)));
+  }
+
+  function mostrarRetorno(mensagem, erro = false) {
+    const retorno = $('#cart-retorno');
+    retorno.textContent = mensagem;
+    retorno.classList.toggle('erro', erro);
+    retorno.hidden = !mensagem;
+  }
+
+  function adicionarAoCarrinho(produto) {
+    if (!produto || finalizando) return;
+
+    const item = carrinho.find(atual => atual.id === produto.id);
+    if (item) item.q++;
+    else carrinho.push({ ...produto, q: 1 });
+
+    mostrarRetorno('');
+    renderCart();
+    abrir('cart');
   }
 
   function renderCart() {
     const n = carrinho.reduce((s, c) => s + c.q, 0);
+    const bloqueado = finalizando ? 'disabled' : '';
     $('#cart-n').textContent = `${n} ite${n === 1 ? 'm' : 'ns'} no seu carrinho`;
-    $('#cart-lista').innerHTML = carrinho.length ? carrinho.map(c => { const p = prod(c.id); return `
-      <div class="item">${foto(p.img)}
-        <div><b>${p.nome}</b><small>${p.variante.split(' / ').slice(0, -1).join(' / ')}</small><small>Tamanho: ${p.variante.split(' / ').pop()}</small>
-          <div class="qtd"><button data-q="-1" data-id="${c.id}" aria-label="Diminuir">${ic('minus')}</button><span>${c.q}</span><button data-q="1" data-id="${c.id}" aria-label="Aumentar">${ic('plus')}</button></div></div>
-        <div class="fim"><button data-rm="${c.id}" aria-label="Remover">${ic('close')}</button><span class="preco">${moeda(p.preco * c.q)}</span></div>
-      </div>`; }).join('') : '<p class="vazio">Seu carrinho está vazio.</p>';
-    const sub = carrinho.reduce((s, c) => s + prod(c.id).preco * c.q, 0);
-    const f = carrinho.length ? frete : 0;
-    $('#cart-tot').innerHTML = `<div><span>Subtotal (${n} ite${n === 1 ? 'm' : 'ns'})</span><span>${moeda(sub)}</span></div>
-      ${desconto ? `<div><span>Desconto</span><span>- ${moeda(sub * desconto)}</span></div>` : ''}
-      <div><span>Frete</span><span>${moeda(f)}</span></div>
-      <div class="total"><span>Total</span><b>${moeda(sub - sub * desconto + f)}</b></div>`;
-    $$('[data-q]').forEach(b => b.onclick = () => { const c = carrinho.find(x => x.id === b.dataset.id); c.q += +b.dataset.q; if (c.q < 1) carrinho = carrinho.filter(x => x !== c); renderCart(); });
-    $$('[data-rm]').forEach(b => b.onclick = () => { carrinho = carrinho.filter(x => x.id !== b.dataset.rm); renderCart(); });
+    $('#cart-lista').innerHTML = carrinho.length ? carrinho.map(c => `
+      <div class="item">${foto(c.img)}
+        <div><b>${textoSeguro(c.nome)}</b><small>${textoSeguro(c.variante)}</small>
+          <div class="qtd"><button data-q="-1" data-id="${c.id}" aria-label="Diminuir" ${bloqueado}>${ic('minus')}</button><span>${c.q}</span><button data-q="1" data-id="${c.id}" aria-label="Aumentar" ${bloqueado}>${ic('plus')}</button></div></div>
+        <div class="fim"><button data-rm="${c.id}" aria-label="Remover" ${bloqueado}>${ic('close')}</button><span class="preco">${moeda(c.preco * c.q)}</span></div>
+      </div>`).join('') : '<p class="vazio">Seu carrinho está vazio.</p>';
+    const total = carrinho.reduce((soma, item) => soma + item.preco * item.q, 0);
+    $('#cart-tot').innerHTML = `<div class="total"><span>Total dos produtos</span><b>${moeda(total)}</b></div>`;
+    $('#finalizar-compra').disabled = finalizando || !n;
+    $$('[data-q]').forEach(botao => botao.onclick = () => {
+      const item = carrinho.find(atual => atual.id === botao.dataset.id);
+      item.q += Number(botao.dataset.q);
+      if (item.q < 1) carrinho = carrinho.filter(atual => atual !== item);
+      mostrarRetorno('');
+      renderCart();
+    });
+    $$('[data-rm]').forEach(botao => botao.onclick = () => {
+      carrinho = carrinho.filter(item => item.id !== botao.dataset.rm);
+      mostrarRetorno('');
+      renderCart();
+    });
+    salvarCarrinho();
   }
-  $('#cupom-f').addEventListener('submit', e => { e.preventDefault(); desconto = $('#cupom-in').value.trim().toUpperCase() === 'DRIP10' ? 0.10 : 0; renderCart(); });
+
+  async function finalizarCompra() {
+    if (finalizando || !carrinho.length) return;
+    if (carrinho.some(item => !Number.isInteger(item.idProduto) || item.idProduto <= 0)) {
+      mostrarRetorno('Remova os itens demonstrativos e adicione os produtos pelo catálogo para finalizar.', true);
+      return;
+    }
+
+    finalizando = true;
+    mostrarRetorno('Registrando seu pedido…');
+    renderCart();
+
+    const irParaLogin = () => location.assign('login.html?voltar=carrinho');
+    try {
+      const { obterAuth } = await import('./sessao.mjs');
+      const auth = await obterAuth();
+      const { data, error } = await auth.getSession();
+      if (error && error.name !== 'AuthSessionMissingError') throw error;
+      if (!data?.session) {
+        irParaLogin();
+        return;
+      }
+
+      const itens = carrinho.map(item => ({ id_produto: item.idProduto, quantidade: item.q }))
+        .sort((a, b) => a.id_produto - b.id_produto);
+      const assinatura = JSON.stringify([data.session.user.id, itens]);
+      if (tentativa?.assinatura !== assinatura || typeof tentativa.chave !== 'string') {
+        tentativa = { assinatura, chave: crypto.randomUUID() };
+        salvarCarrinho();
+      }
+
+      const resposta = await fetch('/api/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.session.access_token },
+        body: JSON.stringify({ chave_solicitacao: tentativa.chave, itens }),
+      });
+
+      if (resposta.status === 401) {
+        irParaLogin();
+        return;
+      }
+
+      const resultado = await resposta.json();
+      if (!resposta.ok) {
+        mostrarRetorno(resultado.erro || 'Não foi possível finalizar a compra.', true);
+        return;
+      }
+
+      if (!resultado.id_pedido) throw new Error('Resposta sem pedido');
+      carrinho = [];
+      tentativa = null;
+      salvarCarrinho();
+      location.assign('perfil.html#pedidos');
+    } catch {
+      mostrarRetorno('Não foi possível confirmar o pedido. Tente novamente com o mesmo carrinho.', true);
+    } finally {
+      finalizando = false;
+      renderCart();
+    }
+  }
+
+  $('#finalizar-compra').addEventListener('click', finalizarCompra);
   renderFav(); renderCart();
+  if (new URLSearchParams(location.search).get('carrinho') === '1' && carrinho.length) abrir('cart');
 
-  $$('.prod .circle').forEach((b, i) => b.addEventListener('click', () => {
-    const p = produtos[i]; if (!p) return;
-    const c = carrinho.find(x => x.id === p.id); c ? c.q++ : carrinho.push({ id: p.id, q: 1 }); renderCart(); abrir('cart');
-  }));
   document.addEventListener('driplab:add-to-cart', (evento) => {
-  const item = evento.detail;
-  const id = String(item.id_produto);
+    const item = evento.detail;
+    if (!Number.isInteger(item.id_produto) || item.id_produto <= 0) return;
 
-  const imagens = {
-    'Moletom Essential': '--img-prod-moletom-essential',
-    'T-Shirt Logo': '--img-prod-tshirt-logo',
-    'Cargo Pants': '--img-prod-cargo-pants',
-    'Boné DripLab': '--img-prod-bone',
-    'Jaqueta Tech': '--img-prod-jaqueta-tech',
-  };
-
-  let produtoLocal = produtos.find((produto) => String(produto.id) === id);
-
-  if (!produtoLocal) {
-    produtoLocal = {
-      id,
+    adicionarAoCarrinho({
+      id: item.compravel ? String(item.id_produto) : 'demo-' + item.id_produto,
+      idProduto: item.compravel ? item.id_produto : null,
       nome: item.nome_produto,
-      variante: 'DripLab / Padrão',
+      variante: item.nome_categoria || 'Produto',
       preco: Number(item.preco),
-      img: imagens[item.nome_produto] || '--img-prod-bone',
-      info: item.nome_categoria || 'Produto',
-    };
-
-    produtos.push(produtoLocal);
-  }
-
-  const itemExistente = carrinho.find((produto) => String(produto.id) === id);
-
-  if (itemExistente) {
-    itemExistente.q += 1;
-  } else {
-    carrinho.push({ id, q: 1 });
-  }
-
-  renderCart();
-  abrir('cart');
+      img: produtos.find(produto => produto.nome === item.nome_produto)?.img || '--img-prod-bone',
+    });
   });
   $$('[data-contagem]').forEach(el => {
     const alvo = el.dataset.contagem ? new Date(el.dataset.contagem).getTime() : Date.now() + (6 * 86400 + 19 * 3600 + 59 * 60 + 11) * 1000;

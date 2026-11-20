@@ -106,6 +106,10 @@
 .pedido .foto{width:64px;height:64px;border-radius:10px;flex:none;--reserva:linear-gradient(#2a2a2a,#0e0e0e)}
 .pedido b{display:block;font-size:.7rem}
 .pedido small{color:var(--muted);display:block}
+[data-lista-pedidos]{grid-template-columns:1fr}
+[data-lista-pedidos] .pedido{display:grid;justify-items:start;gap:.45rem}
+[data-lista-pedidos] .pedido ul{padding-left:1rem;line-height:1.6}
+#finalizar-compra:disabled{opacity:.6;cursor:default}
 .status{display:inline-block;margin-top:.3rem;padding:.1rem .5rem;border-radius:6px;font-size:.55rem;border:1px solid}
 .status.prep{color:var(--orange)}.status.tr{color:#e8c040}.status.ent{color:#5fd068}
 .pontos{display:flex;align-items:center;gap:1rem;font-family:var(--display);font-size:2rem;margin:.4rem 0 1rem}
