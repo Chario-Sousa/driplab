@@ -28,27 +28,20 @@
       </ul>
       <div class="auth-rodape"><span><b>DRIP LAB © 2026</b>Streetwear digital-first</span><span>A Drip Lab te espera.<i class="seta">—</i></span></div>
     </section>
-    <form class="painel" data-auth="login" novalidate>
+    <form class="painel" data-auth="login" method="post" novalidate>
       <h2>Entrar</h2>
       <p>Acesse sua conta DripLab.</p>
-        <label class="campo"><i data-ic="user"></i><input type="text" name="usuario" placeholder="E-mail ou usuário" aria-label="E-mail ou usuário" autocomplete="username" required></label>
-        <p class="msg-erro">Informe seu e-mail ou usuário.</p>
+        <label class="campo"><i data-ic="mail"></i><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" aria-describedby="erro-email" autocomplete="username" maxlength="254" required></label>
+        <p class="msg-erro" id="erro-email">Informe um e-mail válido.</p>
         <label class="campo"><i data-ic="lock"></i><input type="password" name="senha" placeholder="Senha" aria-label="Senha" autocomplete="current-password" required><button class="olho" type="button" aria-label="Mostrar senha"><i data-ic="eye"></i></button></label>
         <p class="msg-erro">Informe sua senha.</p>
-        <div class="linha">
-          <label class="check"><input type="checkbox" name="manter"> Manter conectado</label>
-          <a class="link" href="#">Esqueceu a senha?</a>
-        </div>
-        <button class="btn-grande" type="submit">Entrar <i data-ic="arrow"></i></button>
-        <div class="divisor">ou continue com</div>
-        <div class="sociais">
-          <button type="button" aria-label="Entrar com Google">G</button>
-          <button type="button" aria-label="Entrar com Apple">A</button>
-          <button type="button" aria-label="Entrar com X">X</button>
-        </div>
+        <p class="auth-retorno" data-auth-retorno role="status" hidden></p>
+        <button class="btn-grande" type="submit" disabled>Entrar <i data-ic="arrow"></i></button>
         <p class="troca">Não tem uma conta? <a href="cadastro.html">Cadastre-se →</a></p>
     </form>
 </main>
 <script src="app.js"></script>
+<script src="supabase.js" defer></script>
+<script src="auth.js" defer></script>
 </body>
 </html>

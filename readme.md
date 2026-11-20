@@ -20,13 +20,14 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Alteração de quantidades e remoção de itens.
 - Cálculo do subtotal, frete e total do carrinho.
 - Telas de coleções, cadastro, login e perfil.
+- Cadastro e login por e-mail, sessão persistente e perfil com dados da conta via Supabase Auth na versão Express.
 - API local para verificar a conexão com o banco e consultar produtos.
 
 ### Limitações atuais
 
 - No site publicado, os produtos são estáticos e não vêm do banco de dados.
 - A API possui os endpoints `GET /api/health` e `GET /api/produtos`.
-- O cadastro e o login são protótipos de interface; ainda não autenticam pela API.
+- A demonstração do GitHub Pages usa as telas estáticas de cadastro e login.
 - O carrinho não cria nem salva pedidos no banco de dados.
 - Votação, comentários e gamificação estão representados na proposta e nas telas, mas não estão integrados à API.
 
@@ -71,6 +72,14 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. O mod
 5. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
 
 Para publicar na Vercel, importe o repositório como um projeto Express e configure `DATABASE_URL` como variável privada no ambiente usado pelo deploy. Teste `/api/health` e `/api/produtos` no endereço publicado antes de validar o catálogo no navegador.
+
+### Cadastro e login
+
+O `npm ci` prepara o SDK do Supabase para as páginas de autenticação. O login usa o e-mail e a senha da conta. O nome de exibição aparece no perfil.
+
+Em **Authentication → URL Configuration** no Supabase, configure o endereço principal do site como **Site URL** e adicione o endereço completo de `perfil.html` à lista **Redirect URLs**. Para testar no navegador local, adicione também `http://localhost:3000/perfil.html`.
+
+Com a confirmação de e-mail ativada, use um endereço da equipe para testar com o serviço de e-mail padrão do Supabase. Configure [SMTP próprio](https://supabase.com/docs/guides/auth/auth-smtp) para enviar confirmações a clientes de fora da equipe.
 
 ## Execução local com o MySQL original
 

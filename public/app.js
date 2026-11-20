@@ -122,7 +122,7 @@
 
   const liga = (rotulo, fn) => $$(`.header .circle[aria-label="${rotulo}"]`).forEach(b => b.addEventListener('click', fn));
   liga('Buscar', () => abrir('busca'));
-  liga('Perfil', () => { location.href = 'login.html'; });
+  liga('Perfil', () => { location.href = 'perfil.html'; });
   liga('Favoritos', () => abrir('fav'));
   liga('Carrinho', () => abrir('cart'));
 
@@ -227,17 +227,5 @@
   $$('.olho').forEach(b => b.addEventListener('click', () => {
     const i = b.parentElement.querySelector('input'); i.type = i.type === 'password' ? 'text' : 'password';
     b.setAttribute('aria-label', i.type === 'password' ? 'Mostrar senha' : 'Ocultar senha');
-  }));
-  $$('form[data-auth]').forEach(f => f.addEventListener('submit', e => {
-    e.preventDefault(); let ok = true;
-    $$('.campo input[required]', f).forEach(i => {
-      let v = i.value.trim() !== '';
-      if (i.type === 'email') v = /^\S+@\S+\.\S+$/.test(i.value);
-      if (i.name === 'senha' && f.dataset.auth === 'cadastro') v = i.value.length >= 8;
-      if (i.name === 'confirmar') v = i.value === $('input[name=senha]', f).value && v;
-      i.closest('.campo').classList.toggle('erro', !v); if (!v) ok = false;
-    });
-    const termos = $('input[name=termos]', f); if (termos && !termos.checked) { ok = false; termos.focus(); }
-    if (ok) location.href = 'perfil.html';
   }));
 })();
