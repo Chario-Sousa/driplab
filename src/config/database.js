@@ -13,6 +13,7 @@ function criarConexao() {
 
     return new Sequelize(process.env.DATABASE_URL, {
       dialect: 'postgres',
+      dialectModule: require('pg'),
       dialectOptions: { ssl },
       pool: { max: 2, min: 0, acquire: 10000, idle: 5000 },
       logging: false,
