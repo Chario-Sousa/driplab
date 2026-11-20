@@ -1,0 +1,131 @@
+.shop-layout,.produto-layout{
+  width:min(1350px,94%);
+  margin:1.7rem auto 3rem;
+}
+.shop-layout{
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr);
+  grid-template-areas:"titulo titulo" "filtros banner" "filtros catalogo";
+  gap:1.2rem;
+  align-items:start;
+}
+.shop-layout>h1{grid-area:titulo;font-size:clamp(1.8rem,3.3vw,2.8rem)}
+.shop-filtros,.shop-banner,.shop-grade .prod,.produto-detalhe{
+  border:1px solid var(--line);
+  border-radius:22px;
+  background-color:#111;
+}
+.shop-filtros{grid-area:filtros;padding:1.2rem}
+.shop-filtros h2,.shop-catalogo h2{font-size:1.1rem}
+.shop-filtros form{display:grid;gap:1rem;margin-top:1.25rem}
+.shop-filtros form>div{min-width:0;display:grid;gap:.45rem;font-size:.85rem}
+.shop-filtros select{
+  width:100%;
+  padding:.65rem .5rem;
+  color:inherit;
+  color-scheme:dark;
+  font:inherit;
+  background:#181818;
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+.shop-limpar{
+  justify-self:start;
+  padding:.2rem 0;
+  border:0;
+  background:transparent;
+  color:var(--orange);
+  font:inherit;
+  font-size:.8rem;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.shop-limpar:disabled{color:var(--muted);cursor:default}
+.shop-banner{
+  grid-area:banner;
+  min-height:198px;
+  display:grid;
+  align-content:center;
+  justify-items:start;
+  gap:.65rem;
+  padding:1.4rem clamp(1rem,4vw,2.8rem);
+  background-image:linear-gradient(90deg,rgba(5,5,5,.97),rgba(5,5,5,.28)),var(--img-banner-colecoes);
+  background-size:cover;
+  background-position:center;
+}
+.shop-banner h2{font-size:clamp(1.35rem,4vw,2.7rem)}
+.shop-catalogo{grid-area:catalogo;min-width:0}
+.shop-catalogo-topo{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:.5rem 1rem;
+  flex-wrap:wrap;
+  padding:.2rem 0 .85rem;
+}
+[data-catalogo-status]{color:var(--muted);font-size:.85rem}
+[data-tentar-novamente][hidden]{display:none}
+.shop-grade{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));
+  gap:1rem;
+}
+.shop-grade .prod{min-width:0;padding:.7rem;transition:border-color .2s}
+.shop-grade .prod:hover,.shop-grade .prod:focus-within{border-color:var(--orange)}
+.shop-grade .img{
+  display:grid;
+  width:100%;
+  aspect-ratio:1.2;
+  place-items:center;
+  border-radius:14px;
+  background:radial-gradient(circle,#252525,#141414);
+}
+.shop-grade .row{display:flex;justify-content:space-between;align-items:center;gap:.4rem;margin:.7rem .12rem .2rem}
+.shop-grade b,.shop-grade .row span{display:block;font-size:.9rem;overflow-wrap:anywhere}
+.shop-grade .row span{color:var(--orange)}
+.shop-grade .row .circle{flex:none}
+a.produto-link{display:block}
+.produto-link:hover,.produto-voltar:hover{text-decoration:underline;text-underline-offset:3px}
+
+.produto-voltar{display:inline-block;margin-bottom:1rem;color:var(--orange);font-size:.9rem}
+.produto-detalhe{
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  align-items:center;
+  gap:clamp(1rem,4vw,3rem);
+  padding:clamp(.8rem,2.5vw,2rem);
+}
+.produto-detalhe[hidden]{display:none}
+.produto-foto{
+  display:grid;
+  place-items:center;
+  aspect-ratio:1.2;
+  border-radius:16px;
+  background:radial-gradient(circle,#2a2a2a,#181818);
+}
+.produto-foto img{display:block;width:100%;height:100%;object-fit:contain;border-radius:16px}
+.produto-info{padding:clamp(.25rem,2vw,1rem)}
+.produto-info h1{
+  font-size:clamp(1.45rem,4vw,3rem);
+  margin:.48rem 0;
+  overflow-wrap:anywhere;
+}
+.produto-colecao,.produto-descricao{color:var(--muted)}
+.produto-descricao{white-space:pre-line;margin-bottom:.9rem}
+.produto-preco{margin:.85rem 0;color:var(--orange);font-size:1.55rem;font-weight:700}
+.produto-estado{margin-bottom:1.15rem;font-size:.9rem}
+.produto-adicionar:disabled{opacity:.55;transform:none;cursor:default;color:#fff;background:var(--glass);border-color:var(--line)}
+
+@media(max-width:760px){
+  .shop-layout{grid-template-columns:1fr;grid-template-areas:"titulo" "banner" "filtros" "catalogo";gap:1rem}
+  .shop-filtros form{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+  .produto-detalhe{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .shop-grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+  .shop-grade .prod{padding:.5rem}
+  .shop-grade .row{align-items:end;margin:.55rem 0 .15rem}
+  .shop-grade .row .circle{width:29px;height:29px}
+  .shop-grade b,.shop-grade .row span{font-size:.8rem}
+  .shop-banner{min-height:156px}
+}

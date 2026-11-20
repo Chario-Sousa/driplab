@@ -18,6 +18,7 @@
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/>',
     eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
     close: '<path d="M18 6 6 18M6 6l12 12"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     chev: '<path d="m9 6 6 6-6 6"/>',
@@ -40,6 +41,46 @@
   const sprite = '<svg width="0" height="0" style="position:absolute" aria-hidden="true">' +
     Object.entries(P).map(([k, v]) => `<symbol id="x-${k}" viewBox="0 0 24 24">${v}</symbol>`).join('') + '</svg>';
   document.body.insertAdjacentHTML('afterbegin', sprite);
+
+  const cabecalho = $('.header');
+  const menu = cabecalho?.querySelector('.menu');
+  const acoes = cabecalho?.querySelector('.actions');
+
+  if (menu && acoes) {
+    const botao = document.createElement('button');
+    menu.id ||= 'menu-principal';
+    botao.type = 'button';
+    botao.className = 'circle menu-toggle';
+    botao.setAttribute('aria-label', 'Menu principal');
+    botao.setAttribute('aria-controls', menu.id);
+    botao.setAttribute('aria-expanded', 'false');
+    botao.innerHTML = ic('menu');
+    acoes.prepend(botao);
+
+    function alternarMenu(aberto) {
+      menu.classList.toggle('menu-aberto', aberto);
+      botao.setAttribute('aria-expanded', String(aberto));
+    }
+
+    botao.addEventListener('click', () => {
+      const aberto = !menu.classList.contains('menu-aberto');
+      alternarMenu(aberto);
+      if (aberto) menu.querySelector('a')?.focus();
+    });
+    menu.addEventListener('click', evento => {
+      if (evento.target.closest('a')) alternarMenu(false);
+    });
+    document.addEventListener('click', evento => {
+      if (!menu.contains(evento.target) && !botao.contains(evento.target)) alternarMenu(false);
+    });
+    document.addEventListener('keydown', evento => {
+      if (evento.key === 'Escape' && menu.classList.contains('menu-aberto')) {
+        alternarMenu(false);
+        botao.focus();
+      }
+    });
+    matchMedia('(max-width: 860px)').addEventListener('change', () => alternarMenu(false));
+  }
 
   $$('[data-ic]').forEach(el => { el.outerHTML = ic(el.dataset.ic, el.className); });
 
