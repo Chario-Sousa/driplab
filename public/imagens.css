@@ -9,7 +9,7 @@
 :root{
 
   /* ---------- HOME (index.html) — pasta imagens/hero/ ---------- */
-  --img-hero-1:        url("imagens/hero/hero-1.jpg");        /* foto da modelo com grafite (slide 1) — 1920x900 */
+  --img-hero-1:        url("imagens/hero/hero-1.jpeg");        /* foto da modelo com grafite (slide 1) — 1920x900 */
   --img-hero-2:        url("imagens/hero/hero-2.jpg");        /* slide 2 — 1920x900 */
   --img-hero-3:        url("imagens/hero/hero-3.jpg");        /* slide 3 — 1920x900 */
   --img-drop-1:        url("imagens/hero/drop-1.png");        /* card "Drop 01" (PNG sem fundo) — 400x300 */
