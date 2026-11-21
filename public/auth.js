@@ -74,7 +74,9 @@
       if (error) throw error;
       if (data.session) {
         const voltar = new URLSearchParams(location.search).get('voltar');
-        const destinos = new Map([['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html']]);
+        const destinos = new Map([
+          ['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html'], ['admin', 'admin.html'],
+        ]);
         location.replace((!cadastro && destinos.get(voltar)) || 'perfil.html');
         return;
       }
@@ -142,8 +144,25 @@
       informar('');
       perfil.hidden = false;
       carregarPedidos();
+      mostrarLinkAdmin();
     } catch {
       informar('Não foi possível carregar sua conta. Atualize a página.', true);
+    }
+  }
+
+  async function mostrarLinkAdmin() {
+    const link = perfil.querySelector('[data-admin-link]');
+    if (!link) return;
+    try {
+      const { data } = await auth.getSession();
+      if (!data.session) return;
+      const resposta = await fetch('/api/admin/acesso', {
+        headers: { Authorization: 'Bearer ' + data.session.access_token },
+        cache: 'no-store',
+      });
+      link.hidden = resposta.status !== 204;
+    } catch {
+      link.hidden = true;
     }
   }
 

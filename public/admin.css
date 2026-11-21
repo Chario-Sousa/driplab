@@ -1,0 +1,42 @@
+.admin-layout{
+  width:min(1120px,94%);margin:2rem auto 3rem;
+}
+.admin-layout h1{font-size:clamp(1.55rem,4vw,3rem);margin-bottom:1rem}
+.admin-layout h2{font-size:1rem;line-height:1.35}
+.admin-colunas{
+  display:grid;grid-template-columns:240px minmax(0,1fr);gap:1rem;align-items:start;
+}
+.admin-layout [hidden]{display:none}
+.admin-bloco{
+  min-width:0;display:grid;gap:1rem;padding:1.15rem;
+  border:1px solid var(--line);border-radius:22px;background:#111;
+}
+.admin-layout label,.admin-layout legend,.admin-voltar{font-size:.85rem;font-weight:600}
+.admin-layout label{display:grid;gap:.4rem}
+.admin-voltar{color:var(--orange)}
+.admin-voltar:hover{text-decoration:underline}
+.admin-layout input:not([type="checkbox"]),.admin-layout select{
+  width:100%;min-width:0;padding:.65rem;color:inherit;font:inherit;font-size:.85rem;
+  background:#1c1c1c;border:1px solid var(--line);border-radius:8px;color-scheme:dark;
+}
+.admin-layout input[type="file"]{padding:.5rem}
+.admin-datas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+.admin-layout fieldset{min-width:0;display:grid;gap:.7rem;border:1px solid var(--line);border-radius:12px;padding:.8rem}
+.admin-layout legend{padding:0 .3rem}
+.admin-layout .admin-check{display:flex;align-items:start;gap:.55rem;font-weight:500}
+.admin-check input{flex:none;margin-top:.25rem;accent-color:var(--orange)}
+.admin-layout small,.admin-retorno,#admin-capa-estado{font-size:.82rem;color:var(--muted)}
+#admin-retorno:not(:empty){margin-bottom:1rem}
+#admin-recarregar:not([hidden]){margin-bottom:1rem}
+.admin-retorno.erro{color:#ff9b92}
+.admin-previa{max-width:100%;max-height:220px;border-radius:10px;object-fit:contain;justify-self:start}
+.admin-produtos{display:grid;gap:.65rem;max-height:280px;overflow:auto}
+.admin-produtos .admin-check{padding:.25rem 0}
+.admin-form>.btn{justify-self:start}
+.admin-form>.btn:disabled{opacity:.6;cursor:default}
+@media(max-width:730px){
+  .admin-colunas{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:480px){
+  .admin-datas{grid-template-columns:minmax(0,1fr)}
+}

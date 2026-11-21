@@ -25,6 +25,15 @@
     card.className = 'card';
     card.href = linkColecao(drop);
     card.dataset.estado = drop.estado;
+    if (drop.capa_url) {
+      const capa = document.createElement('img');
+      capa.className = 'card-capa';
+      capa.src = drop.capa_url;
+      capa.alt = '';
+      capa.loading = 'lazy';
+      capa.addEventListener('error', () => capa.remove(), { once: true });
+      card.append(capa);
+    }
 
     const titulo = document.createElement('h3');
     titulo.textContent = drop.nome_colecao;

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerenciar coleções — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
+  <a class="admin-voltar" href="perfil.html">Voltar ao perfil</a>
+</header>
+
+<main class="admin-layout">
+  <h1>Gerenciar coleções</h1>
+  <p class="admin-retorno" id="admin-retorno" role="status">Verificando acesso…</p>
+  <button class="btn sm" type="button" id="admin-recarregar" hidden>Recarregar painel</button>
+
+  <div class="admin-colunas" id="admin-conteudo" hidden>
+    <aside class="admin-bloco" aria-labelledby="admin-colecoes-titulo">
+      <h2 id="admin-colecoes-titulo">Coleções</h2>
+      <label class="admin-rotulo" for="admin-colecoes">Escolher coleção</label>
+      <select id="admin-colecoes">
+        <option value="">Nova coleção</option>
+      </select>
+      <a class="admin-voltar" href="colecoes.html">Ver página pública →</a>
+    </aside>
+
+    <form class="admin-bloco admin-form" id="admin-form" aria-labelledby="admin-form-titulo">
+      <h2 id="admin-form-titulo">Nova coleção</h2>
+      <label>Nome
+        <input name="nome" required maxlength="120">
+      </label>
+      <div class="admin-datas">
+        <label>Lançamento
+          <input name="lancamento" type="datetime-local" step="1" required aria-describedby="admin-fuso">
+        </label>
+        <label>Encerramento (opcional)
+          <input name="encerramento" type="datetime-local" step="1" aria-describedby="admin-fuso">
+        </label>
+      </div>
+      <small id="admin-fuso">Horário de Brasília (America/Sao_Paulo).</small>
+
+      <label>Limite de peças
+        <input name="limite" type="number" min="0" max="2147483647" step="1" inputmode="numeric" required>
+      </label>
+      <label class="admin-check">
+        <input name="ativa" type="checkbox"> Publicar na página Coleções
+      </label>
+
+      <fieldset>
+        <legend>Capa</legend>
+        <label class="admin-rotulo" for="admin-capa">Enviar foto (PNG, JPG ou WebP, até 1 MB)</label>
+        <input id="admin-capa" name="capa" type="file" accept="image/png,image/jpeg,image/webp">
+        <p id="admin-capa-estado" hidden>Esta coleção já tem uma capa salva.</p>
+        <img class="admin-previa" id="admin-previa" alt="Prévia da capa" hidden>
+        <label class="admin-check" id="admin-remover-capa" hidden>
+          <input name="remover_capa" type="checkbox"> Remover capa atual
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Produtos</legend>
+        <div class="admin-produtos" id="admin-produtos"></div>
+        <label class="admin-check" id="admin-mover" hidden>
+          <input name="mover" type="checkbox"> Confirmo mover os produtos selecionados dos drops atuais
+        </label>
+        <small id="admin-aviso-inativo" hidden>Produtos vinculados ficam indisponíveis enquanto a coleção estiver despublicada.</small>
+      </fieldset>
+
+      <p class="admin-retorno" id="admin-form-retorno" role="status" hidden></p>
+      <button class="btn" id="admin-salvar" type="submit">Salvar coleção</button>
+    </form>
+  </div>
+</main>
+<script type="module" src="admin.mjs"></script>
+</body>
+</html>

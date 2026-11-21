@@ -223,3 +223,4 @@
 #favoritos{scroll-margin-top:6rem}
 .perfil-favoritos main>.cartao:not(#favoritos){display:none}
 #favoritos .auth-retorno:empty,.favoritos-painel .auth-retorno:empty{display:none}
+.perfil [data-admin-link][hidden]{display:none}
