@@ -76,6 +76,7 @@
         const voltar = new URLSearchParams(location.search).get('voltar');
         const destinos = new Map([
           ['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html'], ['admin', 'admin.html'],
+          ['votacao', 'comunidade.html'], ['admin-votacoes', 'admin-votacoes.html'],
         ]);
         location.replace((!cadastro && destinos.get(voltar)) || 'perfil.html');
         return;

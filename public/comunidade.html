@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comunidade — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="imagens.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="comunidade.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
+  <nav class="menu" aria-label="Navegação principal">
+    <a href="index.html">Início</a>
+    <a href="shop.html">Shop</a>
+    <a href="colecoes.html">Coleções</a>
+    <a href="comunidade.html" class="on" aria-current="page">Comunidade</a>
+  </nav>
+  <div class="actions">
+    <button class="circle" type="button" aria-label="Buscar"><i data-ic="search"></i></button>
+    <button class="circle" type="button" aria-label="Perfil"><i data-ic="user"></i></button>
+    <button class="circle" type="button" aria-label="Favoritos"><i data-ic="star"></i></button>
+    <button class="circle" type="button" aria-label="Carrinho"><i data-ic="cart"></i></button>
+  </div>
+</header>
+<main class="comunidade-layout" data-votacao>
+  <h1>Comunidade</h1>
+  <section class="votacao-painel" aria-labelledby="votacao-titulo">
+    <h2 id="votacao-titulo">Votação</h2>
+    <p class="votacao-estado" data-votacao-estado role="status">Carregando votação…</p>
+    <form hidden>
+      <fieldset>
+        <legend>Escolha uma opção</legend>
+        <div class="votacao-opcoes" data-opcoes></div>
+      </fieldset>
+      <button class="btn" type="submit" hidden>Confirmar voto</button>
+    </form>
+    <a class="btn" href="login.html?voltar=votacao" data-entrar hidden>Entrar para votar</a>
+    <button class="btn sm" type="button" data-atualizar hidden>Atualizar votação</button>
+  </section>
+</main>
+<script src="app.js" defer></script>
+<script type="module" src="votacoes.mjs"></script>
+</body>
+</html>

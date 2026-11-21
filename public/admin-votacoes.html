@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerenciar votações — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
+  <a class="admin-voltar" href="admin.html">Voltar ao painel</a>
+</header>
+<main class="admin-layout" data-admin-votacoes>
+  <h1>Gerenciar votações</h1>
+  <p class="admin-retorno" data-votacao-estado role="status">Verificando acesso…</p>
+  <button class="btn sm" type="button" data-atualizar hidden>Atualizar painel</button>
+
+  <div class="admin-colunas" data-conteudo hidden>
+    <aside class="admin-bloco">
+      <h2>Última votação</h2>
+      <p data-votacao-atual></p>
+      <button class="btn sm" type="button" data-encerrar hidden>Encerrar votação</button>
+      <a class="admin-voltar" href="comunidade.html">Ver página pública →</a>
+    </aside>
+    <form class="admin-bloco admin-form" aria-labelledby="nova-votacao">
+      <h2 id="nova-votacao">Nova votação</h2>
+      <label>Pergunta
+        <input name="titulo" required maxlength="160" placeholder="Qual coleção você quer ver no próximo drop?">
+      </label>
+      <label>Opção 1 <input name="opcao" required maxlength="100"></label>
+      <label>Opção 2 <input name="opcao" required maxlength="100"></label>
+      <label>Opção 3 (opcional) <input name="opcao" maxlength="100"></label>
+      <label>Opção 4 (opcional) <input name="opcao" maxlength="100"></label>
+      <button class="btn" type="submit">Abrir votação</button>
+    </form>
+  </div>
+</main>
+<script type="module" src="votacoes.mjs"></script>
+</body>
+</html>

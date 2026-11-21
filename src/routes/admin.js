@@ -80,6 +80,7 @@ admin.use(async (req, res, next) => {
 });
 
 admin.get('/acesso', (req, res) => res.status(204).end());
+admin.use('/votacoes', require('./admin-votacoes'));
 admin.get('/colecoes', async (req, res) => {
   try {
     const [[dados]] = await consulta(`

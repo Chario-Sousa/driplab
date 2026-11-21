@@ -6,6 +6,7 @@ const sequelize = require('./config/database');
 const pedidos = require('./routes/pedidos');
 const favoritos = require('./routes/favoritos');
 const admin = require('./routes/admin');
+const votacoes = require('./routes/votacoes');
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/pedidos', pedidos);
 app.use('/api/favoritos', favoritos);
+app.use('/api/votacoes', votacoes);
 
 app.get('/', (req, res) => {
   res.redirect('/index.html');

@@ -38,6 +38,8 @@
 .admin-produtos .admin-check:has(input:focus-visible){outline:2px solid var(--orange);outline-offset:-3px}
 .admin-form>.btn{justify-self:start}
 .admin-form>.btn:disabled{opacity:.6;cursor:default}
+[data-admin-votacoes] .admin-retorno:not(:empty){margin-bottom:1rem}
+[data-votacao-atual]{overflow-wrap:anywhere}
 @media(max-width:730px){
   .admin-colunas{grid-template-columns:minmax(0,1fr)}
 }
