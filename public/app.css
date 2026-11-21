@@ -195,7 +195,7 @@
   .perfil .col:last-child{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 }
 @media(max-width:900px){
-  .auth{grid-template-columns:1fr;gap:2rem}
+  .auth{grid-template-columns:minmax(0,1fr);gap:2rem}
   .auth-marca{gap:1.4rem}
   .auth-marca .logo img{width:min(240px,100%)}
   .auth-marca .beneficios,.auth-marca>p{display:none}
@@ -203,6 +203,13 @@
   .perfil .lateral{position:static;min-height:0}
   .lateral nav{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .pedidos{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .auth{gap:1rem}
+  .auth-rodape{flex-wrap:wrap;gap:.5rem 1rem}
+  .auth .painel{grid-template-columns:minmax(0,1fr);padding:1.15rem}
+  .auth .campo{padding-inline:.65rem;gap:.55rem}
+  .auth .campo input{font-size:1rem}
 }
 .favoritos-lista{display:grid;gap:.65rem}
 .favoritos-lista li{

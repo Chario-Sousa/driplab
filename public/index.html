@@ -49,8 +49,9 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .feats small{color:var(--muted)}
 
 .drops .top{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.count{min-width:0;max-width:100%}
 .count .lbl{letter-spacing:.14em;font-size:.8rem;margin-bottom:1rem;text-align:center}
-.count .row{display:flex;gap:1.2rem;font-family:var(--display);font-size:2.2rem;color:var(--orange);text-align:center}
+.count .row{display:flex;justify-content:center;gap:clamp(.25rem,2vw,1.2rem);font-family:var(--display);font-size:clamp(1.1rem,4.8vw,2.2rem);color:var(--orange);text-align:center}
 .count .row[hidden],.count .drop-info[hidden]{display:none}
 .drop-info{margin-top:.8rem;text-align:center}
 .count small{display:block;font:500 .65rem var(--body);color:#fff;letter-spacing:.1em}
@@ -73,8 +74,8 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .news{background:linear-gradient(180deg,#120904,#3a1a08 75%,#0a0503)}
 .news .wrap{display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap}
 .news p{margin-top:.8rem;color:var(--muted);max-width:40ch}
-.form{display:flex;flex:1;min-width:320px;max-width:540px;border:1.5px solid var(--orange);border-radius:18px;overflow:hidden}
-.form input{flex:1;padding:1.1rem 1.4rem;background:rgba(0,0,0,.35);border:0;color:#fff;font:inherit;outline:0}
+.form{display:flex;flex:1;min-width:min(100%,320px);max-width:540px;border:1.5px solid var(--orange);border-radius:18px;overflow:hidden}
+.form input{flex:1;min-width:0;padding:1.1rem 1.4rem;background:rgba(0,0,0,.35);border:0;color:#fff;font:inherit;outline:0}
 .form button{padding:0 1.8rem;border:0;background:var(--orange);color:#000;letter-spacing:.1em;cursor:pointer;font-weight:500}
 
 @media(max-width:860px){
@@ -82,6 +83,11 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
   .about .wrap,.community .wrap{grid-template-columns:1fr}
   .feats{border:0;padding:0}
   .posts{justify-content:flex-start;overflow-x:auto}
+}
+@media(max-width:480px){
+  .form{flex:1 1 100%;flex-direction:column}
+  .form input{width:100%}
+  .form button{width:100%;min-height:44px}
 }
 </style>
 </head>
