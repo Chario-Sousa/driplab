@@ -70,17 +70,31 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 
 ## Execução com Supabase
 
-1. Instale as dependências com `npm ci`.
+1. Clone o repositório, abra a pasta `driplab` e instale as dependências com `npm ci`. Use **Node.js 22 ou superior**.
 2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql`, `sql/drops_postgres.sql`, `sql/favoritos_postgres.sql`, `sql/admin_colecoes_postgres.sql`, `sql/votacoes_postgres.sql` e `sql/capas_votacoes_postgres.sql`, nessa ordem.
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
-5. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
+5. Em `public/auth-config.json`, configure `url` com a URL do mesmo projeto Supabase e `chavePublica` com a chave publicável desse projeto. Esse arquivo é servido ao navegador e deve conter apenas a configuração pública.
+6. Para carregar as fotos do catálogo inicial, execute `sql/fotos_catalogo.sql` após as migrações.
+7. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
 
 Para publicar na Vercel, importe o repositório como um projeto Express e configure `DATABASE_URL` como variável privada no ambiente usado pelo deploy. Teste `/api/health` e `/api/produtos` no endereço publicado antes de validar o catálogo no navegador.
 
 ### Cadastro e login
 
 O `npm ci` prepara o SDK do Supabase para as páginas de autenticação. O login usa o e-mail e a senha da conta. O nome de exibição aparece no perfil.
+
+Para abrir o painel em um projeto novo, cadastre e confirme a conta da equipe. No SQL Editor do Supabase, vincule só essa conta a `public.administrador`, usando o e-mail dela no lugar do exemplo.
+
+```sql
+insert into public.administrador (id_usuario)
+select id
+from auth.users
+where lower(email) = lower('equipe@exemplo.com')
+  and email_confirmed_at is not null
+  and not is_anonymous
+on conflict do nothing;
+```
 
 Em **Authentication → URL Configuration** no Supabase, configure o endereço principal do site como **Site URL** e adicione o endereço completo de `perfil.html` à lista **Redirect URLs**. Para testar no navegador local, adicione também `http://localhost:3000/perfil.html`.
 
@@ -102,7 +116,7 @@ Defina o início, o encerramento opcional e o limite total de unidades em **Perf
 
 ### Requisitos
 
-- Node.js e npm
+- Node.js 22 ou superior e npm
 - MySQL Server
 - MySQL Workbench, recomendado para executar os scripts SQL
 
