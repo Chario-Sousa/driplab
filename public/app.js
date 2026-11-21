@@ -82,6 +82,40 @@
     matchMedia('(max-width: 860px)').addEventListener('change', () => alternarMenu(false));
   }
 
+  const favoritosPerfil = $('#favoritos');
+  if (favoritosPerfil) {
+    const perfil = $('[data-perfil]');
+    const resumo = favoritosPerfil.parentElement;
+    const principal = $('main', perfil);
+    const favoritosMenu = $('a[href="#favoritos"]', perfil);
+    const visaoGeral = $('a[href="perfil.html"]', perfil);
+
+    function mostrarFavoritosPerfil() {
+      const ativo = location.hash === '#favoritos';
+      (ativo ? principal : resumo).append(favoritosPerfil);
+      perfil.classList.toggle('perfil-favoritos', ativo);
+      favoritosMenu.classList.toggle('on', ativo);
+      visaoGeral.classList.toggle('on', !ativo);
+      if (ativo) favoritosMenu.setAttribute('aria-current', 'location');
+      else favoritosMenu.removeAttribute('aria-current');
+    }
+
+    mostrarFavoritosPerfil();
+    window.addEventListener('hashchange', () => {
+      const estavaEmFavoritos = perfil.classList.contains('perfil-favoritos');
+      mostrarFavoritosPerfil();
+      if (location.hash === '#favoritos') {
+        favoritosPerfil.focus({ preventScroll: true });
+        favoritosPerfil.scrollIntoView({ block: 'start' });
+      } else if (estavaEmFavoritos) {
+        document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start' });
+      }
+    });
+    favoritosMenu.addEventListener('click', () => {
+      if (location.hash === '#favoritos') favoritosPerfil.focus({ preventScroll: true });
+    });
+  }
+
   $$('[data-ic]').forEach(el => { el.outerHTML = ic(el.dataset.ic, el.className); });
 
   const produtos = [
@@ -164,7 +198,7 @@
         <ul class="favoritos-lista" data-favoritos-lista></ul>
         <button type="button" class="btn sm" data-favoritos-tentar hidden>Tentar novamente</button>
       </div>
-      <a class="btn-borda" href="perfil.html#favoritos" data-favoritos-perfil hidden>Ver no perfil ${ic('arrow')}</a>
+      <a class="btn-borda" href="perfil.html#favoritos" data-favoritos-perfil data-fechar hidden>Ver no perfil ${ic('arrow')}</a>
       <a class="btn-borda" href="login.html?voltar=favoritos" data-favoritos-login hidden>Entrar na conta ${ic('arrow')}</a>
     </aside>
 
