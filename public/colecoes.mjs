@@ -1,3 +1,5 @@
+import { capaColecao } from './capas-colecoes.mjs';
+
 (() => {
   const filtro = document.getElementById('colecoes-filtro');
   const status = document.getElementById('colecoes-status');
@@ -25,10 +27,11 @@
     card.className = 'card';
     card.href = linkColecao(drop);
     card.dataset.estado = drop.estado;
-    if (drop.capa_url) {
+    const imagem = capaColecao(drop.nome_colecao, drop.capa_url);
+    if (imagem) {
       const capa = document.createElement('img');
       capa.className = 'card-capa';
-      capa.src = drop.capa_url;
+      capa.src = imagem;
       capa.alt = '';
       capa.loading = 'lazy';
       capa.addEventListener('error', () => capa.remove(), { once: true });

@@ -1,5 +1,6 @@
 import { obterAuth } from './sessao.mjs';
 import { arquivoCapaValido, lerCapa } from './capa.mjs';
+import { capaColecao } from './capas-colecoes.mjs';
 
 async function sessaoAtual() {
   const auth = await obterAuth();
@@ -46,9 +47,10 @@ function criarOpcao(opcao, podeVotar, escolhida) {
     item.append(entrada);
   }
 
-  if (opcao.capa_url) {
+  const imagem = capaColecao(opcao.nome, opcao.capa_url);
+  if (imagem) {
     const capa = document.createElement('img');
-    capa.src = opcao.capa_url;
+    capa.src = imagem;
     capa.alt = '';
     capa.addEventListener('error', () => capa.remove(), { once: true });
     item.append(capa);
@@ -196,8 +198,9 @@ function iniciarPainel(pagina) {
     titulo.textContent = opcao.nome;
     const previa = document.createElement('img');
     previa.alt = 'Capa de ' + opcao.nome;
-    previa.hidden = !opcao.capa_url;
-    if (opcao.capa_url) previa.src = opcao.capa_url;
+    const imagem = capaColecao(opcao.nome, opcao.capa_url);
+    previa.hidden = !imagem;
+    if (imagem) previa.src = imagem;
 
     const rotulo = document.createElement('label');
     const arquivo = document.createElement('input');
