@@ -1,4 +1,5 @@
 import { obterAuth } from './sessao.mjs';
+import { arquivoCapaValido, lerCapa } from './capa.mjs';
 
 async function sessaoAtual() {
   const auth = await obterAuth();
@@ -43,6 +44,14 @@ function criarOpcao(opcao, podeVotar, escolhida) {
     entrada.value = opcao.id_opcao;
     entrada.required = true;
     item.append(entrada);
+  }
+
+  if (opcao.capa_url) {
+    const capa = document.createElement('img');
+    capa.src = opcao.capa_url;
+    capa.alt = '';
+    capa.addEventListener('error', () => capa.remove(), { once: true });
+    item.append(capa);
   }
 
   const nome = document.createElement('strong');
@@ -144,6 +153,8 @@ function iniciarPainel(pagina) {
   const atualTexto = pagina.querySelector('[data-votacao-atual]');
   const atualizar = pagina.querySelector('[data-atualizar]');
   const encerrar = pagina.querySelector('[data-encerrar]');
+  const capas = pagina.querySelector('[data-capas]');
+  const gradeCapas = pagina.querySelector('[data-capas-grade]');
   const form = pagina.querySelector('form');
   const abrir = form.querySelector('[type=submit]');
   let atual;
@@ -173,7 +184,63 @@ function iniciarPainel(pagina) {
       : 'Nenhuma votação publicada.';
     encerrar.hidden = !aberta;
     form.hidden = aberta;
+    capas.hidden = !atual;
+    gradeCapas.replaceChildren(...(atual?.opcoes ?? []).map(opcao => editarCapa(atual.id_votacao, opcao)));
     conteudo.hidden = false;
+  }
+
+  function editarCapa(id, opcao) {
+    const editor = document.createElement('form');
+    editor.className = 'admin-capa-opcao';
+    const titulo = document.createElement('h3');
+    titulo.textContent = opcao.nome;
+    const previa = document.createElement('img');
+    previa.alt = 'Capa de ' + opcao.nome;
+    previa.hidden = !opcao.capa_url;
+    if (opcao.capa_url) previa.src = opcao.capa_url;
+
+    const rotulo = document.createElement('label');
+    const arquivo = document.createElement('input');
+    arquivo.type = 'file';
+    arquivo.accept = 'image/png,image/jpeg,image/webp';
+    arquivo.required = true;
+    rotulo.append('Capa de ' + opcao.nome, arquivo);
+    const salvar = document.createElement('button');
+    salvar.className = 'btn sm';
+    salvar.type = 'submit';
+    salvar.textContent = 'Salvar capa';
+    const retorno = document.createElement('p');
+    retorno.className = 'admin-retorno';
+    retorno.setAttribute('role', 'status');
+    retorno.hidden = true;
+
+    editor.append(titulo, previa, rotulo, salvar, retorno);
+    editor.addEventListener('submit', async evento => {
+      evento.preventDefault();
+      if (salvar.disabled) return;
+      retorno.hidden = false;
+      const selecionada = arquivo.files[0];
+      if (!selecionada || !arquivoCapaValido(selecionada)) {
+        informar(retorno, 'Envie uma capa PNG, JPG ou WebP com até 1 MB.', true);
+        return;
+      }
+
+      salvar.disabled = true;
+      informar(retorno, 'Salvando capa…');
+      const caminho = `/votacoes/${id}/opcoes/${opcao.id_opcao}/capa`;
+      try {
+        await admin(caminho, { metodo: 'PUT', corpo: { capa: await lerCapa(selecionada) } });
+        previa.src = '/api' + caminho + '?v=' + Date.now();
+        previa.hidden = false;
+        arquivo.value = '';
+        informar(retorno, 'Capa salva.');
+      } catch (erro) {
+        informar(retorno, erro.message, true);
+      } finally {
+        salvar.disabled = false;
+      }
+    });
+    return editor;
   }
 
   async function executar(operacao) {

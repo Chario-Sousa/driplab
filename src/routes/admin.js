@@ -1,16 +1,9 @@
 const { Router, json } = require('express');
 const sequelize = require('../config/database');
 const { autenticar, uuid } = require('../middleware/sessao');
+const { validarCapa, ErroCapa } = require('../capa');
 
 const admin = Router();
-const maxCapa = 1024 * 1024;
-const png = Buffer.from('89504e470d0a1a0a', 'hex');
-const tiposCapa = {
-  'image/jpeg': buffer => buffer.length > 3 && buffer.subarray(0, 3).equals(Buffer.from('ffd8ff', 'hex')),
-  'image/png': buffer => buffer.length > 8 && buffer.subarray(0, 8).equals(png),
-  'image/webp': buffer => buffer.length > 16 && buffer.toString('ascii', 0, 4) === 'RIFF'
-    && buffer.toString('ascii', 8, 12) === 'WEBP',
-};
 const inteiro = (valor, min = 1) => Number.isInteger(valor) && valor >= min && valor <= 2147483647;
 const consulta = (sql, bind = [], transaction) => sequelize.query(sql, { bind, transaction });
 
@@ -26,19 +19,6 @@ function dataLocal(valor) {
   const completa = valor.length === 16 ? valor + ':00' : valor;
   const data = new Date(completa + 'Z');
   return Number.isFinite(data.getTime()) && data.toISOString().slice(0, 19) === completa ? completa : null;
-}
-
-function validarCapa(capa) {
-  const { tipo, dados } = capa ?? {};
-  if (typeof tipo !== 'string' || !Object.hasOwn(tiposCapa, tipo)
-      || typeof dados !== 'string' || dados.length > Math.ceil(maxCapa / 3) * 4) {
-    throw new ErroPainel(400, 'Envie uma capa PNG, JPG ou WebP com até 1 MB.');
-  }
-  const buffer = Buffer.from(dados, 'base64');
-  if (buffer.length > maxCapa || buffer.toString('base64') !== dados || !tiposCapa[tipo](buffer)) {
-    throw new ErroPainel(400, 'O arquivo da capa não corresponde ao formato informado.');
-  }
-  return { tipo, buffer };
 }
 
 function validarColecao(corpo, id) {
@@ -187,6 +167,7 @@ async function enviarColecao(req, res) {
     res.status(id ? 200 : 201).json({ id_colecao: idColecao });
   } catch (erro) {
     if (erro instanceof ErroPainel) return res.status(erro.status).json({ erro: erro.message });
+    if (erro instanceof ErroCapa) return res.status(400).json({ erro: erro.message });
     if (erro.original?.constraint === 'periodo_colecao_valido') {
       return res.status(400).json({ erro: 'O encerramento deve ser posterior ao lançamento.' });
     }

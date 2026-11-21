@@ -38,6 +38,11 @@
       <label>Opção 4 (opcional) <input name="opcao" maxlength="100"></label>
       <button class="btn" type="submit">Abrir votação</button>
     </form>
+    <section class="admin-bloco admin-capas" data-capas aria-labelledby="titulo-capas" hidden>
+      <h2 id="titulo-capas">Capas das opções</h2>
+      <p class="admin-retorno">Envie uma imagem PNG, JPG ou WebP de até 1 MB por opção.</p>
+      <div class="admin-capas-grade" data-capas-grade></div>
+    </section>
   </div>
 </main>
 <script type="module" src="votacoes.mjs"></script>

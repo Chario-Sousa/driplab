@@ -1,6 +1,7 @@
 const { Router, json } = require('express');
 const sequelize = require('../config/database');
 const { uuid } = require('../middleware/sessao');
+const { validarCapa, ErroCapa } = require('../capa');
 
 const votacoes = Router();
 
@@ -56,6 +57,28 @@ votacoes.put('/:id/encerramento', async (req, res) => {
   } catch (erro) {
     console.error('Falha ao encerrar votação:', erro.name);
     res.status(500).json({ erro: 'Não foi possível encerrar a votação.' });
+  }
+});
+
+votacoes.put('/:id/opcoes/:opcao/capa', json({ limit: '1500kb' }), async (req, res) => {
+  const { id, opcao } = req.params;
+  if (!uuid.test(id) || !/^[1-4]$/.test(opcao)) {
+    return res.status(400).json({ erro: 'Opção de votação inválida.' });
+  }
+
+  try {
+    const { tipo, buffer } = validarCapa(req.body?.capa);
+    const [[salva]] = await sequelize.query(`
+      update public.opcao_votacao set capa = $3, capa_tipo = $4
+      where id_votacao = $1::uuid and id_opcao = $2
+      returning id_opcao
+    `, { bind: [id, Number(opcao), buffer, tipo] });
+    if (!salva) return res.status(404).json({ erro: 'Opção de votação não encontrada.' });
+    res.status(204).end();
+  } catch (erro) {
+    if (erro instanceof ErroCapa) return res.status(400).json({ erro: erro.message });
+    console.error('Falha ao salvar capa de votação:', erro.name);
+    res.status(500).json({ erro: 'Não foi possível salvar a capa.' });
   }
 });
 

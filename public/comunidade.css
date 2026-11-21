@@ -34,5 +34,8 @@
 label.votacao-opcao{cursor:pointer}
 .votacao-opcao:has(:checked),.votacao-opcao.escolhida{border-color:var(--orange);color:var(--orange)}
 .votacao-opcao input{flex:none;width:20px;height:20px;accent-color:var(--orange)}
+.votacao-opcao img{
+  flex:none;width:clamp(56px,15vw,108px);aspect-ratio:4/3;object-fit:cover;border-radius:7px;
+}
 .votacao-opcao strong{min-width:0;overflow-wrap:anywhere;font-size:.9rem}
 .votacao-opcao small{margin-left:auto;flex:none;color:var(--muted);font-size:.75rem}

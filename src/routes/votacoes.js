@@ -24,11 +24,14 @@ votacoes.get('/', bancoDisponivel, async (req, res) => {
         order by (encerrada_em is null) desc, criada_em desc, id_votacao
         limit 1
       ), resultados as (
-        select o.id_opcao, o.nome, count(v.id_opcao) as votos
+        select o.id_opcao, o.nome, count(v.id_opcao) as votos,
+          case when o.capa is not null then
+            '/api/votacoes/' || o.id_votacao || '/opcoes/' || o.id_opcao || '/capa'
+          end as capa_url
         from atual a
         join public.opcao_votacao o using (id_votacao)
         left join public.voto v using (id_votacao, id_opcao)
-        group by o.id_opcao, o.nome
+        group by o.id_votacao, o.id_opcao
       )
       select a.*, (
         select coalesce(jsonb_agg(to_jsonb(r) order by r.id_opcao), '[]'::jsonb) from resultados r
@@ -46,6 +49,24 @@ function validarId(req, res, next) {
   if (!uuid.test(req.params.id)) return res.status(400).json({ erro: 'Votação inválida.' });
   next();
 }
+
+votacoes.get('/:id/opcoes/:opcao/capa', bancoDisponivel, validarId, async (req, res) => {
+  if (!/^[1-4]$/.test(req.params.opcao)) return res.sendStatus(404);
+
+  try {
+    const [[imagem]] = await sequelize.query(`
+      select capa, capa_tipo from public.opcao_votacao
+      where id_votacao = $1::uuid and id_opcao = $2 and capa is not null
+    `, { bind: [req.params.id, Number(req.params.opcao)] });
+    if (!imagem) return res.sendStatus(404);
+    res.set('Content-Type', imagem.capa_tipo);
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.send(imagem.capa);
+  } catch (erro) {
+    console.error('Falha ao carregar capa de votação:', erro.name);
+    res.sendStatus(500);
+  }
+});
 
 votacoes.get('/:id/meu-voto', autenticar, bancoDisponivel, validarId, async (req, res) => {
   try {

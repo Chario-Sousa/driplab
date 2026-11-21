@@ -1,4 +1,5 @@
 import { obterAuth } from './sessao.mjs';
+import { arquivoCapaValido, lerCapa } from './capa.mjs';
 
 const conteudo = document.getElementById('admin-conteudo');
 const retorno = document.getElementById('admin-retorno');
@@ -15,7 +16,6 @@ const mover = document.getElementById('admin-mover');
 const avisoInativo = document.getElementById('admin-aviso-inativo');
 const salvar = document.getElementById('admin-salvar');
 const retornoForm = document.getElementById('admin-form-retorno');
-const maxCapa = 1024 * 1024;
 
 let auth;
 let colecoes = [];
@@ -129,21 +129,12 @@ async function iniciar() {
   }
 }
 
-function lerCapa(arquivo) {
-  return new Promise((resolve, reject) => {
-    const leitor = new FileReader();
-    leitor.onload = () => resolve({ tipo: arquivo.type, dados: leitor.result.split(',')[1] });
-    leitor.onerror = () => reject(new Error('Não foi possível ler a capa.'));
-    leitor.readAsDataURL(arquivo);
-  });
-}
-
 campos.capa.addEventListener('change', () => {
   limparPrevia();
   informar(retornoForm, '');
   const arquivo = campos.capa.files[0];
   if (!arquivo) return;
-  if (arquivo.size > maxCapa || !['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) {
+  if (!arquivoCapaValido(arquivo)) {
     campos.capa.value = '';
     informar(retornoForm, 'Envie uma capa PNG, JPG ou WebP com até 1 MB.', true);
     return;
