@@ -33,6 +33,7 @@ app.get('/api/produtos', async (req, res) => {
         p.preco,
         p.estoque,
         c.nome_categoria,
+        co.id_colecao,
         co.nome_colecao
         ${postgres ? ', d.estado as estado_drop' : ''}
       FROM produto AS p

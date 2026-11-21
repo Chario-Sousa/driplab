@@ -11,61 +11,49 @@
 <link rel="stylesheet" href="imagens.css">
 <link rel="stylesheet" href="app.css">
 <style>
-.layout{width:min(1420px,94%);margin:1.5rem auto 2rem;display:grid;grid-template-columns:240px 1fr;gap:1.4rem;align-items:start}
-
-/* sidebar */
-.side{position:sticky;top:6.5rem;padding:1.6rem 1rem 1rem;border:1px solid var(--line);border-radius:26px;background:rgba(15,15,15,.7);min-height:560px;display:flex;flex-direction:column}
-.side h2{font-size:1.3rem;padding:0 .5rem}
-.side>p{font-size:.7rem;color:var(--muted);padding:.4rem .5rem 1.2rem}
-.side nav a{display:flex;align-items:center;gap:1rem;padding:.9rem 1rem;border-radius:14px;font-size:.78rem;font-weight:600;margin-bottom:.35rem;border:1px solid transparent}
-.side nav a i{font-style:normal;width:22px;text-align:center;font-size:1.1rem}
-.side nav a:hover{border-color:var(--line)}
-.side nav a.on{background:linear-gradient(90deg,var(--orange-2),rgba(240,138,36,.15));border-color:var(--orange)}
-.filters{margin:1.4rem .5rem 0;border-top:1px solid var(--line)}
-.filters>span{display:block;padding:.9rem 0;font-size:.75rem;letter-spacing:.06em}
-.filters details{border-top:1px solid var(--line)}
-.filters summary{display:flex;justify-content:space-between;padding:.7rem 0;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;list-style:none}
-.filters summary::after{content:"⌄"}
-.filters details[open] summary::after{content:"⌃"}
-.filters details div{display:grid;gap:.4rem;padding:0 0 .8rem;font-size:.75rem;color:var(--muted)}
-.filters label{display:flex;gap:.5rem;align-items:center;cursor:pointer}
-.filters input{accent-color:var(--orange)}
-.side .copy{margin-top:auto;padding:1.4rem .5rem 0;font-size:.6rem;color:var(--muted)}
-
-/* banner */
-.banner{position:relative;height:210px;border:1px solid var(--line);border-radius:26px;overflow:hidden;padding:1.6rem 2rem;display:flex;flex-direction:column;justify-content:center;
-  background:linear-gradient(90deg,#000 20%,transparent 75%),var(--img-banner-colecoes,none) center/cover,linear-gradient(120deg,#0b0b0b,#3b1c08 70%,#120904)}
-.banner .eyebrow{font-size:.75rem;position:relative}
-.banner h2{font-size:clamp(1.4rem,2.6vw,2rem);margin:.4rem 0 .6rem;position:relative}
-.banner p{font-size:.85rem;color:rgba(255,255,255,.85);max-width:34ch;margin-bottom:.8rem;position:relative}
-.banner .btn{align-self:flex-start;position:relative}
-.nav-b{position:absolute;right:1.6rem;bottom:1.2rem;display:flex;gap:.6rem;align-items:center;font-size:.8rem}
-.nav-b .circle{width:24px;height:24px;font-size:.7rem}
-.nav-b i{width:54px;height:2px;background:var(--orange)}
-.nav-b b{font-weight:600}.nav-b span{color:var(--muted)}
-
-/* grade */
+.layout{width:min(1420px,94%);margin:1.5rem auto 2rem;display:grid;grid-template-columns:230px minmax(0,1fr);gap:1.4rem;align-items:start}
+.side{position:sticky;top:6.5rem;padding:1.2rem;border:1px solid var(--line);border-radius:22px;background:#111}
+.side label{display:block;margin-bottom:.5rem;font-size:.86rem;font-weight:600}
+.side select{
+  width:100%;padding:.65rem .5rem;border:1px solid var(--line);border-radius:8px;
+  background:#181818;color:inherit;color-scheme:dark;font:inherit;font-size:.85rem;
+}
+.banner{
+  min-height:210px;padding:1.4rem clamp(1rem,4vw,2.8rem);display:grid;align-content:center;justify-items:start;gap:.65rem;
+  border:1px solid var(--line);border-radius:26px;
+  background:linear-gradient(90deg,rgba(0,0,0,.94),rgba(0,0,0,.35)),var(--img-banner-colecoes) center/cover,#17100b;
+}
+.banner h1{font-size:clamp(1.7rem,4vw,3rem)}
+.banner p{font-size:.9rem}
+.banner .btn[hidden],#colecoes-tentar[hidden]{display:none}
 .grid-t{margin:1.6rem 0 1.1rem}
-.grid-t h2{font-size:1.3rem}.grid-t p{font-size:.8rem;color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem}
-.card{position:relative;aspect-ratio:1/1.1;border:1px solid var(--line);border-radius:26px;overflow:hidden;padding:1.2rem;display:flex;flex-direction:column;justify-content:flex-end;
-  background:linear-gradient(0deg,rgba(0,0,0,.85),transparent 55%),var(--foto,none) center/cover,var(--bg-img);transition:.25s}
-.card:hover{transform:translateY(-6px);border-color:var(--orange)}
-.card h3{font-family:var(--display);font-size:1rem;text-transform:uppercase;letter-spacing:.04em}
-.card small{color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin:.2rem 0 .8rem}
-
-/* newsletter */
-.nl{margin-top:1.4rem;display:flex;align-items:center;gap:1.6rem;padding:1rem 1.6rem;border:1px solid var(--line);border-radius:22px;background:rgba(15,15,15,.7);flex-wrap:wrap}
+.grid-t h2{font-size:1.15rem;margin-bottom:.4rem}
+.grid-t p,.card time{font-size:.8rem;color:var(--muted)}
+#colecoes-tentar{margin-bottom:1rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:1.1rem}
+.card{
+  min-height:174px;padding:1.1rem;display:grid;align-content:start;justify-items:start;gap:.6rem;
+  border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#21160d,#101010 72%);
+}
+.card:hover,.card:focus-visible{border-color:var(--orange)}
+.card h3{font-family:var(--display);font-size:1rem;overflow-wrap:anywhere}
+.card .estado{padding:.15rem .5rem;border:1px solid var(--line);border-radius:999px;font-size:.75rem}
+.card[data-estado="em_andamento"] .estado,.card[data-estado="agendado"] .estado{color:var(--orange);border-color:var(--orange)}
+.card .btn{margin-top:.15rem}
+.nl{margin-top:1.4rem;display:flex;align-items:center;gap:1rem;padding:1rem 1.3rem;border:1px solid var(--line);border-radius:22px;background:rgba(15,15,15,.7);flex-wrap:wrap}
 .nl .crown{font-size:2rem;color:var(--orange)}
 .nl b{display:block;color:var(--orange);font-size:.85rem;text-transform:uppercase}
 .nl small{font-size:.75rem}
-.nl form{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
-.nl input{background:none;border:0;padding:.7rem 1.2rem;color:#fff;font:inherit;font-size:.8rem;outline:0}
-.nl button{background:var(--orange);color:#000;border:0;padding:0 1.8rem;letter-spacing:.1em;cursor:pointer;font-weight:500;border-radius:999px}
+.nl form{margin-left:auto;display:flex;min-width:0;max-width:100%;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.nl input{min-width:0;background:none;border:0;padding:.7rem .85rem;color:#fff;font:inherit;font-size:.8rem}
+.nl button{background:var(--orange);color:#000;border:0;padding:0 .8rem;cursor:pointer;font-weight:500;border-radius:999px}
 .nl .social{font-size:1.1rem}
-
-@media(max-width:1000px){.layout{grid-template-columns:1fr}.side{position:static;min-height:0}.cards{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.cards{grid-template-columns:1fr}}
+@media(max-width:760px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:.85rem}
+  .side{position:static;padding:.85rem}
+  .banner{min-height:155px}
+  .nl form{margin-left:0}
+}
 </style>
 </head>
 <body>
@@ -80,8 +68,8 @@
 <header class="header">
   <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
   <nav class="menu">
-    <a href="index.html">Início</a><a href="shop.html">Shop</a><a href="#">Novidades</a>
-    <a class="on" href="colecoes.html">Coleções</a><a href="index.html#sobre">Sobre</a>
+    <a href="index.html">Início</a><a href="shop.html">Shop</a><a href="index.html#drops">Novidades</a>
+    <a class="on" href="colecoes.html" aria-current="page">Coleções</a><a href="index.html#sobre">Sobre</a>
   </nav>
   <div class="actions">
     <button class="circle" aria-label="Buscar"><svg width="18" height="18"><use href="#i-search"/></svg></button>
@@ -93,38 +81,27 @@
 
 <div class="layout">
   <aside class="side">
-    <h2>Coleções</h2>
-    <p>Explore nossas coleções e encontre sua próxima peça favorita.</p>
-    <nav>
-      <a class="on" href="#"><i>▦</i>Todas as coleções</a>
-      <a href="#"><i>♨</i>Novas coleções</a>
-      <a href="#"><i>ϟ</i>Lançamentos</a>
-      <a href="#"><i>♛</i>Edições limitadas</a>
-      <a href="#"><i>▭</i>Arquivos</a>
-      <a href="#"><i>⚭</i>Colaborações</a>
-    </nav>
-    <div class="filters">
-      <span>FILTRAR POR</span>
-      <details><summary>Ano</summary><div><label><input type="checkbox"> 2026</label><label><input type="checkbox"> 2025</label><label><input type="checkbox"> 2024</label></div></details>
-      <details><summary>Tipo</summary><div><label><input type="checkbox"> Drop</label><label><input type="checkbox"> Collab</label><label><input type="checkbox"> Completa</label></div></details>
-      <details><summary>Estilo</summary><div><label><input type="checkbox"> Oversized</label><label><input type="checkbox"> Básico</label><label><input type="checkbox"> Tech</label></div></details>
-      <details><summary>Cor</summary><div><label><input type="checkbox"> Preto</label><label><input type="checkbox"> Branco</label><label><input type="checkbox"> Verde</label></div></details>
-    </div>
-    <div class="copy">© 2026 DripLab. Todos os direitos reservados.</div>
+    <label for="colecoes-filtro">Filtrar por status</label>
+    <select id="colecoes-filtro" disabled>
+      <option value="">Todos os status</option>
+    </select>
   </aside>
 
   <main>
-    <section class="banner" id="banner">
-      <span class="eyebrow">Coleção</span>
-      <h2 id="b-title"></h2>
-      <p id="b-text"></p>
-      <a class="btn sm" href="#">Ver coleção →</a>
-      <div class="nav-b"><i></i><b id="b-n">01</b><span>/ 04</span>
-        <button class="circle" id="prev" aria-label="Anterior">←</button><button class="circle" id="next" aria-label="Próximo">→</button></div>
+    <section class="banner" aria-labelledby="colecoes-titulo">
+      <h1 id="colecoes-titulo">Coleções</h1>
+      <p id="colecoes-destaque" hidden></p>
+      <a class="btn sm" id="colecoes-destaque-link" hidden>Ver coleção →</a>
     </section>
 
-    <div class="grid-t"><h2>Todas as coleções</h2><p>Cada coleção conta uma história. Escolha a sua.</p></div>
-    <div class="cards" id="cards"></div>
+    <section aria-labelledby="colecoes-lista-titulo">
+      <div class="grid-t">
+        <h2 id="colecoes-lista-titulo">Drops do DripLab</h2>
+        <p id="colecoes-status" role="status">Carregando coleções…</p>
+      </div>
+      <button class="btn sm" type="button" id="colecoes-tentar" hidden>Tentar novamente</button>
+      <div class="cards" id="cards"></div>
+    </section>
 
     <div class="nl">
       <span class="crown">♛</span>
@@ -135,40 +112,7 @@
   </main>
 </div>
 
-<script>
-// Dados — para usar fotos reais, preencha "img" com 'url(img/essentials.jpg)'
-const colecoes=[
- {nome:'Essentials',sub:'Drop 01 / 2026',cor:'#1e2a22'},
- {nome:'Caps Collection',sub:'Drop 01 / 2026',cor:'#3a3a3d'},
- {nome:'Zona Norte',sub:'Collab / 2026',cor:'#3b1c08'},
- {nome:'Summer Vibes',sub:'Drop 02 / 2026',cor:'#2c3a28'},
- {nome:'Archive 01',sub:'2024 - 2026',cor:'#15151a'},
- {nome:'Rio Capital',sub:'Collab / 2026',cor:'#2b3340'},
- {nome:'Blackout',sub:'Drop 03 / 2026',cor:'#16323a'},
- {nome:'All Black',sub:'Coleção completa',cor:'#4a4a4a'}
-];
-// IMAGENS DAS CAPAS: troque em imagens.css (--img-colecao-1 … 8)
-document.getElementById('cards').innerHTML=colecoes.map((c,i)=>`
-  <a class="card" href="#" style="--foto:var(--img-colecao-${i+1});--bg-img:linear-gradient(160deg,${c.cor},#0a0a0a)">
-    <h3>${c.nome}</h3><small>${c.sub}</small><span class="btn sm" style="align-self:flex-start">Ver coleção →</span>
-  </a>`).join('');
-
-// Banner (4 destaques)
-const banners=[
- ['Essentials<br><span class="accent">Drop 01</span>','O básico elevado ao extraordinário. Peças essenciais com identidade Drip Lab.'],
- ['Caps<br><span class="accent">Collection</span>','Tudo que cobre a cabeça, com a assinatura da casa.'],
- ['Zona Norte<br><span class="accent">Collab</span>','A rua como origem: uma colaboração feita com quem vive o bairro.'],
- ['Blackout<br><span class="accent">Drop 03</span>','Tudo preto, todo atitude. A coleção mais ousada do ano.']
-];
-let b=0;
-function showB(i){ b=(i+banners.length)%banners.length;
-  document.getElementById('b-title').innerHTML=banners[b][0];
-  document.getElementById('b-text').textContent=banners[b][1];
-  document.getElementById('b-n').textContent=String(b+1).padStart(2,'0'); }
-document.getElementById('prev').onclick=()=>showB(b-1);
-document.getElementById('next').onclick=()=>showB(b+1);
-showB(0);
-</script>
+<script src="colecoes.js" defer></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -182,21 +182,28 @@
     const limpar = form.querySelector('[type="reset"]');
     const status = shop.querySelector('[data-catalogo-status]');
     const tentar = shop.querySelector('[data-tentar-novamente]');
+    const idNaUrl = new URLSearchParams(location.search).get('colecao') || '';
+    const colecaoInicial = /^[1-9]\d*$/.test(idNaUrl) ? idNaUrl : '';
     let produtos;
 
-    function preencherFiltro(campo, propriedade) {
-      const valores = [...new Set(produtos.map(produto => produto[propriedade]).filter(Boolean))];
-      valores.sort((a, b) => a.localeCompare(b, 'pt-BR'));
-      const selecionado = campo.value;
-      campo.replaceChildren(campo.options[0], ...valores.map(valor => new Option(valor, valor)));
-      campo.value = valores.includes(selecionado) ? selecionado : '';
+    function preencherFiltro(campo, opcoes, selecionado = '') {
+      const valores = [...opcoes].sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'));
+      campo.replaceChildren(campo.options[0], ...valores.map(([id, nome]) => new Option(nome, id)));
+      campo.value = selecionado;
       campo.disabled = !valores.length;
+    }
+
+    function atualizarUrl() {
+      const url = new URL(location.href);
+      if (colecao.value) url.searchParams.set('colecao', colecao.value);
+      else url.searchParams.delete('colecao');
+      if (url.href !== location.href) history.replaceState(history.state, '', url);
     }
 
     function renderizar() {
       const visiveis = produtos.filter(produto =>
         (!categoria.value || produto.nome_categoria === categoria.value) &&
-        (!colecao.value || produto.nome_colecao === colecao.value)
+        (!colecao.value || String(produto.id_colecao) === colecao.value)
       );
       status.textContent = visiveis.length
         ? `${visiveis.length} ${visiveis.length === 1 ? 'produto' : 'produtos'}`
@@ -211,8 +218,15 @@
       status.textContent = 'Carregando produtos...';
       try {
         produtos = await buscarProdutos();
-        preencherFiltro(categoria, 'nome_categoria');
-        preencherFiltro(colecao, 'nome_colecao');
+        const categorias = new Map(produtos.filter(produto => produto.nome_categoria)
+          .map(produto => [produto.nome_categoria, produto.nome_categoria]));
+        const colecoes = new Map(produtos.filter(produto => produto.id_colecao && produto.nome_colecao)
+          .map(produto => [String(produto.id_colecao), produto.nome_colecao]));
+        if (colecaoInicial && !colecoes.has(colecaoInicial)) {
+          colecoes.set(colecaoInicial, 'Coleção selecionada');
+        }
+        preencherFiltro(categoria, categorias);
+        preencherFiltro(colecao, colecoes, colecaoInicial);
         renderizar();
       } catch {
         status.textContent = 'Não foi possível carregar os produtos.';
@@ -220,11 +234,15 @@
       }
     }
 
-    form.addEventListener('change', renderizar);
+    form.addEventListener('change', () => {
+      atualizarUrl();
+      renderizar();
+    });
     form.addEventListener('reset', evento => {
       evento.preventDefault();
       categoria.value = '';
       colecao.value = '';
+      atualizarUrl();
       renderizar();
     });
     tentar.addEventListener('click', carregar);
