@@ -125,13 +125,6 @@
     { id: 'bone', nome: 'Boné DripLab', variante: 'Preto / Único', preco: 129.90, img: '--img-prod-bone', info: 'Preto / Único' },
     { id: 'jaqueta-tech', nome: 'Jaqueta Tech', variante: 'Preto / G', preco: 399.90, img: '--img-prod-jaqueta-tech', info: 'Preto / G' }
   ];
-  const buscaProdutos = [
-    { nome: 'Moletom Essential', sub: 'Moletom / Preto', preco: 349.90, img: '--img-prod-moletom-essential' },
-    { nome: 'Moletom Oversized', sub: 'Moletom / Branco', preco: 379.90, img: '--img-prod-moletom-oversized' },
-    { nome: 'Moletom Tech', sub: 'Moletom / Cinza', preco: 399.90, img: '--img-prod-moletom-tech' },
-    { nome: 'Moletom DripLab Logo', sub: 'Moletom / Preto', preco: 329.90, img: '--img-prod-moletom-logo' }
-  ];
-  const sugestoes = ['moletom drip lab', 'moletom oversized', 'moletom preto', 'moletom com capuz', 'moletom feminino'];
   const foto = (v, cls = '') => `<div class="foto ${cls}" style="--foto:var(${v})" role="img" aria-label="Imagem do produto"></div>`;
 
   const chaveCarrinho = 'driplab:carrinho';
@@ -170,24 +163,18 @@
   document.body.insertAdjacentHTML('beforeend', `
     <div class="veu" id="veu"></div>
 
-    <div class="busca" id="busca" role="dialog" aria-label="Buscar" aria-hidden="true">
+    <div class="busca" id="busca" role="dialog" aria-label="Buscar produtos" aria-modal="true" aria-hidden="true">
       <div class="busca-topo">
-        <label class="campo busca-campo">${ic('search')}
-          <input id="busca-in" type="search" placeholder="Buscar produtos, coleções..." autocomplete="off">
-          <button type="button" id="busca-limpar" aria-label="Limpar">${ic('close')}</button>
-        </label>
+        <div class="campo busca-campo">${ic('search')}
+          <input id="busca-in" type="search" aria-label="Buscar por nome ou categoria" placeholder="Buscar por nome ou categoria" autocomplete="off">
+          <button type="button" id="busca-limpar" aria-label="Limpar busca">${ic('close')}</button>
+        </div>
         <button class="cancelar" type="button" data-fechar>Cancelar</button>
       </div>
-      <div class="abas">${['Tudo', 'Produtos', 'Coleções', 'Marcas', 'Conteúdo'].map((a, i) => `<button type="button" class="${i ? '' : 'on'}">${a}</button>`).join('')}</div>
       <div class="busca-corpo">
-        <div><h5>Produtos</h5><div id="busca-res"></div></div>
-        <div>
-          <h5>Sugestões</h5>
-          <div class="sug">${sugestoes.map(s => `<a href="#" data-sug="${s}">${ic('search')}${s}</a>`).join('')}</div>
-          <h5 style="margin-top:1.4rem">Coleções</h5>
-          <a class="col-mini" href="colecoes.html"><div class="foto" style="--foto:var(--img-busca-colecao)" role="img" aria-label="Coleção Drip Essentials"></div><div><b>DRIP ESSENTIALS</b><br><small>Ver coleção</small></div>${ic('chev')}</a>
-        </div>
-        <aside class="promo"><span class="tag" style="align-self:flex-start">Drops exclusivos</span><h4>Moletons exclusivos</h4><p>Estilo, conforto e atitude em cada detalhe.</p><a class="btn sm" href="colecoes.html">Ver todos →</a></aside>
+        <p class="auth-retorno" id="busca-status" role="status"></p>
+        <ul id="busca-res" aria-label="Resultados da busca"></ul>
+        <button class="btn sm" id="busca-tentar" type="button" hidden>Tentar novamente</button>
       </div>
     </div>
 
@@ -212,12 +199,14 @@
 
   const veu = $('#veu');
   const alvos = { busca: $('#busca'), fav: $('#g-fav'), cart: $('#g-cart') };
+  let acionadorBusca;
   function abrir(k) {
     Object.values(alvos).forEach(e => { e.classList.remove('on'); e.setAttribute('aria-hidden', 'true'); });
     alvos[k].classList.add('on'); alvos[k].setAttribute('aria-hidden', 'false'); veu.classList.add('on');
     if (k === 'busca') $('#busca-in').focus();
   }
   function fechar() {
+    if (alvos.busca.classList.contains('on')) acionadorBusca?.focus();
     Object.values(alvos).forEach(e => { e.classList.remove('on'); e.setAttribute('aria-hidden', 'true'); });
     veu.classList.remove('on');
   }
@@ -226,7 +215,11 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') fechar(); });
 
   const liga = (rotulo, fn) => $$(`.header .circle[aria-label="${rotulo}"]`).forEach(b => b.addEventListener('click', fn));
-  liga('Buscar', () => abrir('busca'));
+  liga('Buscar', evento => {
+    acionadorBusca = evento.currentTarget;
+    abrir('busca');
+    carregarBusca();
+  });
   liga('Perfil', () => { location.href = 'perfil.html'; });
   liga('Favoritos', () => {
     abrir('fav');
@@ -234,17 +227,109 @@
   });
   liga('Carrinho', () => abrir('cart'));
 
-  function renderBusca(t = '') {
-    const l = buscaProdutos.filter(p => p.nome.toLowerCase().includes(t.toLowerCase()));
-    $('#busca-res').innerHTML = l.length ? l.map(p => `
-      <a class="res" href="colecoes.html">${foto(p.img)}<div><b>${p.nome}</b><small>${p.sub}</small></div><b>${moeda(p.preco)}</b>${ic('arrow')}</a>`).join('')
-      : '<p class="vazio">Nenhum produto encontrado.</p>';
+  const campoBusca = $('#busca-in');
+  const listaBusca = $('#busca-res');
+  const statusBusca = $('#busca-status');
+  const tentarBusca = $('#busca-tentar');
+  let catalogoBusca;
+  let carregandoBusca = false;
+
+  function normalizarBusca(texto) {
+    return texto.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   }
-  renderBusca();
-  $('#busca-in').addEventListener('input', e => renderBusca(e.target.value));
-  $('#busca-limpar').addEventListener('click', () => { $('#busca-in').value = ''; renderBusca(); $('#busca-in').focus(); });
-  $$('[data-sug]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); $('#busca-in').value = a.dataset.sug; renderBusca(a.dataset.sug); }));
-  $$('.abas button').forEach(b => b.addEventListener('click', () => { $$('.abas button').forEach(x => x.classList.toggle('on', x === b)); }));
+
+  function criarResultadoBusca(produto) {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.className = 'res';
+    link.href = 'produto.html?id=' + encodeURIComponent(produto.id_produto);
+
+    const miniatura = document.createElement('span');
+    miniatura.className = 'busca-foto';
+    if (produto.imagem_url) {
+      const imagem = document.createElement('img');
+      imagem.src = produto.imagem_url;
+      imagem.alt = '';
+      imagem.loading = 'lazy';
+      imagem.addEventListener('error', () => imagem.remove(), { once: true });
+      miniatura.append(imagem);
+    }
+
+    const descricao = document.createElement('span');
+    const nome = document.createElement('b');
+    const categoria = document.createElement('small');
+    const preco = document.createElement('b');
+    nome.textContent = produto.nome_produto;
+    categoria.textContent = produto.nome_categoria;
+    preco.textContent = moeda(Number(produto.preco));
+    descricao.append(nome, categoria);
+    link.append(miniatura, descricao, preco);
+    link.insertAdjacentHTML('beforeend', ic('arrow'));
+    item.append(link);
+    return item;
+  }
+
+  function renderBusca() {
+    if (!catalogoBusca) return;
+    const termos = normalizarBusca(campoBusca.value).split(' ');
+    const encontrados = catalogoBusca.filter(({ busca }) => termos.every(termo => busca.includes(termo)));
+    statusBusca.textContent = encontrados.length
+      ? `${encontrados.length} ${encontrados.length === 1 ? 'produto encontrado' : 'produtos encontrados'}`
+      : 'Nenhum produto encontrado.';
+    listaBusca.replaceChildren(...encontrados.map(({ produto }) => criarResultadoBusca(produto)));
+  }
+
+  async function carregarBusca() {
+    if (carregandoBusca) return;
+    carregandoBusca = true;
+    catalogoBusca = null;
+    tentarBusca.hidden = true;
+    statusBusca.textContent = 'Carregando produtos…';
+    listaBusca.replaceChildren();
+
+    try {
+      const resposta = await fetch('/api/produtos', { cache: 'no-store' });
+      if (!resposta.ok) throw new Error('Catálogo indisponível.');
+      const produtos = await resposta.json();
+      catalogoBusca = produtos.map(produto => ({
+        produto,
+        busca: normalizarBusca(`${produto.nome_produto} ${produto.nome_categoria || ''}`),
+      }));
+      renderBusca();
+    } catch {
+      statusBusca.textContent = 'Não foi possível carregar os produtos.';
+      tentarBusca.hidden = false;
+    } finally {
+      carregandoBusca = false;
+    }
+  }
+
+  campoBusca.addEventListener('input', renderBusca);
+  campoBusca.addEventListener('keydown', evento => {
+    if (evento.key === 'Enter' && !evento.isComposing) listaBusca.querySelector('a')?.focus();
+  });
+  $('#busca-limpar').addEventListener('click', () => {
+    campoBusca.value = '';
+    renderBusca();
+    campoBusca.focus();
+  });
+  tentarBusca.addEventListener('click', () => {
+    campoBusca.focus();
+    carregarBusca();
+  });
+  alvos.busca.addEventListener('keydown', evento => {
+    if (evento.key !== 'Tab') return;
+    const ultimo = alvos.busca.querySelector('#busca-tentar:not([hidden])')
+      || listaBusca.querySelector('li:last-child a') || alvos.busca.querySelector('[data-fechar]');
+
+    if (evento.shiftKey && evento.target === campoBusca) {
+      evento.preventDefault();
+      ultimo.focus();
+    } else if (!evento.shiftKey && evento.target === ultimo) {
+      evento.preventDefault();
+      campoBusca.focus();
+    }
+  });
 
   function iniciarFavoritos() {
     import('./favoritos.mjs').catch(() => {
