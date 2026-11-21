@@ -4,10 +4,12 @@ Plataforma web de streetwear digital-first, com catálogo de produtos, drops e r
 
 ## Links
 
-- **Site publicado:** [https://chario-sousa.github.io/driplab/](https://chario-sousa.github.io/driplab/)
+- **Site integrado na Vercel** — [Abrir DripLab](https://driplab-lovat.vercel.app/)
 - **Repositório GitHub:** [https://github.com/Chario-Sousa/driplab](https://github.com/Chario-Sousa/driplab)
+- **Documentação da API** — [Especificação OpenAPI](docs/api.json)
+- **Protótipo estático** — [GitHub Pages](https://chario-sousa.github.io/driplab/)
 
-> **Sobre a demonstração publicada:** o catálogo do GitHub Pages usa dados demonstrativos e o carrinho funciona no navegador. A versão integrada usa a API Express com o PostgreSQL do Supabase.
+O site da Vercel usa a API Express, o PostgreSQL e a autenticação do Supabase. O GitHub Pages hospeda o protótipo estático com dados demonstrativos.
 
 ## Objetivo do sistema
 
@@ -15,24 +17,17 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 
 ## Funcionalidades
 
-- Página inicial com catálogo demonstrativo de cinco produtos.
-- Adição de produtos ao carrinho.
-- Alteração de quantidades e remoção de itens.
-- Cálculo do subtotal, frete e total do carrinho.
-- Telas de coleções, cadastro, login e perfil.
-- Cadastro e login por e-mail, sessão persistente e perfil com dados da conta via Supabase Auth na versão Express.
-- Finalização do carrinho e histórico de pedidos da conta no perfil da versão Express.
-- Contagem regressiva, período de venda e limite de peças por drop na versão Express.
-- Votação da comunidade com um voto por conta e publicação de enquetes pelo painel.
-- API local para verificar a conexão com o banco e consultar produtos.
+- Catálogo com busca por nome ou categoria, filtros, detalhes e favoritos por conta.
+- Cadastro, login por e-mail e perfil via Supabase Auth.
+- Carrinho, registro de pedidos com baixa de estoque e histórico no perfil.
+- Drops com datas, contagem regressiva e limite compartilhado de unidades.
+- Painel administrativo para cadastrar e editar coleções, enviar capas e vincular produtos.
+- Votação da comunidade com um voto por conta, capas, contagem pública e encerramento pelo painel.
 
 ### Limitações atuais
 
-- No site publicado, os produtos são estáticos e não vêm do banco de dados.
-- A API possui os endpoints `GET /api/health` e `GET /api/produtos`.
-- A demonstração do GitHub Pages usa as telas estáticas de cadastro e login.
-- O carrinho da demonstração do GitHub Pages funciona só no navegador.
-- Comentários e gamificação estão representados na proposta e nas telas, mas não estão integrados à API.
+- O checkout registra pedidos como pendentes. Pagamento real e gestão de pedidos são etapas futuras.
+- Comentários, pontos, conquistas e recompensas fazem parte da evolução planejada.
 
 ## Tecnologias utilizadas
 
@@ -44,6 +39,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Sequelize e PostgreSQL no Supabase
 - MySQL e `mysql2` para execução local com o banco original
 - Git e GitHub
+- Vercel para publicação da versão integrada
 - GitHub Pages para publicação da demonstração estática
 
 ## Banco de dados e modelagem
@@ -100,7 +96,7 @@ Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finaliza
 
 `GET /api/drops` retorna as datas e as peças restantes de cada drop anunciado. A página inicial usa esses dados para mostrar quando abre ou encerra a venda.
 
-Defina o início, o encerramento opcional e o limite de peças na tabela `colecao`. Na migração, as datas antigas passaram a usar o fuso `America/Sao_Paulo`. O limite é compartilhado entre os produtos da coleção. Pedidos pendentes e confirmados ocupam esse limite.
+Defina o início, o encerramento opcional e o limite total de unidades em **Perfil → Gerenciar coleções**. O painel usa o horário de Brasília. Pedidos pendentes e confirmados ocupam o limite compartilhado da coleção.
 
 ## Execução local com o MySQL original
 
@@ -171,8 +167,10 @@ Acesse no navegador:
 - `docs/` — modelos do banco e arquivos estáticos publicados pelo GitHub Pages.
 - `package.json` — dependências e comandos do projeto.
 
-## Uso do site publicado
+## Roteiro de demonstração
 
-Acesse [https://chario-sousa.github.io/driplab/](https://chario-sousa.github.io/driplab/) para visualizar a demonstração estática. No catálogo, é possível adicionar produtos ao carrinho e testar os controles disponíveis na interface.
-
-Para testar a consulta integrada ao Supabase, use a rota `/api/produtos` na execução local ou em um deploy da Vercel com `DATABASE_URL` configurada.
+1. Abra o [site na Vercel](https://driplab-lovat.vercel.app/) e mostre o catálogo e a busca.
+2. Abra [Coleções](https://driplab-lovat.vercel.app/colecoes.html), selecione um drop e mostre a Shop filtrada.
+3. Entre na sua conta, abra **Perfil → Meus pedidos** e mostre um pedido de teste já registrado. Mostre também os favoritos salvos no perfil.
+4. Abra [Comunidade](https://driplab-lovat.vercel.app/comunidade.html) e mostre a enquete, a contagem e o voto registrado.
+5. Na conta administrativa, mostre **Gerenciar coleções** e **Gerenciar votações**. Para verificar a integração com o banco, abra [a rota de saúde](https://driplab-lovat.vercel.app/api/health).

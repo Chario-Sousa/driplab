@@ -1,0 +1,2208 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DripLab API",
+    "version": "1.0.0",
+    "description": "API REST do catálogo, drops, pedidos, favoritos, votações e painel do DripLab."
+  },
+  "servers": [
+    {
+      "url": "https://driplab-lovat.vercel.app",
+      "description": "Vercel"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Desenvolvimento local"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Verificar conexão com o banco",
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/produtos": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Listar o catálogo",
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Produto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drops": {
+      "get": {
+        "tags": [
+          "Drops"
+        ],
+        "summary": "Listar drops publicados e o horário do servidor",
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "agora": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "drops": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Drop"
+                      }
+                    }
+                  },
+                  "required": [
+                    "agora",
+                    "drops"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drops/{id}/capa": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Drops"
+        ],
+        "summary": "Abrir a capa do drop",
+        "responses": {
+          "200": {
+            "description": "Arquivo da capa",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos": {
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Consultar os pedidos da conta",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pedido"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Registrar pedido e baixar estoque",
+        "description": "Reenvie a mesma chave de solicitação para tentar novamente com os mesmos itens.",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarPedido"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id_pedido": {
+                      "type": "string",
+                      "pattern": "^[1-9][0-9]*$",
+                      "description": "Identificador inteiro de 64 bits representado como texto"
+                    }
+                  },
+                  "required": [
+                    "id_pedido"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/favoritos": {
+      "get": {
+        "tags": [
+          "Favoritos"
+        ],
+        "summary": "Consultar os favoritos da conta",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Favorito"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/favoritos/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Favoritos"
+        ],
+        "summary": "Salvar um produto nos favoritos",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Favorito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Favoritos"
+        ],
+        "summary": "Remover um favorito",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Operação concluída sem corpo"
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/votacoes": {
+      "get": {
+        "tags": [
+          "Votações"
+        ],
+        "summary": "Consultar a votação atual ou a última encerrada",
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "votacao": {
+                      "type": "object",
+                      "properties": {
+                        "id_votacao": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "titulo": {
+                          "type": "string"
+                        },
+                        "encerrada_em": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "opcoes": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Opcao"
+                          }
+                        }
+                      },
+                      "required": [
+                        "id_votacao",
+                        "titulo",
+                        "encerrada_em",
+                        "opcoes"
+                      ],
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "votacao"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/votacoes/{id}/opcoes/{opcao}/capa": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "opcao",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Votações"
+        ],
+        "summary": "Abrir a capa da opção",
+        "responses": {
+          "200": {
+            "description": "Arquivo da capa",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/votacoes/{id}/meu-voto": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Votações"
+        ],
+        "summary": "Consultar o voto da conta",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeuVoto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Votações"
+        ],
+        "summary": "Registrar um voto da conta",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_opcao": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4
+                  }
+                },
+                "required": [
+                  "id_opcao"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A mesma opção já estava registrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeuVoto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeuVoto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/acesso": {
+      "get": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Verificar a permissão administrativa",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Operação concluída sem corpo"
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/colecoes": {
+      "get": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Listar coleções e produtos para o painel",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DadosAdmin"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Criar uma coleção",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarColecao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id_colecao": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "id_colecao"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Imagem acima do limite",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/colecoes/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Editar uma coleção",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditarColecao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id_colecao": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "id_colecao"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Imagem acima do limite",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/votacoes": {
+      "post": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Abrir votação com duas a quatro opções",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarVotacao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A chave já corresponde a uma votação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id_votacao": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "required": [
+                    "id_votacao"
+                  ]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id_votacao": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "required": [
+                    "id_votacao"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/votacoes/{id}/encerramento": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Encerrar a votação",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "encerrada_em": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "encerrada_em"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/votacoes/{id}/opcoes/{opcao}/capa": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "opcao",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Administração"
+        ],
+        "summary": "Enviar a capa de uma opção",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "capa": {
+                    "$ref": "#/components/schemas/Capa"
+                  }
+                },
+                "required": [
+                  "capa"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Operação concluída sem corpo"
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Conta sem acesso administrativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ou capa não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Imagem acima do limite",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "supabaseBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token de acesso da sessão do Supabase Auth. As rotas administrativas também conferem a permissão da conta."
+      }
+    },
+    "schemas": {
+      "Mensagem": {
+        "type": "object",
+        "properties": {
+          "mensagem": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mensagem"
+        ]
+      },
+      "Erro": {
+        "type": "object",
+        "properties": {
+          "erro": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "erro"
+        ]
+      },
+      "Capa": {
+        "type": "object",
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ]
+          },
+          "dados": {
+            "type": "string",
+            "format": "byte",
+            "description": "Imagem em base64 com até 1 MB antes da codificação"
+          }
+        },
+        "required": [
+          "tipo",
+          "dados"
+        ]
+      },
+      "Produto": {
+        "type": "object",
+        "properties": {
+          "id_produto": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nome_produto": {
+            "type": "string"
+          },
+          "imagem_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao_produto": {
+            "type": "string"
+          },
+          "preco": {
+            "type": "string"
+          },
+          "estoque": {
+            "type": "integer"
+          },
+          "nome_categoria": {
+            "type": "string"
+          },
+          "id_colecao": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          "nome_colecao": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado_drop": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id_produto",
+          "nome_produto",
+          "imagem_url",
+          "descricao_produto",
+          "preco",
+          "estoque",
+          "nome_categoria",
+          "id_colecao",
+          "nome_colecao",
+          "estado_drop"
+        ]
+      },
+      "Favorito": {
+        "type": "object",
+        "properties": {
+          "id_produto": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nome_produto": {
+            "type": "string"
+          },
+          "imagem_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id_produto",
+          "nome_produto",
+          "imagem_url"
+        ]
+      },
+      "Drop": {
+        "type": "object",
+        "properties": {
+          "id_colecao": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nome_colecao": {
+            "type": "string"
+          },
+          "data_lancamento": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data_encerramento": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "limite_pecas": {
+            "type": "integer"
+          },
+          "pecas_restantes": {
+            "type": "integer"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "agendado",
+              "em_andamento",
+              "esgotado",
+              "encerrado"
+            ]
+          },
+          "capa_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id_colecao",
+          "nome_colecao",
+          "data_lancamento",
+          "data_encerramento",
+          "limite_pecas",
+          "pecas_restantes",
+          "estado",
+          "capa_url"
+        ]
+      },
+      "Opcao": {
+        "type": "object",
+        "properties": {
+          "id_opcao": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "nome": {
+            "type": "string"
+          },
+          "votos": {
+            "type": "integer"
+          },
+          "capa_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id_opcao",
+          "nome",
+          "votos",
+          "capa_url"
+        ]
+      },
+      "Votacao": {
+        "type": "object",
+        "properties": {
+          "id_votacao": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "encerrada_em": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "opcoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Opcao"
+            }
+          }
+        },
+        "required": [
+          "id_votacao",
+          "titulo",
+          "encerrada_em",
+          "opcoes"
+        ]
+      },
+      "MeuVoto": {
+        "type": "object",
+        "properties": {
+          "id_opcao": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id_opcao"
+        ]
+      },
+      "Pedido": {
+        "type": "object",
+        "properties": {
+          "id_pedido": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Identificador inteiro de 64 bits representado como texto"
+          },
+          "data_pedido": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pendente",
+              "confirmado",
+              "cancelado"
+            ]
+          },
+          "valor_total": {
+            "type": "string"
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "nome_produto": {
+                  "type": "string"
+                },
+                "quantidade": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "preco_unitario": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "nome_produto",
+                "quantidade",
+                "preco_unitario"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id_pedido",
+          "data_pedido",
+          "status",
+          "valor_total",
+          "itens"
+        ]
+      },
+      "DadosAdmin": {
+        "type": "object",
+        "properties": {
+          "colecoes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id_colecao": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "nome_colecao": {
+                  "type": "string"
+                },
+                "ativa": {
+                  "type": "boolean"
+                },
+                "limite_pecas": {
+                  "type": "integer"
+                },
+                "versao": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "tem_capa": {
+                  "type": "boolean"
+                },
+                "lancamento": {
+                  "type": "string"
+                },
+                "encerramento": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id_colecao",
+                "nome_colecao",
+                "ativa",
+                "limite_pecas",
+                "versao",
+                "tem_capa",
+                "lancamento",
+                "encerramento"
+              ]
+            }
+          },
+          "produtos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id_produto": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "nome_produto": {
+                  "type": "string"
+                },
+                "id_colecao": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id_produto",
+                "nome_produto",
+                "id_colecao"
+              ]
+            }
+          }
+        },
+        "required": [
+          "colecoes",
+          "produtos"
+        ]
+      },
+      "CriarPedido": {
+        "type": "object",
+        "properties": {
+          "chave_solicitacao": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id_produto": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "quantidade": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "id_produto",
+                "quantidade"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "chave_solicitacao",
+          "itens"
+        ]
+      },
+      "CriarColecao": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "lancamento": {
+            "type": "string",
+            "description": "Data e hora local de Brasília, como 2026-11-20T18:30"
+          },
+          "encerramento": {
+            "type": "string",
+            "nullable": true
+          },
+          "limite": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "ativa": {
+            "type": "boolean"
+          },
+          "produtos": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "uniqueItems": true
+          },
+          "mover": {
+            "type": "boolean"
+          },
+          "capa": {
+            "$ref": "#/components/schemas/Capa"
+          },
+          "remover_capa": {
+            "type": "boolean"
+          },
+          "chave_criacao": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "nome",
+          "lancamento",
+          "limite",
+          "ativa",
+          "produtos",
+          "chave_criacao"
+        ]
+      },
+      "EditarColecao": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "lancamento": {
+            "type": "string",
+            "description": "Data e hora local de Brasília, como 2026-11-20T18:30"
+          },
+          "encerramento": {
+            "type": "string",
+            "nullable": true
+          },
+          "limite": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "ativa": {
+            "type": "boolean"
+          },
+          "produtos": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "uniqueItems": true
+          },
+          "mover": {
+            "type": "boolean"
+          },
+          "capa": {
+            "$ref": "#/components/schemas/Capa"
+          },
+          "remover_capa": {
+            "type": "boolean"
+          },
+          "versao": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "nome",
+          "lancamento",
+          "limite",
+          "ativa",
+          "produtos",
+          "versao"
+        ]
+      },
+      "CriarVotacao": {
+        "type": "object",
+        "properties": {
+          "id_votacao": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titulo": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "opcoes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "minItems": 2,
+            "maxItems": 4
+          }
+        },
+        "required": [
+          "id_votacao",
+          "titulo",
+          "opcoes"
+        ]
+      }
+    }
+  }
+}
