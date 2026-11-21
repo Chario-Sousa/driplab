@@ -32,8 +32,10 @@
 #colecoes-tentar{margin-bottom:1rem}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:1.1rem}
 .card{
-  min-height:174px;padding:1.1rem;display:grid;align-content:start;justify-items:start;gap:.6rem;
-  border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#21160d,#101010 72%);
+  min-height:248px;aspect-ratio:1/1.1;padding:1.1rem;display:grid;align-content:end;justify-items:start;gap:.6rem;
+  border:1px solid var(--line);border-radius:22px;
+  background:linear-gradient(0deg,#080808 4%,rgba(8,8,8,.8) 43%,transparent 79%),
+    var(--img-banner-colecoes) center/cover,#17100b;
 }
 .card:hover,.card:focus-visible{border-color:var(--orange)}
 .card h3{font-family:var(--display);font-size:1rem;overflow-wrap:anywhere}
