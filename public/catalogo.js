@@ -138,6 +138,18 @@
     linha.append(informacoes, adicionar);
     card.append(foto, linha);
 
+    if (shop && compravel) {
+      const favorito = document.createElement('button');
+      favorito.type = 'button';
+      favorito.className = 'circle favorito-toggle';
+      favorito.dataset.favorito = produto.id_produto;
+      favorito.setAttribute('aria-pressed', 'false');
+      favorito.setAttribute('aria-label', `Favorito: ${produto.nome_produto}`);
+      favorito.innerHTML = window.dlIcone('star');
+      favorito.disabled = true;
+      card.append(favorito);
+    }
+
     return card;
   }
 
@@ -191,6 +203,7 @@
         : 'Nenhum produto encontrado.';
       limpar.disabled = !categoria.value && !colecao.value;
       container.replaceChildren(...visiveis.map(produto => criarCard(produto, true)));
+      document.dispatchEvent(new Event('driplab:catalogo-renderizado'));
     }
 
     async function carregar() {
@@ -228,6 +241,7 @@
 
     const quadro = detalhe.querySelector('.produto-detalhe');
     const botao = quadro.querySelector('.produto-adicionar');
+    const favorito = quadro.querySelector('[data-favorito]');
     const tentar = detalhe.querySelector('[data-tentar-novamente]');
     let produto;
 
@@ -259,9 +273,12 @@
         preencherTexto('descricao', produto.descricao_produto);
         preencherTexto('estado', estado || (estoque > 0 ? disponibilidade : 'Disponível'));
         botao.disabled = Boolean(estado);
+        favorito.dataset.favorito = produto.id_produto;
+        favorito.setAttribute('aria-label', `Favorito: ${produto.nome_produto}`);
         document.title = `${produto.nome_produto} — DripLab`;
         status.textContent = '';
         quadro.hidden = false;
+        document.dispatchEvent(new Event('driplab:catalogo-renderizado'));
       } catch {
         status.textContent = 'Não foi possível carregar o produto.';
         tentar.hidden = false;

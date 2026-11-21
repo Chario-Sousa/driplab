@@ -73,8 +73,9 @@
 
       if (error) throw error;
       if (data.session) {
-        const voltouDoCarrinho = new URLSearchParams(location.search).get('voltar') === 'carrinho';
-        location.replace(!cadastro && voltouDoCarrinho ? 'index.html?carrinho=1' : 'perfil.html');
+        const voltar = new URLSearchParams(location.search).get('voltar');
+        const destinos = new Map([['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html']]);
+        location.replace((!cadastro && destinos.get(voltar)) || 'perfil.html');
         return;
       }
 

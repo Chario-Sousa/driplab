@@ -80,7 +80,10 @@
     </section>
 
     <section class="cartao" id="favoritos">
-      <div class="cartao-t"><i data-ic="star"></i><h3>Favoritos<small>Seus produtos salvos.</small></h3><button class="todos" style="background:none;border:0;color:#fff;cursor:pointer" onclick="document.querySelector('.header [aria-label=Favoritos]').click()">Ver todos <i data-ic="arrow"></i></button></div>
+      <div class="cartao-t"><i data-ic="star"></i><h3>Favoritos</h3></div>
+      <p class="auth-retorno" role="status" data-favoritos-status>Carregando favoritos…</p>
+      <ul class="favoritos-lista" data-favoritos-lista></ul>
+      <button type="button" class="btn sm" data-favoritos-tentar hidden>Tentar novamente</button>
     </section>
   </aside>
 </div>

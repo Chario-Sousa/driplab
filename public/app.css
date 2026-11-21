@@ -202,3 +202,21 @@
   .pedidos{grid-template-columns:1fr}
   .busca-corpo{grid-template-columns:1fr}
 }
+.favoritos-lista{display:grid;gap:.65rem}
+.favoritos-lista li{
+  display:flex;align-items:center;gap:.45rem;
+  padding:.45rem;border:1px solid var(--line);border-radius:12px;
+}
+.favoritos-lista a{
+  display:flex;flex:1;align-items:center;gap:.55rem;
+  min-width:0;font-size:.8rem;overflow-wrap:anywhere;
+}
+.favoritos-lista a:hover{text-decoration:underline}
+.favoritos-lista button{flex:none}
+.favorito-miniatura{
+  display:block;flex:none;width:44px;height:44px;background:#222;border-radius:7px;
+}
+.favorito-miniatura img{display:block;width:100%;height:100%;object-fit:contain}
+[data-favoritos-tentar][hidden],[data-favoritos-perfil][hidden],[data-favoritos-login][hidden]{display:none}
+#favoritos{scroll-margin-top:6rem}
+#favoritos .auth-retorno:empty,.favoritos-painel .auth-retorno:empty{display:none}

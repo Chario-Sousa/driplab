@@ -70,7 +70,7 @@
   grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));
   gap:1rem;
 }
-.shop-grade .prod{min-width:0;padding:.7rem;transition:border-color .2s}
+.shop-grade .prod{position:relative;min-width:0;padding:.7rem;transition:border-color .2s}
 .shop-grade .prod:hover,.shop-grade .prod:focus-within{border-color:var(--orange)}
 .shop-grade .img{
   display:grid;
@@ -84,6 +84,10 @@
 .shop-grade b,.shop-grade .row span{display:block;font-size:.9rem;overflow-wrap:anywhere}
 .shop-grade .row span{color:var(--orange)}
 .shop-grade .row .circle{flex:none}
+.shop-grade .favorito-toggle{position:absolute;top:1rem;right:1rem;background:#111}
+.favorito-toggle[aria-pressed="true"]{color:var(--orange);border-color:var(--orange)}
+.favorito-toggle[aria-pressed="true"] .ico{fill:currentColor}
+.favorito-toggle:disabled{opacity:.55;cursor:default}
 a.produto-link{display:block}
 .produto-link:hover,.produto-voltar:hover{text-decoration:underline;text-underline-offset:3px}
 
@@ -114,6 +118,7 @@ a.produto-link{display:block}
 .produto-descricao{white-space:pre-line;margin-bottom:.9rem}
 .produto-preco{margin:.85rem 0;color:var(--orange);font-size:1.55rem;font-weight:700}
 .produto-estado{margin-bottom:1.15rem;font-size:.9rem}
+.produto-acoes{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem}
 .produto-adicionar:disabled{opacity:.55;transform:none;cursor:default;color:#fff;background:var(--glass);border-color:var(--line)}
 
 @media(max-width:760px){

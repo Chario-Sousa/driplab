@@ -43,7 +43,11 @@
       <p class="produto-preco" data-produto-preco></p>
       <p class="produto-descricao" data-produto-descricao hidden></p>
       <p class="produto-estado" data-produto-estado></p>
-      <button type="button" class="btn produto-adicionar" disabled><span data-ic="cart"></span> Adicionar ao carrinho</button>
+      <div class="produto-acoes">
+        <button type="button" class="btn produto-adicionar" disabled><span data-ic="cart"></span> Adicionar ao carrinho</button>
+        <button type="button" class="circle favorito-toggle" data-favorito aria-pressed="false" disabled><span data-ic="star"></span></button>
+      </div>
+      <p class="auth-retorno" role="status" data-favoritos-aviso hidden></p>
     </div>
   </article>
 </main>

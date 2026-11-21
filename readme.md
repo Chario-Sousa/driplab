@@ -55,6 +55,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 
 - [Migração do catálogo para PostgreSQL e dados de exemplo](sql/catalogo_postgres.sql)
 - [Migração de pedidos e baixa de estoque](sql/pedidos_postgres.sql)
+- [Migração de favoritos por conta](sql/favoritos_postgres.sql)
 - [Migração dos períodos e limites de drops](sql/drops_postgres.sql)
 - [Criação do banco original no MySQL](sql/criar_banco.sql)
 - [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
@@ -70,7 +71,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 ## Execução com Supabase
 
 1. Instale as dependências com `npm ci`.
-2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql` e `sql/drops_postgres.sql`, nessa ordem.
+2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql`, `sql/drops_postgres.sql` e `sql/favoritos_postgres.sql`, nessa ordem.
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
 5. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).

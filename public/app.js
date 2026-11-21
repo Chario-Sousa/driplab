@@ -100,13 +100,11 @@
   const sugestoes = ['moletom drip lab', 'moletom oversized', 'moletom preto', 'moletom com capuz', 'moletom feminino'];
   const foto = (v, cls = '') => `<div class="foto ${cls}" style="--foto:var(${v})" role="img" aria-label="Imagem do produto"></div>`;
 
-  let favoritos = produtos.slice(0, 5).map(p => p.id);
   const chaveCarrinho = 'driplab:carrinho';
   const rascunho = lerCarrinho();
   let carrinho = rascunho.itens;
   let tentativa = rascunho.tentativa;
   let finalizando = false;
-  const prod = id => produtos.find(p => p.id === id);
   const textoSeguro = texto => texto.replace(/[&<>"']/g, caractere => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[caractere]);
@@ -160,9 +158,14 @@
     </div>
 
     <aside class="gaveta fav" id="g-fav" aria-label="Favoritos" aria-hidden="true">
-      <div class="g-topo">${ic('star')}<div><h2>Meus favoritos</h2><small id="fav-n"></small></div><button class="circle fechar" data-fechar aria-label="Fechar">${ic('close')}</button></div>
-      <div class="g-lista" id="fav-lista"></div>
-      <a class="btn-borda" href="perfil.html">Ver todos os favoritos ${ic('arrow')}</a>
+      <div class="g-topo">${ic('star')}<h2>Meus favoritos</h2><button class="circle fechar" data-fechar aria-label="Fechar">${ic('close')}</button></div>
+      <div class="g-lista favoritos-painel">
+        <p class="auth-retorno" role="status" data-favoritos-status>Carregando favoritos…</p>
+        <ul class="favoritos-lista" data-favoritos-lista></ul>
+        <button type="button" class="btn sm" data-favoritos-tentar hidden>Tentar novamente</button>
+      </div>
+      <a class="btn-borda" href="perfil.html#favoritos" data-favoritos-perfil hidden>Ver no perfil ${ic('arrow')}</a>
+      <a class="btn-borda" href="login.html?voltar=favoritos" data-favoritos-login hidden>Entrar na conta ${ic('arrow')}</a>
     </aside>
 
     <aside class="gaveta" id="g-cart" aria-label="Carrinho" aria-hidden="true">
@@ -191,7 +194,10 @@
   const liga = (rotulo, fn) => $$(`.header .circle[aria-label="${rotulo}"]`).forEach(b => b.addEventListener('click', fn));
   liga('Buscar', () => abrir('busca'));
   liga('Perfil', () => { location.href = 'perfil.html'; });
-  liga('Favoritos', () => abrir('fav'));
+  liga('Favoritos', () => {
+    abrir('fav');
+    iniciarFavoritos();
+  });
   liga('Carrinho', () => abrir('cart'));
 
   function renderBusca(t = '') {
@@ -206,15 +212,12 @@
   $$('[data-sug]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); $('#busca-in').value = a.dataset.sug; renderBusca(a.dataset.sug); }));
   $$('.abas button').forEach(b => b.addEventListener('click', () => { $$('.abas button').forEach(x => x.classList.toggle('on', x === b)); }));
 
-  function renderFav() {
-    $('#fav-n').textContent = `${favoritos.length} produto${favoritos.length === 1 ? '' : 's'} salvo${favoritos.length === 1 ? '' : 's'}`;
-    $('#fav-lista').innerHTML = favoritos.length ? favoritos.map(id => { const p = prod(id); return `
-      <div class="item" style="grid-template-columns:72px 1fr auto">${foto(p.img)}
-        <div><b>${p.nome}</b><small>${p.info}</small><b style="margin-top:.5rem">${moeda(p.preco)}</b></div>
-        <div class="fim"><button data-fav-rm="${id}" aria-label="Remover">${ic('trash')}</button><button data-fav-add="${id}" aria-label="Adicionar ao carrinho">${ic('cart')}</button></div>
-      </div>`; }).join('') : '<p class="vazio">Você ainda não favoritou nada.</p>';
-    $$('[data-fav-rm]').forEach(b => b.onclick = () => { favoritos = favoritos.filter(x => x !== b.dataset.favRm); renderFav(); });
-    $$('[data-fav-add]').forEach(b => b.onclick = () => adicionarAoCarrinho(prod(b.dataset.favAdd)));
+  function iniciarFavoritos() {
+    import('./favoritos.mjs').catch(() => {
+      $$('[data-favoritos-status]').forEach(campo => {
+        campo.textContent = 'Não foi possível abrir favoritos. Atualize a página.';
+      });
+    });
   }
 
   function mostrarRetorno(mensagem, erro = false) {
@@ -325,7 +328,8 @@
   }
 
   $('#finalizar-compra').addEventListener('click', finalizarCompra);
-  renderFav(); renderCart();
+  renderCart();
+  if ($('[data-shop], [data-produto], [data-perfil]')) iniciarFavoritos();
   if (new URLSearchParams(location.search).get('carrinho') === '1' && carrinho.length) abrir('cart');
 
   document.addEventListener('driplab:add-to-cart', (evento) => {

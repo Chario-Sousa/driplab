@@ -4,12 +4,14 @@ const express = require('express');
 const path = require('path');
 const sequelize = require('./config/database');
 const pedidos = require('./routes/pedidos');
+const favoritos = require('./routes/favoritos');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/pedidos', pedidos);
+app.use('/api/favoritos', favoritos);
 
 app.get('/', (req, res) => {
   res.redirect('/index.html');

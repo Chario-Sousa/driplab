@@ -1,35 +1,12 @@
 const { Router } = require('express');
-const { url, chavePublica } = require('../../public/auth-config.json');
+const { autenticar, uuid } = require('../middleware/sessao');
 const sequelize = require('../config/database');
 
 const pedidos = Router();
 
-pedidos.use(async (req, res, next) => {
-  res.set('Cache-Control', 'no-store');
-  const token = req.get('Authorization')?.match(/^Bearer ([^\s]+)$/i)?.[1];
-  if (!token) return res.status(401).json({ erro: 'Entre na sua conta para continuar.' });
+pedidos.use(autenticar);
 
-  try {
-    const resposta = await fetch(new URL('/auth/v1/user', url), {
-      headers: { apikey: chavePublica, Authorization: 'Bearer ' + token },
-      signal: AbortSignal.timeout(8000),
-      redirect: 'error',
-    });
-    if ([400, 401, 403].includes(resposta.status)) {
-      return res.status(401).json({ erro: 'Sua sessão expirou. Entre novamente.' });
-    }
-    if (!resposta.ok) {
-      return res.status(503).json({ erro: 'Não foi possível validar sua sessão. Tente novamente.' });
-    }
-    const usuario = await resposta.json();
-    if (typeof usuario.id !== 'string' || !uuid.test(usuario.id)) {
-      return res.status(401).json({ erro: 'Sua sessão expirou. Entre novamente.' });
-    }
-    req.idUsuario = usuario.id;
-  } catch {
-    return res.status(503).json({ erro: 'Não foi possível validar sua sessão. Tente novamente.' });
-  }
-
+pedidos.use((req, res, next) => {
   if (sequelize?.getDialect() !== 'postgres') {
     return res.status(503).json({ erro: 'Pedidos indisponíveis neste ambiente.' });
   }
@@ -59,7 +36,6 @@ pedidos.get('/', async (req, res) => {
   }
 });
 
-const uuid = /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i;
 const inteiroPositivo = valor => Number.isInteger(valor) && valor > 0 && valor <= 2147483647;
 const conflitos = {
   estoque_insuficiente: 'Estoque insuficiente para um dos produtos do carrinho.',
