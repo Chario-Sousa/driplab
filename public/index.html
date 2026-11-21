@@ -44,7 +44,8 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .about p,.community p,.drops p{margin:1.2rem 0 1.6rem;max-width:42ch}
 .feats{display:grid;gap:1.4rem;padding-left:2rem;border-left:1px solid var(--line)}
 .feats li{display:flex;gap:1rem;align-items:center}
-.feats em{flex:none;width:52px;height:52px;border:1.5px solid var(--orange);border-radius:50%}
+.feats em{flex:none;width:52px;height:52px;display:grid;place-items:center;border:1.5px solid var(--orange);border-radius:50%;color:var(--orange)}
+.feats .ico{width:26px;height:26px}
 .feats b{display:block;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}
 .feats small{color:var(--muted)}
 
@@ -150,10 +151,10 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
         <a class="btn" href="#contato">Fale conosco →</a>
       </div>
       <ul class="feats">
-        <li><em></em><div><b>Drops limitados</b><small>Coleções exclusivas</small></div></li>
-        <li><em></em><div><b>Comunidade</b><small>Vote, comente, interaja</small></div></li>
-        <li><em></em><div><b>Gamificação</b><small>Conquiste recompensas</small></div></li>
-        <li><em></em><div><b>Experiências</b><small>Muito além da compra.</small></div></li>
+        <li><em><i data-ic="parachute"></i></em><div><b>Drops limitados</b><small>Coleções exclusivas</small></div></li>
+        <li><em><i data-ic="users"></i></em><div><b>Comunidade</b><small>Vote, comente, interaja</small></div></li>
+        <li><em><i data-ic="gamepad"></i></em><div><b>Gamificação</b><small>Conquiste recompensas</small></div></li>
+        <li><em><i data-ic="monitor"></i></em><div><b>Experiências</b><small>Muito além da compra.</small></div></li>
       </ul>
     </div>
   </section>
