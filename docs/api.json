@@ -3,7 +3,7 @@
   "info": {
     "title": "DripLab API",
     "version": "1.0.0",
-    "description": "API REST do catálogo, drops, pedidos, favoritos, votações e painel do DripLab."
+    "description": "API REST do catálogo, drops, pedidos, favoritos, comentários, votações e painel do DripLab."
   },
   "servers": [
     {
@@ -16,6 +16,355 @@
     }
   ],
   "paths": {
+    "/api/comentarios/{tipo}/{alvo}": {
+      "parameters": [
+        {
+          "name": "tipo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "votacao",
+              "drop"
+            ]
+          }
+        },
+        {
+          "name": "alvo",
+          "in": "path",
+          "required": true,
+          "description": "UUID da votação ou identificador numérico do drop.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Comunidade"
+        ],
+        "summary": "Listar comentários publicados",
+        "description": "Lista a conversa da votação ou do drop publicado. Com um token válido, o campo meu indica os comentários da conta. A página retorna até 20 comentários.",
+        "security": [
+          {},
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "antes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "description": "Identificador retornado em proximo para carregar comentários anteriores."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comentários em ordem do mais recente para o mais antigo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "itens": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Comentario"
+                      }
+                    },
+                    "proximo": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647,
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "itens",
+                    "proximo"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversa indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Comunidade"
+        ],
+        "summary": "Publicar comentário",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "texto": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "chave_publicacao": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "texto",
+                  "chave_publicacao"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A mesma tentativa já foi publicada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comentario"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Comentário publicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comentario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversa indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Chave de publicação já utilizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/comentarios/{tipo}/{alvo}/{id}": {
+      "parameters": [
+        {
+          "name": "tipo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "votacao",
+              "drop"
+            ]
+          }
+        },
+        {
+          "name": "alvo",
+          "in": "path",
+          "required": true,
+          "description": "UUID da votação ou identificador numérico do drop.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        }
+      ],
+      "delete": {
+        "tags": [
+          "Comunidade"
+        ],
+        "summary": "Apagar um comentário da própria conta",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comentário removido"
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comentário indisponível para a conta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -1665,6 +2014,36 @@
       }
     },
     "schemas": {
+      "Comentario": {
+        "type": "object",
+        "properties": {
+          "id_comentario": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "autor": {
+            "type": "string"
+          },
+          "texto": {
+            "type": "string"
+          },
+          "publicado_em": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "meu": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id_comentario",
+          "autor",
+          "texto",
+          "publicado_em",
+          "meu"
+        ]
+      },
       "Mensagem": {
         "type": "object",
         "properties": {

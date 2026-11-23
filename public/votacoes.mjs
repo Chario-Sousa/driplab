@@ -1,6 +1,7 @@
 import { obterAuth } from './sessao.mjs';
 import { arquivoCapaValido, lerCapa } from './capa.mjs';
 import { capaColecao } from './capas-colecoes.mjs';
+import { montarComentarios } from './comentarios.mjs';
 
 async function sessaoAtual() {
   const auth = await obterAuth();
@@ -73,6 +74,8 @@ function iniciarVotacao(pagina) {
   const botao = form.querySelector('[type=submit]');
   const entrar = pagina.querySelector('[data-entrar]');
   const atualizar = pagina.querySelector('[data-atualizar]');
+  const comentarios = pagina.querySelector('[data-comentarios]');
+  const atalho = document.querySelector('[data-atalho-comentarios]');
   let atual;
 
   async function carregar(mensagem) {
@@ -81,6 +84,8 @@ function iniciarVotacao(pagina) {
     try {
       const dados = await consultar('/api/votacoes');
       atual = dados.votacao;
+      montarComentarios(comentarios, 'votacao', atual?.id_votacao);
+      atalho.hidden = !atual;
       titulo.textContent = atual?.titulo || 'Votação';
       form.hidden = !atual;
       entrar.hidden = true;

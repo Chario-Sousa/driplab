@@ -23,11 +23,12 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Drops com datas, contagem regressiva e limite compartilhado de unidades.
 - Painel administrativo para cadastrar e editar coleções, enviar capas e vincular produtos.
 - Votação da comunidade com um voto por conta, capas, contagem pública e encerramento pelo painel.
+- Comentários por votação e por drop, com leitura pública e exclusão pelo autor.
 
 ### Limitações atuais
 
 - O checkout registra pedidos como pendentes. Pagamento real e gestão de pedidos são etapas futuras.
-- Comentários, pontos, conquistas e recompensas fazem parte da evolução planejada.
+- Pontos, conquistas e recompensas fazem parte da evolução planejada.
 
 ## Tecnologias utilizadas
 
@@ -57,6 +58,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 - [Migração do painel administrativo de coleções](sql/admin_colecoes_postgres.sql)
 - [Migração de votações da comunidade](sql/votacoes_postgres.sql)
 - [Migração das capas das opções de votação](sql/capas_votacoes_postgres.sql)
+- [Migração dos comentários da Comunidade](sql/comentarios_postgres.sql)
 - [Criação do banco original no MySQL](sql/criar_banco.sql)
 - [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
 
@@ -71,7 +73,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 ## Execução com Supabase
 
 1. Clone o repositório, abra a pasta `driplab` e instale as dependências com `npm ci`. Use **Node.js 22 ou superior**.
-2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql`, `sql/drops_postgres.sql`, `sql/favoritos_postgres.sql`, `sql/admin_colecoes_postgres.sql`, `sql/votacoes_postgres.sql` e `sql/capas_votacoes_postgres.sql`, nessa ordem.
+2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql`, `sql/drops_postgres.sql`, `sql/favoritos_postgres.sql`, `sql/admin_colecoes_postgres.sql`, `sql/votacoes_postgres.sql`, `sql/capas_votacoes_postgres.sql` e `sql/comentarios_postgres.sql`, nessa ordem.
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
 5. Em `public/auth-config.json`, configure `url` com a URL do mesmo projeto Supabase e `chavePublica` com a chave publicável desse projeto. Esse arquivo é servido ao navegador e deve conter apenas a configuração pública.
@@ -186,5 +188,5 @@ Acesse no navegador:
 1. Abra o [site na Vercel](https://driplab-lovat.vercel.app/) e mostre o catálogo e a busca.
 2. Abra [Coleções](https://driplab-lovat.vercel.app/colecoes.html), selecione um drop e mostre a Shop filtrada.
 3. Entre na sua conta, abra **Perfil → Meus pedidos** e mostre um pedido de teste já registrado. Mostre também os favoritos salvos no perfil.
-4. Abra [Comunidade](https://driplab-lovat.vercel.app/comunidade.html) e mostre a enquete, a contagem e o voto registrado.
+4. Abra **Comunidade** pelo menu principal e mostre a enquete, a contagem, o voto registrado e os comentários da votação. Na Shop filtrada por coleção, mostre os comentários daquele drop.
 5. Na conta administrativa, mostre **Gerenciar coleções** e **Gerenciar votações**. Para verificar a integração com o banco, abra [a rota de saúde](https://driplab-lovat.vercel.app/api/health).

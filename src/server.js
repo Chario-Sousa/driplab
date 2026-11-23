@@ -7,6 +7,7 @@ const pedidos = require('./routes/pedidos');
 const favoritos = require('./routes/favoritos');
 const admin = require('./routes/admin');
 const votacoes = require('./routes/votacoes');
+const comentarios = require('./routes/comentarios');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/pedidos', pedidos);
 app.use('/api/favoritos', favoritos);
 app.use('/api/votacoes', votacoes);
+app.use('/api/comentarios', comentarios);
 
 app.get('/', (req, res) => {
   res.redirect('/index.html');

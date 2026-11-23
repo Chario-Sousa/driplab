@@ -73,11 +73,17 @@
 
       if (error) throw error;
       if (data.session) {
-        const voltar = new URLSearchParams(location.search).get('voltar');
+        const parametros = new URLSearchParams(location.search);
+        const voltar = parametros.get('voltar');
+        const colecao = parametros.get('colecao') || '';
         const destinos = new Map([
           ['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html'], ['admin', 'admin.html'],
           ['votacao', 'comunidade.html'], ['admin-votacoes', 'admin-votacoes.html'],
+          ['comentarios', 'comunidade.html#comentarios'],
         ]);
+        if (/^[1-9]\d*$/.test(colecao) && Number(colecao) <= 2147483647) {
+          destinos.set('comentarios-drop', 'shop.html?colecao=' + colecao + '#comentarios');
+        }
         location.replace((!cadastro && destinos.get(voltar)) || 'perfil.html');
         return;
       }

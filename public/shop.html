@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="imagens.css">
 <link rel="stylesheet" href="app.css">
 <link rel="stylesheet" href="shop.css">
+<link rel="stylesheet" href="comunidade.css">
 </head>
 <body>
 <header class="header">
@@ -20,6 +21,7 @@
     <a class="on" href="shop.html" aria-current="page">Shop</a>
     <a href="index.html#drops">Novidades</a>
     <a href="colecoes.html">Coleções</a>
+    <a href="comunidade.html">Comunidade</a>
     <a href="index.html#sobre">Sobre</a>
   </nav>
   <div class="actions">
@@ -56,13 +58,16 @@
     <div class="shop-catalogo-topo">
       <h2 id="titulo-catalogo">Produtos</h2>
       <p data-catalogo-status role="status">Carregando produtos...</p>
+      <a class="btn sm" href="#comentarios" data-atalho-comentarios hidden>Comentários do drop</a>
     </div>
     <button class="btn sm" type="button" data-tentar-novamente hidden>Tentar novamente</button>
     <p class="auth-retorno" role="status" data-favoritos-aviso hidden></p>
     <div class="shop-grade" id="produtos-api"></div>
+    <section class="votacao-painel comunidade-comentarios" id="comentarios" aria-labelledby="comentarios-titulo" data-comentarios-drop hidden></section>
   </section>
 </main>
 <script src="app.js" defer></script>
 <script src="catalogo.js" defer></script>
+<script type="module" src="comentarios.mjs"></script>
 </body>
 </html>

@@ -3,6 +3,9 @@
   margin:2rem auto 3rem;
 }
 .comunidade-layout h1{font-size:clamp(1.6rem,5vw,3rem);margin-bottom:1rem}
+.comunidade-atalhos{display:flex;flex-wrap:wrap;gap:.65rem;margin-bottom:1rem}
+.comunidade-atalhos [hidden]{display:none}
+.comunidade-layout section{scroll-margin-top:7rem}
 .votacao-painel{
   display:grid;
   gap:1rem;
@@ -39,3 +42,21 @@ label.votacao-opcao{cursor:pointer}
 }
 .votacao-opcao strong{min-width:0;overflow-wrap:anywhere;font-size:.9rem}
 .votacao-opcao small{margin-left:auto;flex:none;color:var(--muted);font-size:.75rem}
+
+.comunidade-comentarios{margin-top:1rem;scroll-margin-top:7rem}
+.comunidade-comentarios[hidden]{display:none}
+.votacao-painel>.comunidade-comentarios{border-top:1px solid var(--line);padding-top:1rem}
+.comentarios-conteudo{display:grid;gap:.75rem}
+.comunidade-comentarios label{font-size:.9rem;font-weight:600}
+.comunidade-comentarios textarea{
+  width:100%;min-width:0;padding:.75rem;resize:vertical;font:inherit;
+  color:inherit;background:#191919;border:1px solid var(--line);border-radius:10px;
+}
+#comentario-limite,.comentarios-lista time{color:var(--muted);font-size:.78rem}
+.comentarios-lista{display:grid;gap:.65rem}
+.comentarios-lista li{
+  display:grid;gap:.45rem;min-width:0;padding:.8rem;
+  background:#191919;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere;
+}
+.comentario-cabecalho{display:flex;align-items:baseline;flex-wrap:wrap;gap:.35rem .75rem}
+.comentarios-lista p{white-space:pre-wrap}

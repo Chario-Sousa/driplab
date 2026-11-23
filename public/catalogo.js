@@ -196,7 +196,10 @@
     function atualizarUrl() {
       const url = new URL(location.href);
       if (colecao.value) url.searchParams.set('colecao', colecao.value);
-      else url.searchParams.delete('colecao');
+      else {
+        url.searchParams.delete('colecao');
+        if (url.hash === '#comentarios') url.hash = '';
+      }
       if (url.href !== location.href) history.replaceState(history.state, '', url);
     }
 
@@ -211,6 +214,7 @@
       limpar.disabled = !categoria.value && !colecao.value;
       container.replaceChildren(...visiveis.map(produto => criarCard(produto, true)));
       document.dispatchEvent(new Event('driplab:catalogo-renderizado'));
+      document.dispatchEvent(new CustomEvent('driplab:colecao-selecionada', { detail: colecao.value }));
     }
 
     async function carregar() {

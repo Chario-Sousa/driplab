@@ -24,6 +24,9 @@ async function autenticar(req, res, next) {
       return res.status(401).json({ erro: 'Sua sessão expirou. Entre novamente.' });
     }
     req.idUsuario = usuario.id;
+    if (typeof usuario.user_metadata?.nome === 'string') {
+      req.nomePublico = usuario.user_metadata.nome;
+    }
   } catch {
     return res.status(503).json({ erro: 'Não foi possível validar sua sessão. Tente novamente.' });
   }

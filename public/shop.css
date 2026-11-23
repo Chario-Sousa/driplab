@@ -55,6 +55,7 @@
 }
 .shop-banner h2{font-size:clamp(1.35rem,4vw,2.7rem)}
 .shop-catalogo{grid-area:catalogo;min-width:0}
+.shop-catalogo [data-atalho-comentarios][hidden]{display:none}
 .shop-catalogo-topo{
   display:flex;
   justify-content:space-between;

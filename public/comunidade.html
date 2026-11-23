@@ -20,6 +20,7 @@
     <a href="shop.html">Shop</a>
     <a href="index.html#drops">Novidades</a>
     <a href="colecoes.html">Coleções</a>
+    <a class="on" href="comunidade.html" aria-current="page">Comunidade</a>
     <a href="index.html#sobre">Sobre</a>
   </nav>
   <div class="actions">
@@ -29,9 +30,13 @@
     <button class="circle" type="button" aria-label="Carrinho"><i data-ic="cart"></i></button>
   </div>
 </header>
-<main class="comunidade-layout" data-votacao>
+<main class="comunidade-layout">
   <h1>Comunidade</h1>
-  <section class="votacao-painel" aria-labelledby="votacao-titulo">
+  <nav class="comunidade-atalhos" aria-label="Seções da comunidade">
+    <a class="btn sm" href="#votacao">Votação</a>
+    <a class="btn sm" href="#comentarios" data-atalho-comentarios hidden>Comentários da votação</a>
+  </nav>
+  <section class="votacao-painel" id="votacao" aria-labelledby="votacao-titulo" data-votacao>
     <h2 id="votacao-titulo">Votação</h2>
     <p class="votacao-estado" data-votacao-estado role="status">Carregando votação…</p>
     <form hidden>
@@ -43,6 +48,7 @@
     </form>
     <a class="btn" href="login.html?voltar=votacao" data-entrar hidden>Entrar para votar</a>
     <button class="btn sm" type="button" data-atualizar hidden>Atualizar votação</button>
+    <section class="comunidade-comentarios" id="comentarios" aria-labelledby="comentarios-titulo" data-comentarios hidden></section>
   </section>
 </main>
 <script src="app.js" defer></script>
