@@ -49,15 +49,16 @@
 .nl .crown{font-size:2rem;color:var(--orange)}
 .nl b{display:block;color:var(--orange);font-size:.85rem;text-transform:uppercase}
 .nl small{font-size:.75rem}
-.nl form{margin-left:auto;display:flex;min-width:0;max-width:100%;border:1px solid var(--line);border-radius:999px;overflow:hidden}
-.nl input{min-width:0;background:none;border:0;padding:.7rem .85rem;color:#fff;font:inherit;font-size:.8rem}
+.nl-inscricao{margin-left:auto;min-width:0;max-width:100%}
+.nl form{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.nl input{flex:1;min-width:0;background:none;border:0;padding:.7rem .85rem;color:#fff;font:inherit;font-size:.8rem}
 .nl button{background:var(--orange);color:#000;border:0;padding:0 .8rem;cursor:pointer;font-weight:500;border-radius:999px}
 .nl .social{font-size:1.1rem}
 @media(max-width:760px){
   .layout{grid-template-columns:minmax(0,1fr);gap:.85rem}
   .side{position:static;padding:.85rem}
   .banner{min-height:155px}
-  .nl form{margin-left:0}
+  .nl-inscricao{margin-left:0}
 }
 </style>
 </head>
@@ -75,7 +76,7 @@
   <nav class="menu">
     <a href="index.html">Início</a><a href="shop.html">Shop</a><a href="index.html#drops">Novidades</a>
     <a class="on" href="colecoes.html" aria-current="page">Coleções</a>
-    <a href="comunidade.html">Comunidade</a><a href="index.html#sobre">Sobre</a>
+    <a href="comunidade.html">Comunidade</a><a href="sobre.html">Sobre</a>
   </nav>
   <div class="actions">
     <button class="circle" aria-label="Buscar"><svg width="18" height="18"><use href="#i-search"/></svg></button>
@@ -112,8 +113,19 @@
     <div class="nl">
       <span class="crown">♛</span>
       <div><b>Receba novidades em primeira mão</b><small>Seja o primeiro a saber sobre os novos lançamentos, drops e coleções exclusivas.</small></div>
-      <form onsubmit="event.preventDefault()"><input type="email" placeholder="Seu e-mail" aria-label="Seu e-mail" required><button>INSCREVER</button></form>
-      <div class="social"><a href="#" aria-label="Instagram"><img src="imagens/instagram.svg" alt=""></a> <a href="#" aria-label="TikTok"><img src="imagens/tiktok.svg" alt=""></a> <a href="#" aria-label="YouTube"><img src="imagens/youtube.svg" alt=""></a> <a href="#" aria-label="X"><img src="imagens/x.svg" alt=""></a></div>
+      <div class="nl-inscricao" data-inscricao>
+        <form>
+          <input type="email" placeholder="Seu e-mail" aria-label="Seu e-mail" autocomplete="email" required>
+          <button type="submit">INSCREVER</button>
+        </form>
+        <p class="inscricao-retorno" role="status"></p>
+      </div>
+      <nav class="social" aria-label="Redes sociais">
+        <a href="https://www.instagram.com/" aria-label="Instagram"><img src="imagens/instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/" aria-label="TikTok"><img src="imagens/tiktok.svg" alt=""></a>
+        <a href="https://www.youtube.com/" aria-label="YouTube"><img src="imagens/youtube.svg" alt=""></a>
+        <a href="https://x.com/" aria-label="X"><img src="imagens/x.svg" alt=""></a>
+      </nav>
     </div>
   </main>
 </div>

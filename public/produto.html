@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="imagens.css">
 <link rel="stylesheet" href="app.css">
 <link rel="stylesheet" href="shop.css">
+<link rel="stylesheet" href="comunidade.css">
 </head>
 <body>
 <header class="header">
@@ -21,7 +22,7 @@
     <a href="index.html#drops">Novidades</a>
     <a href="colecoes.html">Coleções</a>
     <a href="comunidade.html">Comunidade</a>
-    <a href="index.html#sobre">Sobre</a>
+    <a href="sobre.html">Sobre</a>
   </nav>
   <div class="actions">
     <button class="circle" type="button" aria-label="Buscar"><span data-ic="search"></span></button>
@@ -51,8 +52,10 @@
       <p class="auth-retorno" role="status" data-favoritos-aviso hidden></p>
     </div>
   </article>
+  <section class="votacao-painel comunidade-comentarios" id="comentarios" aria-labelledby="comentarios-titulo" data-comentarios-produto hidden></section>
 </main>
 <script src="app.js" defer></script>
 <script src="catalogo.js" defer></script>
+<script type="module" src="comentarios.mjs"></script>
 </body>
 </html>

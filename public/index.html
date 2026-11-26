@@ -11,13 +11,13 @@
 <link rel="stylesheet" href="imagens.css">
 <link rel="stylesheet" href="app.css">
 <style>
-/* HERO — carrossel */
+
 .hero{position:relative;height:min(92vh,760px);margin-top:-5.6rem;overflow:hidden}
 .slide{position:absolute;inset:0;display:flex;align-items:center;opacity:0;visibility:hidden;transition:opacity .8s;
   background:var(--foto,none) center/cover,var(--img) center/cover}
 .slide.on{opacity:1;visibility:visible}
 .slide::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.8),transparent 65%),linear-gradient(0deg,#050505,transparent 22%)}
-/* FOTOS DO HERO: troque em imagens.css (--img-hero-1/2/3). Os degradês abaixo são só reserva. */
+
 .s1{--foto:var(--img-hero-1)}.s2{--foto:var(--img-hero-2)}.s3{--foto:var(--img-hero-3)}
 .s1{--img:radial-gradient(circle at 60% 40%,rgba(255,255,255,.22),transparent 22%),radial-gradient(circle at 30% 65%,rgba(120,200,40,.3),transparent 30%),radial-gradient(circle at 40% 35%,rgba(220,50,40,.35),transparent 30%),#15151a}
 .s2{--img:linear-gradient(160deg,#2b2118,#0c0c0c 60%),#0c0c0c}
@@ -49,7 +49,21 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .feats b{display:block;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}
 .feats small{color:var(--muted)}
 
-.drops .top{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.5rem}
+#drops{scroll-margin-top:6rem}
+.novidades-cabecalho{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
+.novidades-destaque{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));align-items:center;gap:1.5rem;padding:clamp(1rem,3vw,2rem);border:1px solid var(--line);border-radius:22px;background:linear-gradient(120deg,rgba(240,138,36,.13),rgba(255,255,255,.035))}
+.novidades-destaque:has(>[data-drop-resumo][hidden]){grid-template-columns:1fr}
+.novidades-destaque h3{font-family:var(--display);font-size:clamp(1.2rem,3vw,2.3rem);line-height:1.2;overflow-wrap:anywhere}
+.novidades-destaque .btn{margin-top:.8rem}
+.novidades-destaque [hidden],.novidades-recentes[hidden]{display:none}
+.novidades-recentes,.novidades-produtos{margin-top:2rem}
+.novidades-recentes>h3,.novidades-produtos>h3{margin-bottom:1rem;font-size:1.15rem}
+.novidades-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,16rem),1fr));gap:1rem}
+.novidades-lista a{position:relative;isolation:isolate;display:grid;align-content:end;gap:.35rem;min-height:10rem;overflow:hidden;padding:1rem;border:1px solid var(--line);border-radius:16px;background:#181411;overflow-wrap:anywhere}
+.novidades-lista a:is(:hover,:focus-visible){border-color:var(--orange)}
+.novidades-lista a:has(img)::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,#090909 5%,rgba(0,0,0,.25))}
+.novidades-lista img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover}
+.novidades-lista small{color:var(--muted)}
 .count{min-width:0;max-width:100%}
 .count .lbl{letter-spacing:.14em;font-size:.8rem;margin-bottom:1rem;text-align:center}
 .count .row{display:flex;justify-content:center;gap:clamp(.25rem,2vw,1.2rem);font-family:var(--display);font-size:clamp(1.1rem,4.8vw,2.2rem);color:var(--orange);text-align:center}
@@ -57,9 +71,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .drop-info{margin-top:.8rem;text-align:center}
 .count small{display:block;font:500 .65rem var(--body);color:#fff;letter-spacing:.1em}
 .count .sep{color:#fff}
-.carousel{display:flex;align-items:center;gap:1rem}
-.carousel>.circle{flex:none}
-.products{flex:1;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1.4rem}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1.4rem}
 .prod{min-width:0;display:flex;flex-direction:column;padding:1rem;border-radius:22px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(10px);transition:.25s}
 .prod:hover{transform:translateY(-6px);border-color:var(--orange)}
 .prod .img{display:block;flex:none;height:170px;border-radius:12px;--reserva:radial-gradient(circle,#2a2a2a,#0d0d0d);margin-bottom:1rem}
@@ -69,13 +81,14 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .prod b{display:block;font-weight:500;text-transform:uppercase}
 
 .community .wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
-.posts{display:flex;gap:1.4rem;align-items:center;justify-content:flex-end}
-.post{display:block;flex:none;width:min(200px,52vw);height:auto}
+.posts{display:grid;grid-template-columns:repeat(2,minmax(0,200px));gap:clamp(.65rem,2vw,1.4rem);justify-content:end}
+.post{display:block;width:100%;height:auto}
 
 .news{background:linear-gradient(180deg,#120904,#3a1a08 75%,#0a0503)}
 .news .wrap{display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap}
 .news p{margin-top:.8rem;color:var(--muted);max-width:40ch}
-.form{display:flex;flex:1;min-width:min(100%,320px);max-width:540px;border:1.5px solid var(--orange);border-radius:18px;overflow:hidden}
+.news-inscricao{flex:1;min-width:min(100%,320px);max-width:540px}
+.form{display:flex;border:1.5px solid var(--orange);border-radius:18px;overflow:hidden}
 .form input{flex:1;min-width:0;padding:1.1rem 1.4rem;background:rgba(0,0,0,.35);border:0;color:#fff;font:inherit;outline:0}
 .form button{padding:0 1.8rem;border:0;background:var(--orange);color:#000;letter-spacing:.1em;cursor:pointer;font-weight:500}
 
@@ -83,10 +96,11 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
   .drop-card,.scroll{display:none}
   .about .wrap,.community .wrap{grid-template-columns:1fr}
   .feats{border:0;padding:0}
-  .posts{justify-content:flex-start;overflow-x:auto}
+  .posts{justify-content:start}
 }
 @media(max-width:480px){
-  .form{flex:1 1 100%;flex-direction:column}
+  .news-inscricao{flex-basis:100%}
+  .form{flex-direction:column}
   .form input{width:100%}
   .form button{width:100%;min-height:44px}
 }
@@ -109,7 +123,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
     <a href="#drops">Novidades</a>
     <a href="colecoes.html">Coleções</a>
     <a href="comunidade.html">Comunidade</a>
-    <a href="#sobre">Sobre</a>
+    <a href="sobre.html">Sobre</a>
   </nav>
   <div class="actions">
     <button class="circle" aria-label="Buscar"><svg width="18" height="18"><use href="#i-search"/></svg></button>
@@ -120,21 +134,21 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 </header>
 
 <main>
-  <div class="hero">
+  <div class="hero hero-capturas">
     <div class="slide s1 on"><div class="wrap">
       <div><div class="bar"></div><h1>Seja<br><span class="accent">o caos</span></h1>
         <p>Streetwear feito pra quem não segue padrão</p><a class="btn" href="#sobre">Saiba mais →</a></div>
-      <aside class="drop-card"><!-- IMAGEM: imagens/hero/drop-3.png --><div class="img foto contain" style="--foto:var(--img-drop-3)" role="img" aria-label="Drop 03"></div><div class="row"><div><b>DROP 03</b><small>EM BREVE</small></div><span class="circle">→</span></div></aside>
+      <aside class="drop-card"><div class="img foto contain" style="--foto:var(--img-drop-3)" role="img" aria-label="Drop 03"></div><div class="row"><div><b>DROP 03</b><small>EM BREVE</small></div></div></aside>
     </div></div>
     <div class="slide s2"><div class="wrap">
       <div><div class="bar"></div><h1>Vista o seu<br><span class="accent">ritmo</span></h1>
         <p>Streetwear feito para quem não segue o padrão</p><a class="btn" href="colecoes.html">Ver coleção →</a></div>
-      <aside class="drop-card"><div class="img dk foto contain" style="--foto:var(--img-drop-1)" role="img" aria-label="Drop 01"></div><div class="row"><div><b>DROP 01</b><small>EM BREVE</small></div><span class="circle">→</span></div></aside>
+      <aside class="drop-card"><div class="img dk foto contain" style="--foto:var(--img-drop-1)" role="img" aria-label="Drop 01"></div><div class="row"><div><b>DROP 01</b><small>EM BREVE</small></div></div></aside>
     </div></div>
     <div class="slide s3"><div class="wrap">
       <div><div class="bar"></div><h1>Fuja do<br><span class="accent">comum</span></h1>
         <p>Streetwear pra quem cria o próprio caminho.</p><a class="btn" href="#drops">Explorar drop →</a></div>
-      <aside class="drop-card"><!-- IMAGEM: imagens/hero/drop-2.png --><div class="img dk foto contain" style="--foto:var(--img-drop-2)" role="img" aria-label="Drop 02"></div><div class="row"><div><b>DROP 02</b><small>EM BREVE</small></div><span class="circle">→</span></div></aside>
+      <aside class="drop-card"><div class="img dk foto contain" style="--foto:var(--img-drop-2)" role="img" aria-label="Drop 02"></div><div class="row"><div><b>DROP 02</b><small>EM BREVE</small></div></div></aside>
     </div></div>
     <div class="indicator">
       <button class="on"><span>01</span><i></i></button><button><span>02</span><i></i></button><button><span>03</span><i></i></button>
@@ -149,7 +163,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
         <span class="eyebrow">Sobre a DripLab</span>
         <h2 style="margin-top:.6rem">Mais que roupas, uma comunidade.</h2>
         <p>A DripLab é uma marca de streetwear digital-first que conecta moda, cultura e tecnologia. Aqui, você não apenas compra, mas vive a experiência: drops exclusivos, interação, gamificação e muito mais.</p>
-        <a class="btn" href="#contato">Fale conosco →</a>
+        <a class="btn" href="sobre.html">Conheça a DripLab →</a>
       </div>
       <ul class="feats">
         <li><em><i data-ic="parachute"></i></em><div><b>Drops limitados</b><small>Coleções exclusivas</small></div></li>
@@ -162,14 +176,17 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 
   <section class="drops" id="drops">
     <div class="wrap">
-      <div class="top">
-        <div>
-          <span class="eyebrow">Drops</span>
-          <h2 data-drop-titulo style="margin-top:.6rem">Lançamentos</h2>
-          <p>Fique ligado. Nossos drops são limitados e somem rápido. Seja um dos primeiros a garantir o seu.</p>
-          <a class="btn" href="colecoes.html">Ver todos os drops →</a>
+      <div class="novidades-cabecalho">
+        <h2>Novidades</h2>
+        <a class="btn sm" href="colecoes.html">Ver todas as coleções →</a>
+      </div>
+      <div class="novidades-destaque" data-drop>
+        <div data-drop-resumo hidden>
+          <span class="eyebrow" data-drop-chamada></span>
+          <h3 data-drop-titulo></h3>
+          <a class="btn sm" data-drop-link>Ver na Shop →</a>
         </div>
-        <div class="count" data-drop>
+        <div class="count">
           <div class="lbl accent" data-drop-estado role="status">Carregando drop…</div>
           <div class="row" data-drop-contagem hidden>
             <div><span id="d">00</span><small>DIAS</small></div><span class="sep">:</span>
@@ -180,12 +197,15 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
           <small class="drop-info" data-drop-info hidden></small>
         </div>
       </div>
-      <div class="carousel">
-        <button class="circle" aria-label="Anterior">‹</button>
+      <div class="novidades-recentes" data-drops-recentes hidden>
+        <h3>Lançamentos recentes</h3>
+        <ul class="novidades-lista" data-drops-lista></ul>
+      </div>
+      <div class="novidades-produtos">
+        <h3>Peças em destaque</h3>
         <div class="products" id="produtos-api">
           <p>Carregando produtos...</p>
         </div>
-        <button class="circle" aria-label="Próximo">›</button>
       </div>
     </div>
   </section>
@@ -200,7 +220,6 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
         <a class="btn" href="comunidade.html#votacao">Ver votação →</a>
       </div>
       <div class="posts">
-        <button class="circle" aria-label="Anterior">←</button>
         <img class="post" src="imagens/comunidade/post-1.webp" width="460" height="520" alt="Post da comunidade DripLab em um show" loading="lazy">
         <img class="post" src="imagens/comunidade/post-2.webp" width="460" height="520" alt="Post da comunidade DripLab ao ar livre" loading="lazy">
       </div>
@@ -214,10 +233,13 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
         <h2 style="margin-top:.6rem">Fique por dentro</h2>
         <p>Receba em primeira mão os lançamentos, conteúdos exclusivos e novidades da comunidade.</p>
       </div>
-      <form class="form" onsubmit="event.preventDefault()">
-        <input type="email" placeholder="Seu e-mail" aria-label="Seu e-mail" required>
-        <button>INSCREVER →</button>
-      </form>
+      <div class="news-inscricao" data-inscricao>
+        <form class="form">
+          <input type="email" placeholder="Seu e-mail" aria-label="Seu e-mail" autocomplete="email" required>
+          <button type="submit">INSCREVER →</button>
+        </form>
+        <p class="inscricao-retorno" role="status"></p>
+      </div>
     </div>
   </section>
 </main>
@@ -226,15 +248,20 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
   <div class="wrap">
     <div class="row">
       <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab" loading="lazy"></a>
-      <nav class="menu"><a class="on" href="index.html">Início</a><a href="shop.html">Shop</a><a href="#drops">Novidades</a><a href="colecoes.html">Coleções</a><a href="#sobre">Sobre</a></nav>
-      <div class="social"><a href="#" aria-label="Instagram"><img src="imagens/instagram.svg" alt=""></a><a href="#" aria-label="TikTok"><img src="imagens/tiktok.svg" alt=""></a><a href="#" aria-label="YouTube"><img src="imagens/youtube.svg" alt=""></a><a href="#" aria-label="X"><img src="imagens/x.svg" alt=""></a></div>
+      <nav class="menu"><a class="on" href="index.html">Início</a><a href="shop.html">Shop</a><a href="#drops">Novidades</a><a href="colecoes.html">Coleções</a><a href="sobre.html">Sobre</a></nav>
+      <nav class="social" aria-label="Redes sociais">
+        <a href="https://www.instagram.com/" aria-label="Instagram"><img src="imagens/instagram.svg" alt=""></a>
+        <a href="https://www.tiktok.com/" aria-label="TikTok"><img src="imagens/tiktok.svg" alt=""></a>
+        <a href="https://www.youtube.com/" aria-label="YouTube"><img src="imagens/youtube.svg" alt=""></a>
+        <a href="https://x.com/" aria-label="X"><img src="imagens/x.svg" alt=""></a>
+      </nav>
     </div>
     <div class="legal"><span>© 2026 <b class="accent" style="font-weight:400">DripLab.</b> Todos os direitos reservados.</span><span>DRIP LAB &nbsp;/&nbsp; STREETWEAR DIGITAL-FIRST</span></div>
   </div>
 </footer>
 
 <script>
-// Carrossel do hero
+
 const slides=[...document.querySelectorAll('.slide')], dots=[...document.querySelectorAll('.indicator button')];
 let atual=0, timer;
 function ir(i){ atual=(i+slides.length)%slides.length;
@@ -246,6 +273,6 @@ dots.forEach((d,n)=>d.addEventListener('click',()=>{ir(n);auto();})); auto();
 </script>
 <script src="catalogo.js"></script>
 <script src="app.js"></script>
-<script src="drops.js"></script>
+<script type="module" src="drops.mjs"></script>
 </body>
 </html>

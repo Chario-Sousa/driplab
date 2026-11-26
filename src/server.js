@@ -13,6 +13,7 @@ const gamificacao = require('./routes/gamificacao');
 const app = express();
 
 app.use('/api/admin', admin);
+app.use('/api/perfil', require('./routes/perfil'));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/pedidos', pedidos);
@@ -38,6 +39,7 @@ app.get('/api/produtos', async (req, res) => {
         p.nome_produto,
         p.descricao_produto,
         p.imagem_url,
+        ${postgres ? 'p.imagem_detalhe_url' : 'null as imagem_detalhe_url'},
         p.preco,
         p.estoque,
         c.nome_categoria,

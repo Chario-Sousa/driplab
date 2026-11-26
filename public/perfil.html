@@ -17,7 +17,7 @@
   <nav class="menu">
     <a href="index.html">Início</a><a href="shop.html">Shop</a><a href="index.html#drops">Novidades</a>
     <a href="colecoes.html">Coleções</a>
-    <a href="comunidade.html">Comunidade</a><a href="index.html#sobre">Sobre</a>
+    <a href="comunidade.html">Comunidade</a><a href="sobre.html">Sobre</a>
   </nav>
   <div class="actions">
     <button class="circle" aria-label="Buscar"><i data-ic="search"></i></button>
@@ -35,8 +35,14 @@
 <div class="perfil" data-perfil hidden>
   <aside class="lateral glass">
     <div class="usuario">
-      <div class="avatar foto" aria-hidden="true"></div>
+      <div data-avatar-perfil></div>
       <div><b data-conta-usuario></b><small data-conta-desde></small></div>
+    </div>
+    <div class="avatar-acoes">
+      <input type="file" data-foto-arquivo accept="image/png,image/jpeg,image/webp" aria-label="Arquivo da foto de perfil" hidden>
+      <button class="btn sm" type="button" data-foto-escolher>Adicionar foto</button>
+      <button class="btn sm" type="button" data-foto-remover hidden>Remover foto</button>
+      <p class="auth-retorno" data-foto-status role="status"></p>
     </div>
     <nav aria-label="Menu do perfil">
       <a class="on" href="perfil.html"><i data-ic="home"></i>Visão Geral</a>
@@ -46,6 +52,7 @@
       <a href="#recompensas"><i data-ic="award"></i>Recompensas</a>
       <a href="#titulos"><i data-ic="tag"></i>Títulos</a>
       <a href="admin.html" data-admin-link hidden><i data-ic="sliders"></i>Gerenciar coleções</a>
+      <a href="admin-votacoes.html" data-admin-link hidden><i data-ic="users"></i>Gerenciar votações</a>
       <a href="admin-pedidos.html" data-admin-link hidden><i data-ic="bag"></i>Gerenciar pedidos</a>
     </nav>
     <button class="sair" type="button" data-auth-sair><i data-ic="logout"></i>Sair</button>
@@ -133,5 +140,6 @@
 <script src="supabase.js" defer></script>
 <script src="auth.js" defer></script>
 <script type="module" src="gamificacao.mjs"></script>
+<script type="module" src="avatar.mjs"></script>
 </body>
 </html>

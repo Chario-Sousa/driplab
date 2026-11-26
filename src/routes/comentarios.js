@@ -4,7 +4,9 @@ const { autenticar, uuid } = require('../middleware/sessao');
 
 const comentarios = Router();
 const tamanhoPagina = 20;
-const camposPublicos = 'id_comentario, autor, texto, publicado_em';
+const camposPublicos = 'c.id_comentario, c.autor, c.texto, c.publicado_em, c.editado_em';
+const camposRetorno = camposPublicos + ", '/api/perfil/avatares/' || a.id_avatar as avatar_url";
+const textoValido = texto => texto && Array.from(texto).length <= 500 && !texto.includes('\0');
 const inteiroPositivo = valor => typeof valor === 'string' && /^[1-9]\d*$/.test(valor)
   && Number(valor) <= 2147483647;
 
@@ -25,12 +27,13 @@ async function resolverAlvo(req, res, next) {
   const { tipo, alvo } = req.params;
   const votacao = tipo === 'votacao' && uuid.test(alvo);
   const drop = tipo === 'drop' && inteiroPositivo(alvo);
-  if (!votacao && !drop) return res.status(400).json({ erro: 'Conversa inválida.' });
+  const produto = tipo === 'produto' && inteiroPositivo(alvo);
+  if (!votacao && !drop && !produto) return res.status(400).json({ erro: 'Conversa inválida.' });
 
   try {
-    const coluna = votacao ? 'id_votacao' : 'id_colecao';
+    const coluna = votacao ? 'id_votacao' : drop ? 'id_colecao' : 'id_produto';
     const valor = votacao ? alvo : Number(alvo);
-    const tabela = votacao ? 'public.votacao' : 'public.colecao';
+    const tabela = votacao ? 'public.votacao' : drop ? 'public.colecao' : 'public.produto';
     const [[registro]] = await sequelize.query(
       `select 1 from ${tabela} where ${coluna} = $1${drop ? ' and ativa' : ''}`,
       { bind: [valor] }
@@ -53,11 +56,12 @@ comentarios.get('/:tipo/:alvo', autenticarSeInformado, resolverAlvo, async (req,
   try {
     const { coluna, valor } = req.alvoComentario;
     const [registros] = await sequelize.query(`
-      select ${camposPublicos}, coalesce(id_usuario = $1::uuid, false) as meu
-      from public.comentario_comunidade
-      where ${coluna} = $2
-      ${antes === undefined ? '' : 'and id_comentario < $3::integer'}
-      order by id_comentario desc
+      select ${camposRetorno}, coalesce(c.id_usuario = $1::uuid, false) as meu
+      from public.comentario_comunidade c
+      left join public.perfil_avatar a on a.id_usuario = c.id_usuario
+      where c.${coluna} = $2
+      ${antes === undefined ? '' : 'and c.id_comentario < $3::integer'}
+      order by c.id_comentario desc
       limit ${tamanhoPagina + 1}
     `, { bind: [req.idUsuario ?? null, valor, ...(antes === undefined ? [] : [Number(antes)])] });
     const itens = registros.slice(0, tamanhoPagina);
@@ -71,7 +75,7 @@ comentarios.get('/:tipo/:alvo', autenticarSeInformado, resolverAlvo, async (req,
 comentarios.post('/:tipo/:alvo', autenticar, resolverAlvo, async (req, res) => {
   const { texto, chave_publicacao: chave } = req.body ?? {};
   const conteudo = typeof texto === 'string' ? texto.trim() : '';
-  if (!conteudo || Array.from(conteudo).length > 500 || conteudo.includes('\0')
+  if (!textoValido(conteudo)
       || typeof chave !== 'string' || !uuid.test(chave)) {
     return res.status(400).json({ erro: 'Escreva um comentário de até 500 caracteres.' });
   }
@@ -81,25 +85,57 @@ comentarios.post('/:tipo/:alvo', autenticar, resolverAlvo, async (req, res) => {
   try {
     const { coluna, valor } = req.alvoComentario;
     const [[novo]] = await sequelize.query(`
-      insert into public.comentario_comunidade (id_usuario, chave_publicacao, autor, texto, ${coluna})
-      values ($1::uuid, $2::uuid, $3, $4, $5)
-      on conflict (id_usuario, chave_publicacao) do nothing
-      returning ${camposPublicos}, true as meu
+      with criado as (
+        insert into public.comentario_comunidade (id_usuario, chave_publicacao, autor, texto, ${coluna})
+        values ($1::uuid, $2::uuid, $3, $4, $5)
+        on conflict (id_usuario, chave_publicacao) do nothing
+        returning *
+      )
+      select ${camposRetorno}, true as meu from criado c
+      left join public.perfil_avatar a on a.id_usuario = c.id_usuario
     `, { bind: [req.idUsuario, chave, autor, conteudo, valor] });
     if (novo) return res.status(201).json(novo);
 
-    const [[existente]] = await sequelize.query(`
-      select ${camposPublicos}, true as meu
-      from public.comentario_comunidade
-      where id_usuario = $1::uuid and chave_publicacao = $2::uuid and ${coluna} = $3
+    const [[registro]] = await sequelize.query(`
+      select ${camposRetorno}, true as meu, coalesce(c.texto_original, c.texto) as texto_original
+      from public.comentario_comunidade c
+      left join public.perfil_avatar a on a.id_usuario = c.id_usuario
+      where c.id_usuario = $1::uuid and c.chave_publicacao = $2::uuid and c.${coluna} = $3
     `, { bind: [req.idUsuario, chave, valor] });
-    if (existente?.texto !== conteudo) {
+    if (registro?.texto_original !== conteudo) {
       return res.status(409).json({ erro: 'Essa tentativa de publicação já foi utilizada.' });
     }
+    const { texto_original, ...existente } = registro;
     res.json(existente);
   } catch (erro) {
     console.error('Falha ao publicar comentário:', erro.name);
     res.status(500).json({ erro: 'Não foi possível publicar o comentário.' });
+  }
+});
+
+comentarios.patch('/:tipo/:alvo/:id', autenticar, resolverAlvo, async (req, res) => {
+  const texto = typeof req.body?.texto === 'string' ? req.body.texto.trim() : '';
+  if (!inteiroPositivo(req.params.id) || !textoValido(texto)) {
+    return res.status(400).json({ erro: 'Escreva um comentário de até 500 caracteres.' });
+  }
+  try {
+    const { coluna, valor } = req.alvoComentario;
+    const [[comentario]] = await sequelize.query(`
+      with alterado as (
+        update public.comentario_comunidade
+        set texto_original = coalesce(texto_original, texto), texto = $4,
+          editado_em = case when texto is distinct from $4 then clock_timestamp() else editado_em end
+        where id_comentario = $1::integer and id_usuario = $2::uuid and ${coluna} = $3
+        returning *
+      )
+      select ${camposRetorno}, true as meu from alterado c
+      left join public.perfil_avatar a on a.id_usuario = c.id_usuario
+    `, { bind: [Number(req.params.id), req.idUsuario, valor, texto] });
+    if (!comentario) return res.status(404).json({ erro: 'Comentário não encontrado na sua conta.' });
+    res.json(comentario);
+  } catch (erro) {
+    console.error('Falha ao editar comentário:', erro.name);
+    res.status(500).json({ erro: 'Não foi possível editar o comentário.' });
   }
 });
 

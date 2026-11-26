@@ -3,6 +3,16 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
+  $$('[data-inscricao]').forEach(painel => {
+    const form = $('form', painel);
+    const retorno = $('[role="status"]', painel);
+    form.addEventListener('submit', evento => {
+      evento.preventDefault();
+      form.reset();
+      retorno.textContent = 'Obrigado por participar!';
+    });
+    form.addEventListener('input', () => { retorno.textContent = ''; });
+  });
 
   const P = {
     home: '<path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-6h6v6"/>',
@@ -28,7 +38,7 @@
     tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1"/>',
     lockopen: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
     gamepad: '<path d="M6 12h4M8 10v4M15 13h.01M18 11h.01M17.3 5H6.7a4 4 0 0 0-3.9 3.1L1.6 15a3 3 0 0 0 5 2.6L8 16h8l1.4 1.6a3 3 0 0 0 5-2.6l-1.2-6.9A4 4 0 0 0 17.3 5z"/>',
-    shirt: '<path d="M20.4 7.2 16 3l-4 2-4-2-4.4 4.2 3 3 1.4-1V21h12V9.2l1.4 1z"/>',
+    shirt: '<path d="M8 4 3 7l2.5 4L8 9.5V21h8V9.5l2.5 1.5L21 7l-5-3a4 4 0 0 1-8 0Z" stroke-linejoin="round"/>',
     parachute: '<path d="M2 10a10 10 0 0 1 20 0H2zM7 10a5 8 0 0 1 10 0M2 10l7 8m13-8-7 8m-8-8 3 8m7-8-3 8"/><rect x="9" y="18" width="6" height="4" rx="1"/>',
     monitor: '<rect x="3" y="3" width="18" height="14" rx="2"/><path d="M12 17v4m-4 0h8m-4-7V6m-3 3 3-3 3 3"/>',
     bolt: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',

@@ -19,6 +19,7 @@ pedidos.get('/', async (req, res) => {
       select p.id_pedido, p.data_pedido, p.status, p.valor_total, p.valor_desconto,
         jsonb_agg(jsonb_build_object(
           'nome_produto', produto.nome_produto,
+          'imagem_url', produto.imagem_url,
           'quantidade', i.quantidade,
           'preco_unitario', i.preco_unitario
         ) order by i.id_produto) as itens

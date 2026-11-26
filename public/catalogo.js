@@ -69,17 +69,21 @@
     );
   }
 
-  function preencherFoto(foto, produto, lazy = false) {
+  function preencherFoto(foto, produto, lazy = false, imagemDetalhe = false) {
     foto.replaceChildren();
     foto.setAttribute('role', 'img');
     foto.setAttribute('aria-label', `Imagem de ${produto.nome_produto}`);
-    if (!produto.imagem_url) return;
+    const url = imagemDetalhe ? produto.imagem_detalhe_url || produto.imagem_url : produto.imagem_url;
+    if (!url) return;
 
     const imagem = document.createElement('img');
     imagem.alt = produto.nome_produto;
     if (lazy) imagem.loading = 'lazy';
-    imagem.src = produto.imagem_url;
-    imagem.addEventListener('error', () => imagem.remove(), { once: true });
+    imagem.src = url;
+    imagem.addEventListener('error', () => {
+      if (produto.imagem_url && imagem.getAttribute('src') !== produto.imagem_url) imagem.src = produto.imagem_url;
+      else imagem.remove();
+    });
     foto.append(imagem);
   }
 
@@ -292,7 +296,7 @@
         const estado = estadoProduto(produto);
         const estoque = Number(produto.estoque);
         const disponibilidade = estoque === 1 ? '1 unidade em estoque' : `${estoque} unidades em estoque`;
-        preencherFoto(quadro.querySelector('[data-produto-foto]'), produto);
+        preencherFoto(quadro.querySelector('[data-produto-foto]'), produto, false, true);
         preencherTexto('nome', produto.nome_produto);
         preencherTexto('categoria', produto.nome_categoria);
         preencherTexto('colecao', produto.nome_colecao);

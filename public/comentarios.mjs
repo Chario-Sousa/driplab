@@ -1,4 +1,5 @@
 import { obterAuth } from './sessao.mjs';
+import { criarAvatar } from './avatar.mjs';
 
 export function montarComentarios(destino, tipo, id) {
   const endpoint = id ? '/api/comentarios/' + tipo + '/' + encodeURIComponent(id) : '';
@@ -11,10 +12,12 @@ export function montarComentarios(destino, tipo, id) {
   if (!endpoint) return;
 
   const drop = tipo === 'drop';
+  const produto = tipo === 'produto';
+  const titulo = drop ? 'Comentários do drop' : produto ? 'Comentários da peça' : 'Comentários da votação';
   const painel = document.createElement('div');
   painel.className = 'comentarios-conteudo';
   painel.innerHTML = `
-    <h3 id="comentarios-titulo">${drop ? 'Comentários do drop' : 'Comentários da votação'}</h3>
+    <h3 id="comentarios-titulo">${titulo}</h3>
     <form data-comentario-form hidden>
       <label for="comentario-texto">Escreva um comentário</label>
       <textarea id="comentario-texto" name="texto" rows="3" maxlength="500" required
@@ -29,7 +32,7 @@ export function montarComentarios(destino, tipo, id) {
   `;
   painel.querySelector('[data-comentario-login]').href = drop
     ? 'login.html?voltar=comentarios-drop&colecao=' + encodeURIComponent(id)
-    : 'login.html?voltar=comentarios';
+    : produto ? 'login.html?voltar=comentarios-produto&produto=' + encodeURIComponent(id) : 'login.html?voltar=comentarios';
   destino.append(painel);
   if (location.hash === '#comentarios') {
     requestAnimationFrame(() => {
@@ -90,6 +93,7 @@ export function montarComentarios(destino, tipo, id) {
 
   function criarComentario(comentario) {
     const item = document.createElement('li');
+    item.dataset.comentarioId = comentario.id_comentario;
     const cabecalho = document.createElement('header');
     cabecalho.className = 'comentario-cabecalho';
     const autor = document.createElement('strong');
@@ -97,19 +101,95 @@ export function montarComentarios(destino, tipo, id) {
     const data = document.createElement('time');
     data.dateTime = comentario.publicado_em;
     data.textContent = formatoData.format(new Date(comentario.publicado_em));
-    cabecalho.append(autor, data);
+    const detalhes = document.createElement('div');
+    detalhes.className = 'comentario-detalhes';
+    detalhes.append(autor, data);
+    if (comentario.editado_em) {
+      const marca = document.createElement('small');
+      marca.textContent = 'Editado';
+      detalhes.append(marca);
+    }
+    cabecalho.append(criarAvatar(comentario.autor, comentario.avatar_url), detalhes);
 
     const conteudo = document.createElement('p');
     conteudo.textContent = comentario.texto;
     item.append(cabecalho, conteudo);
 
     if (comentario.meu) {
-      const apagar = document.createElement('button');
-      apagar.type = 'button';
-      apagar.className = 'btn sm';
-      apagar.textContent = 'Apagar comentário';
-      apagar.addEventListener('click', () => remover(comentario.id_comentario));
-      item.append(apagar);
+      const menu = document.createElement('details');
+      menu.className = 'comentario-menu';
+      menu.innerHTML = `
+        <summary class="circle" aria-label="Opções do comentário">⋯</summary>
+        <div><button type="button">Editar</button><button type="button">Excluir</button></div>
+      `;
+      const [editar, excluir] = menu.querySelectorAll('button');
+      const abrirMenu = menu.querySelector('summary');
+      const editor = document.createElement('form');
+      editor.className = 'comentario-editor';
+      editor.hidden = true;
+      editor.innerHTML = `
+        <label>Editar comentário <textarea name="texto" rows="3" maxlength="500" required></textarea></label>
+        <div><button class="btn sm" type="submit">Salvar</button><button class="btn sm" type="button">Cancelar</button></div>
+      `;
+      const campo = editor.elements.texto;
+      const [salvar, cancelar] = editor.querySelectorAll('button');
+      editar.addEventListener('click', () => {
+        menu.open = false;
+        campo.value = comentario.texto;
+        editor.hidden = false;
+        conteudo.hidden = true;
+        campo.focus();
+      });
+      excluir.addEventListener('click', () => {
+        menu.open = false;
+        abrirMenu.focus();
+        remover(comentario.id_comentario);
+      });
+      cancelar.addEventListener('click', () => {
+        editor.hidden = true;
+        conteudo.hidden = false;
+        abrirMenu.focus();
+      });
+      menu.addEventListener('keydown', evento => {
+        if (evento.key === 'Escape' && menu.open) {
+          menu.open = false;
+          abrirMenu.focus();
+        }
+      });
+      menu.addEventListener('focusout', evento => {
+        if (evento.relatedTarget && !menu.contains(evento.relatedTarget)) menu.open = false;
+      });
+      editor.addEventListener('submit', evento => {
+        evento.preventDefault();
+        executar(async () => {
+          const texto = campo.value.trim();
+          if (!texto) {
+            informar('Escreva um comentário antes de salvar.', true);
+            campo.focus();
+            return;
+          }
+          salvar.disabled = true;
+          cancelar.disabled = true;
+          campo.readOnly = true;
+          try {
+            const sessao = await sessaoParaEditar();
+            const atualizado = await consultar('/' + comentario.id_comentario, {
+              token: sessao.access_token, metodo: 'PATCH', corpo: { texto },
+            });
+            comentarios = comentarios.map(item => item.id_comentario === atualizado.id_comentario ? atualizado : item);
+            const novoItem = criarComentario(atualizado);
+            item.replaceWith(novoItem);
+            novoItem.querySelector('summary')?.focus({ preventScroll: true });
+            informar('Comentário atualizado.');
+          } finally {
+            salvar.disabled = false;
+            cancelar.disabled = false;
+            campo.readOnly = false;
+          }
+        });
+      });
+      cabecalho.append(menu);
+      item.append(editor);
     }
     return item;
   }
@@ -159,7 +239,7 @@ export function montarComentarios(destino, tipo, id) {
       } catch (erro) {
         if (erro.status === 404 && destino.dataset.conversa === endpoint) {
           destino.hidden = true;
-        if (atalho) atalho.hidden = true;
+          if (atalho) atalho.hidden = true;
           return;
         }
         reenviar = true;
@@ -249,3 +329,14 @@ if (comentariosDrop) {
   });
   montarComentarios(comentariosDrop, 'drop', seletor.value);
 }
+
+const comentariosProduto = document.querySelector('[data-comentarios-produto]');
+if (comentariosProduto) {
+  montarComentarios(comentariosProduto, 'produto', new URLSearchParams(location.search).get('id'));
+}
+
+document.addEventListener('click', evento => {
+  document.querySelectorAll('.comentario-menu[open]').forEach(menu => {
+    if (!menu.contains(evento.target)) menu.open = false;
+  });
+});

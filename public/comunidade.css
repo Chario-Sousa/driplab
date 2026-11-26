@@ -58,5 +58,16 @@ label.votacao-opcao{cursor:pointer}
   display:grid;gap:.45rem;min-width:0;padding:.8rem;
   background:#191919;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere;
 }
-.comentario-cabecalho{display:flex;align-items:baseline;flex-wrap:wrap;gap:.35rem .75rem}
+.comentario-cabecalho{display:flex;align-items:center;gap:.6rem}
+.comentario-cabecalho .avatar{width:34px;height:34px;border-width:1px;font-size:.65rem}
+.comentario-detalhes{display:flex;flex-wrap:wrap;align-items:baseline;gap:.15rem .6rem;min-width:0}
+.comentario-detalhes small{color:var(--muted);font-size:.78rem}
+.comentario-menu{position:relative;margin-left:auto;align-self:start;flex:none}
+.comentario-menu summary{list-style:none;font-size:1.3rem;line-height:1}
+.comentario-menu summary::-webkit-details-marker{display:none}
+.comentario-menu>div{position:absolute;z-index:2;right:0;top:100%;min-width:8rem;padding:.25rem;background:#222;border:1px solid var(--line);border-radius:9px}
+.comentario-menu button{display:block;width:100%;padding:.5rem .65rem;text-align:left;font:inherit;color:inherit;background:none;border:0;border-radius:5px;cursor:pointer}
+.comentario-menu button:is(:hover,:focus-visible){background:var(--glass)}
+.comentario-editor:not([hidden]){display:grid;gap:.45rem}
+.comentario-editor>div{display:flex;flex-wrap:wrap;gap:.5rem}
 .comentarios-lista p{white-space:pre-wrap}

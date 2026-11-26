@@ -351,6 +351,69 @@
         }
       }
     },
+    "/api/perfil/avatar": {
+      "get": {
+        "summary": "Consultar a foto de perfil da própria conta",
+        "security": [{ "supabaseBearer": [] }],
+        "responses": {
+          "200": { "description": "URL pública da foto ou valor nulo" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Serviço indisponível" }
+        }
+      },
+      "put": {
+        "summary": "Adicionar ou substituir a foto de perfil",
+        "security": [{ "supabaseBearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["tipo", "dados"],
+                "properties": {
+                  "tipo": { "type": "string", "enum": ["image/png", "image/jpeg", "image/webp"] },
+                  "dados": { "type": "string", "format": "byte", "description": "Imagem em Base64, com até 1 MB antes da codificação." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Nova URL pública da foto" },
+          "400": { "description": "Imagem inválida" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "413": { "description": "Imagem acima do limite" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Serviço indisponível" }
+        }
+      },
+      "delete": {
+        "summary": "Remover a foto de perfil",
+        "security": [{ "supabaseBearer": [] }],
+        "responses": {
+          "204": { "description": "Foto removida" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Serviço indisponível" }
+        }
+      }
+    },
+    "/api/perfil/avatares/{id}": {
+      "get": {
+        "summary": "Abrir uma foto de perfil publicada",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Imagem PNG, JPG ou WebP" },
+          "404": { "description": "Foto indisponível" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Serviço indisponível" }
+        }
+      }
+    },
     "/api/comentarios/{tipo}/{alvo}": {
       "parameters": [
         {
@@ -361,7 +424,8 @@
             "type": "string",
             "enum": [
               "votacao",
-              "drop"
+              "drop",
+              "produto"
             ]
           }
         },
@@ -369,7 +433,7 @@
           "name": "alvo",
           "in": "path",
           "required": true,
-          "description": "UUID da votação ou identificador numérico do drop.",
+          "description": "UUID da votação ou identificador numérico do drop ou produto.",
           "schema": {
             "type": "string"
           }
@@ -380,7 +444,7 @@
           "Comunidade"
         ],
         "summary": "Listar comentários publicados",
-        "description": "Lista a conversa da votação ou do drop publicado. Com um token válido, o campo meu indica os comentários da conta. A página retorna até 20 comentários.",
+        "description": "Lista a conversa da votação, do drop publicado ou do produto, com foto de perfil e edição quando disponíveis. Com um token válido, o campo meu indica os comentários da conta. A página retorna até 20 comentários.",
         "security": [
           {},
           {
@@ -609,7 +673,8 @@
             "type": "string",
             "enum": [
               "votacao",
-              "drop"
+              "drop",
+              "produto"
             ]
           }
         },
@@ -617,7 +682,7 @@
           "name": "alvo",
           "in": "path",
           "required": true,
-          "description": "UUID da votação ou identificador numérico do drop.",
+          "description": "UUID da votação ou identificador numérico do drop ou produto.",
           "schema": {
             "type": "string"
           }
@@ -633,6 +698,36 @@
           }
         }
       ],
+      "patch": {
+        "tags": ["Comunidade"],
+        "summary": "Editar um comentário da própria conta",
+        "security": [{ "supabaseBearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["texto"],
+                "properties": {
+                  "texto": { "type": "string", "minLength": 1, "maxLength": 500 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comentário atualizado",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Comentario" } } }
+          },
+          "400": { "description": "Texto ou identificador inválido" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "404": { "description": "Comentário indisponível para a conta" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Serviço indisponível" }
+        }
+      },
       "delete": {
         "tags": [
           "Comunidade"
@@ -2440,6 +2535,8 @@
             "type": "string",
             "format": "date-time"
           },
+          "editado_em": { "type": "string", "format": "date-time", "nullable": true },
+          "avatar_url": { "type": "string", "nullable": true },
           "meu": {
             "type": "boolean"
           }
@@ -2449,6 +2546,8 @@
           "autor",
           "texto",
           "publicado_em",
+          "editado_em",
+          "avatar_url",
           "meu"
         ]
       },
@@ -2510,6 +2609,7 @@
             "type": "string",
             "nullable": true
           },
+          "imagem_detalhe_url": { "type": "string", "nullable": true },
           "descricao_produto": {
             "type": "string"
           },
@@ -2546,6 +2646,7 @@
           "id_produto",
           "nome_produto",
           "imagem_url",
+          "imagem_detalhe_url",
           "descricao_produto",
           "preco",
           "estoque",
@@ -2735,6 +2836,7 @@
                 "nome_produto": {
                   "type": "string"
                 },
+                "imagem_url": { "type": "string", "nullable": true },
                 "quantidade": {
                   "type": "integer",
                   "minimum": 1
@@ -2745,6 +2847,7 @@
               },
               "required": [
                 "nome_produto",
+                "imagem_url",
                 "quantidade",
                 "preco_unitario"
               ]

@@ -76,6 +76,7 @@
         const parametros = new URLSearchParams(location.search);
         const voltar = parametros.get('voltar');
         const colecao = parametros.get('colecao') || '';
+        const produto = parametros.get('produto') || '';
         const destinos = new Map([
           ['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html'], ['admin', 'admin.html'],
           ['votacao', 'comunidade.html'], ['admin-votacoes', 'admin-votacoes.html'],
@@ -83,6 +84,9 @@
         ]);
         if (/^[1-9]\d*$/.test(colecao) && Number(colecao) <= 2147483647) {
           destinos.set('comentarios-drop', 'shop.html?colecao=' + colecao + '#comentarios');
+        }
+        if (/^[1-9]\d*$/.test(produto) && Number(produto) <= 2147483647) {
+          destinos.set('comentarios-produto', 'produto.html?id=' + produto + '#comentarios');
         }
         location.replace((!cadastro && destinos.get(voltar)) || 'perfil.html');
         return;
@@ -208,7 +212,17 @@
         const itens = document.createElement('ul');
         for (const item of pedido.itens) {
           const linha = document.createElement('li');
-          linha.textContent = `${item.quantidade} × ${item.nome_produto} · ${moeda.format(Number(item.preco_unitario))}`;
+          if (item.imagem_url) {
+            const imagem = document.createElement('img');
+            imagem.src = item.imagem_url;
+            imagem.alt = '';
+            imagem.loading = 'lazy';
+            imagem.addEventListener('error', () => imagem.remove(), { once: true });
+            linha.append(imagem);
+          }
+          const descricao = document.createElement('span');
+          descricao.textContent = `${item.quantidade} × ${item.nome_produto} · ${moeda.format(Number(item.preco_unitario))}`;
+          linha.append(descricao);
           itens.append(linha);
         }
         const total = document.createElement('b');

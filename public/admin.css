@@ -20,16 +20,41 @@
   background:#1c1c1c;border:1px solid var(--line);border-radius:8px;color-scheme:dark;
 }
 .admin-layout input[type="file"]{padding:.5rem}
+.admin-layout input[type="file"]::file-selector-button{
+  margin-right:.6rem;padding:.4rem .7rem;border:1px solid var(--orange);border-radius:6px;
+  background:#2c1c10;color:#fff;font:inherit;font-weight:600;cursor:pointer;
+}
+.admin-layout input[type="file"]:hover::file-selector-button{background:var(--orange);color:#15100d}
 .admin-datas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
 .admin-layout fieldset{min-width:0;display:grid;gap:.7rem;border:1px solid var(--line);border-radius:12px;padding:.8rem}
 .admin-layout legend{padding:0 .3rem}
 .admin-layout .admin-check{display:flex;align-items:center;gap:.65rem;font-weight:500;cursor:pointer}
-.admin-check input{flex:none;width:20px;height:20px;accent-color:var(--orange);color-scheme:dark;cursor:pointer}
+.admin-check input[type="checkbox"]{
+  appearance:none;display:grid;place-items:center;flex:none;width:20px;height:20px;
+  border:1px solid #958a82;border-radius:5px;background:#161412;color:#15100d;
+  accent-color:var(--orange);color-scheme:dark;cursor:pointer;
+}
+.admin-check input[type="checkbox"]:hover{border-color:var(--orange)}
+.admin-check input[type="checkbox"]:checked{border-color:var(--orange);background:var(--orange)}
+.admin-check input[type="checkbox"]:checked::after{
+  content:"";width:9px;height:5px;border:solid currentColor;border-width:0 0 2px 2px;
+  transform:translateY(-1px) rotate(-45deg);
+}
+.admin-check input[type="checkbox"]:disabled{opacity:.55;cursor:default}
+.admin-check input[type="checkbox"]:focus-visible,.admin-layout input[type="file"]:focus-visible{
+  outline:2px solid var(--orange);outline-offset:2px;
+}
+@media(forced-colors:active){
+  .admin-check input[type="checkbox"]{appearance:auto}
+  .admin-check input[type="checkbox"]::after{display:none}
+}
 .admin-layout small,.admin-retorno,#admin-capa-estado{font-size:.82rem;color:var(--muted)}
 #admin-retorno:not(:empty){margin-bottom:1rem}
 #admin-recarregar:not([hidden]){margin-bottom:1rem}
 .admin-retorno.erro{color:#ff9b92}
 .admin-previa{max-width:100%;max-height:220px;border-radius:10px;object-fit:contain;justify-self:start}
+.admin-remover-capa{justify-self:start;min-height:44px}
+.admin-remover-capa:disabled{opacity:.55;cursor:default}
 .admin-produtos{display:grid;gap:.5rem;max-height:280px;overflow:auto}
 .admin-produtos .admin-check{
   min-height:44px;padding:.55rem .65rem;border:1px solid var(--line);border-radius:8px;background:#191919;

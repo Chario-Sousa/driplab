@@ -23,6 +23,7 @@ let produtos = [];
 let selecionada;
 let urlPrevia;
 let chaveCriacao;
+let remocaoPendente = false;
 
 function informar(elemento, mensagem, erro = false) {
   elemento.textContent = mensagem;
@@ -57,6 +58,29 @@ function limparPrevia() {
   previa.removeAttribute('src');
 }
 
+function atualizarCapa() {
+  limparPrevia();
+  const arquivo = campos.capa.files[0];
+  const temCapa = Boolean(selecionada?.tem_capa);
+  removerCapa.disabled = salvar.disabled || (!temCapa && !arquivo);
+  removerCapa.textContent = remocaoPendente ? 'Desfazer remoção' : 'Remover capa';
+  if (arquivo && !temCapa) removerCapa.textContent = 'Descartar foto selecionada';
+  if (remocaoPendente) {
+    informar(capaAtual, 'A capa será removida ao salvar a coleção.');
+  } else if (arquivo) {
+    urlPrevia = URL.createObjectURL(arquivo);
+    previa.src = urlPrevia;
+    previa.hidden = false;
+    informar(capaAtual, 'A nova capa será aplicada ao salvar a coleção.');
+  } else {
+    informar(capaAtual, temCapa ? 'Esta coleção já tem uma capa salva.' : 'Nenhuma capa enviada.');
+    if (temCapa && selecionada.ativa) {
+      previa.src = `/api/drops/${selecionada.id_colecao}/capa?v=${selecionada.versao}`;
+      previa.hidden = false;
+    }
+  }
+}
+
 function atualizarOpcoesProdutos() {
   const marcados = [...lista.querySelectorAll('input:checked')];
   const precisaMover = marcados.some(input => input.dataset.mover === 'true');
@@ -70,7 +94,7 @@ function abrirEditor() {
   selecionada = colecoes.find(colecao => String(colecao.id_colecao) === seletor.value);
   chaveCriacao = selecionada ? null : crypto.randomUUID();
   form.reset();
-  limparPrevia();
+  remocaoPendente = false;
   informar(retornoForm, '');
   titulo.textContent = selecionada ? 'Editar coleção' : 'Nova coleção';
   campos.nome.value = selecionada?.nome_colecao ?? '';
@@ -79,12 +103,7 @@ function abrirEditor() {
   campos.limite.value = selecionada?.limite_pecas ?? '';
   campos.nivel_minimo.value = selecionada?.nivel_minimo ?? 1;
   campos.ativa.checked = selecionada?.ativa ?? false;
-  capaAtual.hidden = !selecionada?.tem_capa;
-  removerCapa.hidden = !selecionada?.tem_capa;
-  if (selecionada?.tem_capa && selecionada.ativa) {
-    previa.src = `/api/drops/${selecionada.id_colecao}/capa?v=${selecionada.versao}`;
-    previa.hidden = false;
-  }
+  atualizarCapa();
 
   const nomes = new Map(colecoes.map(colecao => [colecao.id_colecao, colecao.nome_colecao]));
   const itens = produtos.map(produto => {
@@ -131,25 +150,20 @@ async function iniciar() {
 }
 
 campos.capa.addEventListener('change', () => {
-  limparPrevia();
   informar(retornoForm, '');
   const arquivo = campos.capa.files[0];
-  if (!arquivo) return;
-  if (!arquivoCapaValido(arquivo)) {
+  if (arquivo && !arquivoCapaValido(arquivo)) {
     campos.capa.value = '';
     informar(retornoForm, 'Envie uma capa PNG, JPG ou WebP com até 1 MB.', true);
-    return;
+  } else if (arquivo) {
+    remocaoPendente = false;
   }
-  campos.remover_capa.checked = false;
-  urlPrevia = URL.createObjectURL(arquivo);
-  previa.src = urlPrevia;
-  previa.hidden = false;
+  atualizarCapa();
 });
-campos.remover_capa.addEventListener('change', () => {
-  if (campos.remover_capa.checked) {
-    campos.capa.value = '';
-    limparPrevia();
-  }
+removerCapa.addEventListener('click', () => {
+  remocaoPendente = Boolean(selecionada?.tem_capa) && !remocaoPendente;
+  campos.capa.value = '';
+  atualizarCapa();
 });
 previa.addEventListener('error', () => { previa.hidden = true; });
 
@@ -159,6 +173,8 @@ form.addEventListener('submit', async evento => {
 
   salvar.disabled = true;
   seletor.disabled = true;
+  removerCapa.disabled = true;
+  campos.capa.disabled = true;
   recarregar.hidden = true;
   informar(retornoForm, 'Salvando coleção…');
   const arquivo = campos.capa.files[0];
@@ -176,7 +192,7 @@ form.addEventListener('submit', async evento => {
       mover: campos.mover.checked,
       versao: selecionada?.versao,
       chave_criacao: chaveCriacao,
-      remover_capa: campos.remover_capa.checked,
+      remover_capa: remocaoPendente,
     };
     if (arquivo) corpo.capa = await lerCapa(arquivo);
     resultado = await consultar(id ? '/colecoes/' + id : '/colecoes', {
@@ -187,6 +203,8 @@ form.addEventListener('submit', async evento => {
     recarregar.hidden = false;
     salvar.disabled = false;
     seletor.disabled = false;
+    campos.capa.disabled = false;
+    atualizarCapa();
     return;
   }
 
@@ -195,6 +213,8 @@ form.addEventListener('submit', async evento => {
     informar(retornoForm, 'Coleção salva.');
     salvar.disabled = false;
     seletor.disabled = false;
+    campos.capa.disabled = false;
+    atualizarCapa();
   } catch {
     informar(retornoForm, 'Coleção salva. Recarregue o painel para continuar.');
     recarregar.hidden = false;

@@ -64,11 +64,9 @@
         <legend>Capa</legend>
         <label class="admin-rotulo" for="admin-capa">Enviar foto (PNG, JPG ou WebP, até 1 MB)</label>
         <input id="admin-capa" name="capa" type="file" accept="image/png,image/jpeg,image/webp">
-        <p id="admin-capa-estado" hidden>Esta coleção já tem uma capa salva.</p>
+        <p id="admin-capa-estado" role="status" hidden></p>
         <img class="admin-previa" id="admin-previa" alt="Prévia da capa" hidden>
-        <label class="admin-check" id="admin-remover-capa" hidden>
-          <input name="remover_capa" type="checkbox"> Remover capa atual
-        </label>
+        <button class="btn sm admin-remover-capa" id="admin-remover-capa" type="button" aria-describedby="admin-capa-estado" disabled>Remover capa</button>
       </fieldset>
 
       <fieldset>
