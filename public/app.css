@@ -159,6 +159,7 @@
 .cart-recompensas[hidden]{display:none}
 .cart-recompensas select{width:100%;color:inherit;background:#151515;border:1px solid var(--line);border-radius:.6rem;padding:.55rem}
 .cart-recompensas a{color:var(--orange);text-decoration:underline;justify-self:start}
+.cart-aviso{color:var(--muted);font-size:.75rem}
 .btn-cheio{display:flex;align-items:center;justify-content:center;gap:.8rem;height:52px;border:0;border-radius:12px;background:var(--orange);color:#000;font:700 .8rem var(--body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:.2s}
 .btn-cheio:hover{filter:brightness(1.1)}
 .btn-borda{display:flex;align-items:center;justify-content:center;gap:.8rem;height:48px;border:1px solid var(--orange);border-radius:12px;background:none;color:#fff;font:600 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
@@ -233,13 +234,14 @@
 [data-favoritos-tentar][hidden],[data-favoritos-perfil][hidden],[data-favoritos-login][hidden]{display:none}
 #favoritos{scroll-margin-top:6rem}
 .perfil[data-aba="favoritos"] main>.cartao:not(#favoritos),
+.perfil[data-aba="pedidos"] main>.cartao:not(#pedidos),
 .perfil[data-aba="conquistas"] main>.cartao:not(#conquistas),
 .perfil[data-aba="recompensas"] main>.cartao:not(#recompensas),
 .perfil[data-aba="titulos"] main>.cartao:not(#titulos),
-.perfil:is([data-aba="conquistas"],[data-aba="recompensas"],[data-aba="titulos"]) [data-resumo-perfil],
+.perfil:is([data-aba="pedidos"],[data-aba="conquistas"],[data-aba="recompensas"],[data-aba="titulos"]) [data-resumo-perfil],
 #conquistas[hidden],#titulos[hidden]{display:none}
 @media(min-width:901px){
-  .perfil:is([data-aba="conquistas"],[data-aba="recompensas"],[data-aba="titulos"]) main{grid-column:2/-1}
+  .perfil:is([data-aba="pedidos"],[data-aba="conquistas"],[data-aba="recompensas"],[data-aba="titulos"]) main{grid-column:2/-1}
 }
 #favoritos .auth-retorno:empty,.favoritos-painel .auth-retorno:empty{display:none}
 .perfil [data-admin-link][hidden]{display:none}
@@ -259,7 +261,7 @@
 .gamificacao-lista .btn{justify-self:start;margin-top:.25rem}
 .gamificacao-lista .btn:disabled{opacity:.65;cursor:default;transform:none}
 .gamificacao-desbloqueada{color:var(--orange)}
-#conquistas,#recompensas,#titulos,#titulo-titulos{scroll-margin-top:6rem}
+#pedidos,#conquistas,#recompensas,#titulos,#titulo-titulos{scroll-margin-top:6rem}
 #conquistas [data-gamificacao-status]:empty{display:none}
 .conquistas-progresso{margin-bottom:.8rem;color:var(--muted);font-size:.85rem}
 .conquistas-grade{grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}

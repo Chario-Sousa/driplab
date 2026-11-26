@@ -59,10 +59,27 @@ pedidos.post('/', async (req, res) => {
 
   const produtos = itens.map(({ id_produto, quantidade }) => ({ id_produto, quantidade }));
   try {
-    const [[pedido]] = await sequelize.query(
-      'select public.criar_pedido_com_recompensa($1::uuid, $2::uuid, $3::jsonb, $4) as id_pedido',
-      { bind: [req.idUsuario, chave, JSON.stringify(produtos), codigo] }
-    );
+    const pedido = await sequelize.transaction(async transaction => {
+      await sequelize.query(`
+        select pg_advisory_xact_lock(hashtextextended('driplab:resgate:' || ($1::uuid)::text, 0))
+      `, { bind: [req.idUsuario], transaction });
+      const [[{ existente }]] = await sequelize.query(`
+        select exists (
+          select 1 from public.pedido where id_usuario = $1::uuid and chave_solicitacao = $2::uuid
+        ) as existente
+      `, { bind: [req.idUsuario, chave], transaction });
+      const [[registrado]] = await sequelize.query(
+        'select public.criar_pedido_com_recompensa($1::uuid, $2::uuid, $3::jsonb, $4) as id_pedido',
+        { bind: [req.idUsuario, chave, JSON.stringify(produtos), codigo], transaction }
+      );
+      if (!existente) {
+        await sequelize.query(`
+          update public.pedido set status = 'confirmado'
+          where id_pedido = $1::bigint and status = 'pendente'
+        `, { bind: [registrado.id_pedido], transaction });
+      }
+      return registrado;
+    });
     res.json(pedido);
   } catch (erro) {
     if (erro.original?.message === 'nivel_insuficiente') {

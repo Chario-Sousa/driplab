@@ -28,7 +28,7 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 
 ### Limitações atuais
 
-- O checkout registra pedidos como pendentes para confirmação manual no painel. Pagamento real fica para uma etapa futura.
+- O checkout simula a compra e confirma novos pedidos automaticamente. A integração com pagamentos fica para uma etapa futura.
 
 ## Tecnologias utilizadas
 
@@ -105,9 +105,9 @@ Com a confirmação de e-mail ativada, use um endereço da equipe para testar co
 
 ### Pedidos
 
-Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finalizar compra**. O pedido aparece como **Pendente** no perfil. O total corresponde aos produtos. Estoque, preços e identidade do cliente são conferidos pelo servidor.
+Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finalizar compra**. O pedido de demonstração é confirmado e aparece em **Meus pedidos**. Estoque, preços e identidade do cliente são conferidos pelo servidor.
 
-Uma conta administrativa pode abrir **Perfil → Gerenciar pedidos** e confirmar o pedido pendente. Na confirmação, a conta do cliente recebe 50 pontos e 50 XP. A primeira confirmação também libera o título **Estreante DripLab**.
+Na confirmação, a conta do cliente recebe 50 pontos e 50 XP. A primeira confirmação também libera o título **Estreante DripLab**. Uma conta administrativa pode abrir **Perfil → Gerenciar pedidos** para confirmar pedidos anteriores que ainda estejam pendentes.
 
 `POST /api/pedidos` recebe `chave_solicitacao` (UUID) e `itens` com `id_produto` e `quantidade`. Reenvie a mesma chave ao repetir a tentativa com os mesmos itens. `GET /api/pedidos` retorna o histórico do usuário autenticado. As duas rotas exigem o token de acesso do Supabase Auth no cabeçalho `Authorization: Bearer`.
 

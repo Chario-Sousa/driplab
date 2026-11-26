@@ -150,6 +150,11 @@
       });
       informar('');
       perfil.hidden = false;
+      if (location.hash === '#pedidos') {
+        const pedidos = perfil.querySelector('#pedidos');
+        if (document.activeElement === document.body) pedidos.focus({ preventScroll: true });
+        pedidos.scrollIntoView({ block: 'start' });
+      }
       perfil.dispatchEvent(new Event('driplab:perfil-pronto'));
       carregarPedidos();
       mostrarLinkAdmin();
@@ -170,7 +175,7 @@
       });
       links.forEach(link => { link.hidden = resposta.status !== 204; });
     } catch {
-      link.hidden = true;
+      links.forEach(link => { link.hidden = true; });
     }
   }
 
@@ -220,7 +225,6 @@
       }
       estado.textContent = pedidos.length ? '' : 'Você ainda não tem pedidos.';
       estado.hidden = Boolean(pedidos.length);
-      if (location.hash === '#pedidos') lista.closest('section').scrollIntoView();
     } catch {
       estado.textContent = 'Não foi possível carregar seus pedidos. Atualize a página.';
       estado.classList.add('erro');

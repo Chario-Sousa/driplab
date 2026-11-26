@@ -974,8 +974,8 @@
         "tags": [
           "Pedidos"
         ],
-        "summary": "Registrar pedido e baixar estoque",
-        "description": "Reenvie a mesma chave de solicitação para tentar novamente com os mesmos itens.",
+        "summary": "Registrar e confirmar um pedido de demonstração",
+        "description": "O checkout confirma novos pedidos e baixa o estoque. Reenvie a mesma chave de solicitação para repetir a tentativa sem duplicar o pedido ou a pontuação.",
         "security": [
           {
             "supabaseBearer": []

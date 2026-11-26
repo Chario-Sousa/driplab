@@ -95,6 +95,7 @@
     const principal = $('main', perfil);
     const menuPerfil = $('.lateral nav', perfil);
     const links = {
+      pedidos: $('a[href="#pedidos"]', menuPerfil),
       favoritos: $('a[href="#favoritos"]', menuPerfil),
       conquistas: $('a[href="#conquistas"]', menuPerfil),
       recompensas: $('a[href="#recompensas"]', menuPerfil),
@@ -105,6 +106,7 @@
     function mostrarAbaPerfil() {
       const hash = location.hash;
       let aba = 'geral';
+      if (hash === '#pedidos') aba = 'pedidos';
       if (hash === '#favoritos') aba = 'favoritos';
       if (hash === '#conquistas') aba = 'conquistas';
       if (hash === '#recompensas') aba = 'recompensas';
@@ -233,6 +235,7 @@
       </div>
       <div class="totais" id="cart-tot"></div>
       <p class="auth-retorno" id="cart-retorno" role="status" hidden></p>
+      <p class="cart-aviso" id="cart-aviso" hidden>Compra de demonstração com confirmação automática.</p>
       <button class="btn-cheio" id="finalizar-compra" type="button">${ic('bag')} Finalizar compra ${ic('arrow')}</button>
     </aside>`);
 
@@ -456,6 +459,7 @@
          <div class="total"><span>Total estimado</span><b>${moeda((subtotal - desconto) / 100)}</b></div>`
       : `<div class="total"><span>Total dos produtos</span><b>${moeda(subtotal / 100)}</b></div>`;
     $('#finalizar-compra').disabled = finalizando || !n;
+    $('#cart-aviso').hidden = !n;
     $$('[data-q]').forEach(botao => botao.onclick = () => {
       const item = carrinho.find(atual => atual.id === botao.dataset.id);
       item.q += Number(botao.dataset.q);
