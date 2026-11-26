@@ -16,7 +16,7 @@ pedidos.use((req, res, next) => {
 pedidos.get('/', async (req, res) => {
   try {
     const [registros] = await sequelize.query(`
-      select p.id_pedido, p.data_pedido, p.status, p.valor_total,
+      select p.id_pedido, p.data_pedido, p.status, p.valor_total, p.valor_desconto,
         jsonb_agg(jsonb_build_object(
           'nome_produto', produto.nome_produto,
           'quantidade', i.quantidade,
@@ -42,11 +42,15 @@ const conflitos = {
   produto_nao_encontrado: 'Um dos produtos não está mais disponível.',
   drop_fora_do_periodo: 'Um dos drops do carrinho está fora do período de venda.',
   limite_do_drop: 'A quantidade no carrinho supera o limite restante de um dos drops.',
-  solicitacao_ja_utilizada: 'Essa tentativa já foi usada com outro carrinho.',
+  solicitacao_ja_utilizada: 'Essa tentativa já foi usada com outro carrinho ou desconto.',
+  desconto_indisponivel: 'Esse desconto já foi usado ou ainda precisa ser resgatado no seu perfil.',
 };
 
 pedidos.post('/', async (req, res) => {
-  const { chave_solicitacao: chave, itens } = req.body ?? {};
+  const { chave_solicitacao: chave, itens, codigo_recompensa: codigo = null } = req.body ?? {};
+  if (codigo !== null && (typeof codigo !== 'string' || !/^[a-z0-9-]{1,64}$/.test(codigo))) {
+    return res.status(400).json({ erro: 'Desconto inválido.' });
+  }
   if (typeof chave !== 'string' || !uuid.test(chave) || !Array.isArray(itens) || !itens.length
       || itens.some(item => !inteiroPositivo(item?.id_produto) || !inteiroPositivo(item?.quantidade))
       || new Set(itens.map(item => item.id_produto)).size !== itens.length) {
@@ -56,11 +60,15 @@ pedidos.post('/', async (req, res) => {
   const produtos = itens.map(({ id_produto, quantidade }) => ({ id_produto, quantidade }));
   try {
     const [[pedido]] = await sequelize.query(
-      'select public.criar_pedido($1::uuid, $2::uuid, $3::jsonb) as id_pedido',
-      { bind: [req.idUsuario, chave, JSON.stringify(produtos)] }
+      'select public.criar_pedido_com_recompensa($1::uuid, $2::uuid, $3::jsonb, $4) as id_pedido',
+      { bind: [req.idUsuario, chave, JSON.stringify(produtos), codigo] }
     );
     res.json(pedido);
   } catch (erro) {
+    if (erro.original?.message === 'nivel_insuficiente') {
+      const nivel = Number(erro.original.detail);
+      return res.status(409).json({ erro: `Um drop do carrinho exige nível ${nivel} para comprar.` });
+    }
     const mensagem = conflitos[erro.original?.message];
     if (mensagem) return res.status(409).json({ erro: mensagem });
     console.error('Falha ao registrar pedido:', erro.name);

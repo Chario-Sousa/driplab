@@ -30,6 +30,7 @@
       </select>
       <a class="admin-voltar" href="colecoes.html">Ver página pública →</a>
       <a class="admin-voltar" href="admin-votacoes.html">Gerenciar votações →</a>
+      <a class="admin-voltar" href="admin-pedidos.html">Gerenciar pedidos →</a>
     </aside>
 
     <form class="admin-bloco admin-form" id="admin-form" aria-labelledby="admin-form-titulo">
@@ -51,6 +52,10 @@
         <input name="limite" type="number" min="0" max="2147483647" step="1" inputmode="numeric" aria-describedby="admin-limite-ajuda" required>
       </label>
       <small id="admin-limite-ajuda">Esse limite é compartilhado entre todos os produtos da coleção.</small>
+      <label>Nível mínimo para comprar
+        <input name="nivel_minimo" type="number" min="1" max="100" step="1" value="1" inputmode="numeric" aria-describedby="admin-nivel-ajuda" required>
+      </label>
+      <small id="admin-nivel-ajuda">Use 1 para liberar a compra para todos os clientes.</small>
       <label class="admin-check">
         <input name="ativa" type="checkbox"> Publicar na página Coleções
       </label>

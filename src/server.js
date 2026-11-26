@@ -8,6 +8,7 @@ const favoritos = require('./routes/favoritos');
 const admin = require('./routes/admin');
 const votacoes = require('./routes/votacoes');
 const comentarios = require('./routes/comentarios');
+const gamificacao = require('./routes/gamificacao');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use('/api/pedidos', pedidos);
 app.use('/api/favoritos', favoritos);
 app.use('/api/votacoes', votacoes);
 app.use('/api/comentarios', comentarios);
+app.use('/api/gamificacao', gamificacao);
 
 app.get('/', (req, res) => {
   res.redirect('/index.html');
@@ -41,7 +43,7 @@ app.get('/api/produtos', async (req, res) => {
         c.nome_categoria,
         ${postgres ? "CASE WHEN d.estado <> 'inativo' THEN co.id_colecao END" : 'co.id_colecao'} AS id_colecao,
         ${postgres ? "CASE WHEN d.estado <> 'inativo' THEN co.nome_colecao END" : 'co.nome_colecao'} AS nome_colecao
-        ${postgres ? ', d.estado as estado_drop' : ''}
+        ${postgres ? ", d.estado as estado_drop, CASE WHEN d.estado <> 'inativo' THEN co.nivel_minimo END AS nivel_minimo" : ''}
       FROM produto AS p
       JOIN categoria AS c
         ON c.id_categoria = p.fk_categoria_id_categoria
@@ -68,8 +70,9 @@ app.get('/api/drops', async (req, res) => {
     const [[disponibilidade]] = await sequelize.query(`
       select clock_timestamp() as agora,
         coalesce(jsonb_agg(
-          to_jsonb(d) || jsonb_build_object('capa_url',
-            case when c.capa is not null then '/api/drops/' || d.id_colecao || '/capa?v=' || c.versao end)
+          to_jsonb(d) || jsonb_build_object(
+            'nivel_minimo', c.nivel_minimo,
+            'capa_url', case when c.capa is not null then '/api/drops/' || d.id_colecao || '/capa?v=' || c.versao end)
           order by d.data_lancamento, d.id_colecao), '[]'::jsonb) as drops
       from public.disponibilidade_drop d
       join public.colecao c on c.id_colecao = d.id_colecao

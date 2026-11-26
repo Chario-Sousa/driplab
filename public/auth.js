@@ -150,6 +150,7 @@
       });
       informar('');
       perfil.hidden = false;
+      perfil.dispatchEvent(new Event('driplab:perfil-pronto'));
       carregarPedidos();
       mostrarLinkAdmin();
     } catch {
@@ -158,8 +159,8 @@
   }
 
   async function mostrarLinkAdmin() {
-    const link = perfil.querySelector('[data-admin-link]');
-    if (!link) return;
+    const links = perfil.querySelectorAll('[data-admin-link]');
+    if (!links.length) return;
     try {
       const { data } = await auth.getSession();
       if (!data.session) return;
@@ -167,7 +168,7 @@
         headers: { Authorization: 'Bearer ' + data.session.access_token },
         cache: 'no-store',
       });
-      link.hidden = resposta.status !== 204;
+      links.forEach(link => { link.hidden = resposta.status !== 204; });
     } catch {
       link.hidden = true;
     }
@@ -206,8 +207,15 @@
           itens.append(linha);
         }
         const total = document.createElement('b');
-        total.textContent = 'Total dos produtos ' + moeda.format(Number(pedido.valor_total));
-        cartao.append(titulo, data, status, itens, total);
+        total.textContent = 'Total do pedido ' + moeda.format(Number(pedido.valor_total));
+        cartao.append(titulo, data, status, itens);
+        const valorDesconto = Number(pedido.valor_desconto);
+        if (valorDesconto > 0) {
+          const desconto = document.createElement('small');
+          desconto.textContent = 'Desconto por pontos: −' + moeda.format(valorDesconto);
+          cartao.append(desconto);
+        }
+        cartao.append(total);
         lista.append(cartao);
       }
       estado.textContent = pedidos.length ? '' : 'Você ainda não tem pedidos.';

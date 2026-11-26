@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerenciar pedidos — DripLab</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
+  <a class="admin-voltar" href="admin.html">Voltar ao painel</a>
+</header>
+<main class="admin-layout" data-admin-pedidos>
+  <h1>Gerenciar pedidos</h1>
+  <p class="admin-retorno" data-pedidos-estado role="status">Carregando pedidos…</p>
+  <a class="admin-voltar" href="login.html" data-pedidos-login hidden>Entrar na conta →</a>
+  <button class="btn sm" type="button" data-pedidos-atualizar hidden>Atualizar lista</button>
+  <section class="admin-bloco admin-pedidos" aria-labelledby="pedidos-pendentes" hidden>
+    <h2 id="pedidos-pendentes">Pedidos pendentes</h2>
+    <p class="admin-retorno" data-pedidos-vazio hidden>Nenhum pedido pendente.</p>
+    <ul data-pedidos-lista></ul>
+    <button class="btn sm" type="button" data-pedidos-mais hidden>Carregar mais</button>
+  </section>
+</main>
+<script type="module" src="admin-pedidos.mjs"></script>
+</body>
+</html>

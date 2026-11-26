@@ -24,11 +24,11 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Painel administrativo para cadastrar e editar coleções, enviar capas e vincular produtos.
 - Votação da comunidade com um voto por conta, capas, contagem pública e encerramento pelo painel.
 - Comentários por votação e por drop, com leitura pública e exclusão pelo autor.
+- Gamificação no perfil com pontos, níveis, conquistas e recompensas de títulos e descontos.
 
 ### Limitações atuais
 
-- O checkout registra pedidos como pendentes. Pagamento real e gestão de pedidos são etapas futuras.
-- Pontos, conquistas e recompensas fazem parte da evolução planejada.
+- O checkout registra pedidos como pendentes para confirmação manual no painel. Pagamento real fica para uma etapa futura.
 
 ## Tecnologias utilizadas
 
@@ -59,6 +59,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 - [Migração de votações da comunidade](sql/votacoes_postgres.sql)
 - [Migração das capas das opções de votação](sql/capas_votacoes_postgres.sql)
 - [Migração dos comentários da Comunidade](sql/comentarios_postgres.sql)
+- [Migração da gamificação](sql/gamificacao_postgres.sql)
 - [Criação do banco original no MySQL](sql/criar_banco.sql)
 - [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
 
@@ -73,7 +74,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 ## Execução com Supabase
 
 1. Clone o repositório, abra a pasta `driplab` e instale as dependências com `npm ci`. Use **Node.js 22 ou superior**.
-2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql`, `sql/drops_postgres.sql`, `sql/favoritos_postgres.sql`, `sql/admin_colecoes_postgres.sql`, `sql/votacoes_postgres.sql`, `sql/capas_votacoes_postgres.sql` e `sql/comentarios_postgres.sql`, nessa ordem.
+2. Em um projeto Supabase novo, aplique `sql/catalogo_postgres.sql`, `sql/pedidos_postgres.sql`, `sql/drops_postgres.sql`, `sql/favoritos_postgres.sql`, `sql/admin_colecoes_postgres.sql`, `sql/votacoes_postgres.sql`, `sql/capas_votacoes_postgres.sql`, `sql/comentarios_postgres.sql` e `sql/gamificacao_postgres.sql`, nessa ordem.
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
 5. Em `public/auth-config.json`, configure `url` com a URL do mesmo projeto Supabase e `chavePublica` com a chave publicável desse projeto. Esse arquivo é servido ao navegador e deve conter apenas a configuração pública.
@@ -106,6 +107,8 @@ Com a confirmação de e-mail ativada, use um endereço da equipe para testar co
 
 Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finalizar compra**. O pedido aparece como **Pendente** no perfil. O total corresponde aos produtos. Estoque, preços e identidade do cliente são conferidos pelo servidor.
 
+Uma conta administrativa pode abrir **Perfil → Gerenciar pedidos** e confirmar o pedido pendente. Na confirmação, a conta do cliente recebe 50 pontos e 50 XP. A primeira confirmação também libera o título **Estreante DripLab**.
+
 `POST /api/pedidos` recebe `chave_solicitacao` (UUID) e `itens` com `id_produto` e `quantidade`. Reenvie a mesma chave ao repetir a tentativa com os mesmos itens. `GET /api/pedidos` retorna o histórico do usuário autenticado. As duas rotas exigem o token de acesso do Supabase Auth no cabeçalho `Authorization: Bearer`.
 
 ### Drops
@@ -113,6 +116,20 @@ Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finaliza
 `GET /api/drops` retorna as datas e as peças restantes de cada drop anunciado. A página inicial usa esses dados para mostrar quando abre ou encerra a venda.
 
 Defina o início, o encerramento opcional e o limite total de unidades em **Perfil → Gerenciar coleções**. O painel usa o horário de Brasília. Pedidos pendentes e confirmados ocupam o limite compartilhado da coleção.
+
+### Gamificação
+
+Votar em uma enquete rende 20 pontos e 20 XP. O primeiro comentário rende 10 pontos e 10 XP. Cada pedido confirmado rende 50 pontos e 50 XP. A migração aproveita as ações já registradas.
+
+O XP acumulado necessário para subir de nível é `75 × nível atual^1,2`, arredondado ao inteiro mais próximo. São 75 XP para chegar ao nível 2, 172 XP para o nível 3 e 280 XP para o nível 4. Cada resgate reduz o saldo de pontos. O XP acumulado determina o nível.
+
+Em **Perfil → Recompensas**, troque 30 pontos por 5% de desconto ou 50 pontos por 10% de desconto. Após usar um desconto, você pode resgatá-lo novamente pelo mesmo custo. A conta pode manter um desconto disponível de cada percentual e aplicar um por pedido.
+
+Em **Perfil → Títulos**, resgate títulos com pontos ou desbloqueie títulos ao completar uma conquista. O primeiro voto libera **Voz da Enquete**, o primeiro comentário libera **Voz do Drop** e a primeira compra confirmada libera **Estreante DripLab**. Os títulos de conquistas são liberados automaticamente.
+
+Use **Usar título** para exibi-lo no perfil. A troca e a remoção preservam os títulos disponíveis e o saldo de pontos. O atalho abaixo do nome abre a aba de títulos.
+
+Em **Perfil → Gerenciar coleções**, o administrador pode definir o nível mínimo para comprar em cada drop. Os produtos ficam visíveis no catálogo, e o sistema confere o nível ao registrar o pedido.
 
 ## Execução local com o MySQL original
 

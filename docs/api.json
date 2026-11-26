@@ -16,6 +16,341 @@
     }
   ],
   "paths": {
+    "/api/gamificacao": {
+      "get": {
+        "tags": [
+          "Gamificação"
+        ],
+        "summary": "Consultar o progresso, as conquistas e as recompensas da conta",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progresso da conta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "saldo": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "xp": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "nivel": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "progresso_xp": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "xp_por_nivel": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "XP total exigido na faixa do nível atual. Subtraia progresso_xp para saber quanto falta."
+                    },
+                    "titulo": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "conquistas": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "titulo": {
+                            "type": "string"
+                          },
+                          "descricao": {
+                            "type": "string"
+                          },
+                          "desbloqueada": {
+                            "type": "boolean"
+                          },
+                          "titulo_recompensa": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        },
+                        "required": [
+                          "titulo",
+                          "descricao",
+                          "desbloqueada",
+                          "titulo_recompensa"
+                        ]
+                      }
+                    },
+                    "recompensas": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "codigo": {
+                            "type": "string"
+                          },
+                          "titulo": {
+                            "type": "string"
+                          },
+                          "descricao": {
+                            "type": "string"
+                          },
+                          "custo": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "resgatada": {
+                            "type": "boolean"
+                          },
+                          "desconto_percentual": {
+                            "type": "integer",
+                            "nullable": true,
+                            "minimum": 1,
+                            "maximum": 100
+                          },
+                          "usada": {
+                            "type": "boolean"
+                          },
+                          "ultimo_resgate": {
+                            "type": "string",
+                            "nullable": true,
+                            "pattern": "^[1-9][0-9]{0,18}$"
+                          },
+                          "titulo_ativo": {
+                            "type": "boolean"
+                          },
+                          "origem_desbloqueio": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": ["voto", "comentario", "pedido", null]
+                          }
+                        },
+                        "required": [
+                          "codigo",
+                          "titulo",
+                          "descricao",
+                          "custo",
+                          "resgatada",
+                          "desconto_percentual",
+                          "usada",
+                          "ultimo_resgate",
+                          "titulo_ativo",
+                          "origem_desbloqueio"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "saldo",
+                    "xp",
+                    "nivel",
+                    "progresso_xp",
+                    "xp_por_nivel",
+                    "titulo",
+                    "conquistas",
+                    "recompensas"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Gamificação indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/gamificacao/recompensas/{codigo}/resgate": {
+      "parameters": [
+        {
+          "name": "codigo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,64}$"
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Gamificação"
+        ],
+        "summary": "Resgatar uma recompensa da própria conta",
+        "description": "Títulos que custam pontos são resgatados uma vez. Os títulos de conquistas são desbloqueados automaticamente. Para resgatar um desconto após o uso, envie o identificador do último resgate usado.",
+        "security": [
+          {
+            "supabaseBearer": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ultimo_resgate": {
+                    "type": "string",
+                    "nullable": true,
+                    "pattern": "^[1-9][0-9]{0,18}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recompensa resgatada ou já ativa na conta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resgatada": {
+                      "type": "boolean"
+                    },
+                    "novo_resgate": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "resgatada",
+                    "novo_resgate"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Código inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão ausente ou inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recompensa não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Saldo insuficiente, resgate desatualizado ou título de conquista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Gamificação indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/gamificacao/titulo": {
+      "put": {
+        "tags": ["Gamificação"],
+        "summary": "Escolher ou remover o título exibido no perfil",
+        "security": [{ "supabaseBearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["codigo"],
+                "properties": {
+                  "codigo": {
+                    "type": "string",
+                    "nullable": true,
+                    "pattern": "^[a-z0-9-]{1,64}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Título atualizado" },
+          "400": { "description": "Título inválido" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "409": { "description": "Título não resgatado pela conta" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Gamificação indisponível" }
+        }
+      }
+    },
     "/api/comentarios/{tipo}/{alvo}": {
       "parameters": [
         {
@@ -1336,6 +1671,79 @@
         }
       }
     },
+    "/api/admin/pedidos": {
+      "get": {
+        "tags": ["Administração"],
+        "summary": "Listar pedidos pendentes para confirmação",
+        "security": [{ "supabaseBearer": [] }],
+        "parameters": [
+          {
+            "name": "antes",
+            "in": "query",
+            "schema": { "type": "string", "pattern": "^[1-9][0-9]{0,18}$" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de pedidos pendentes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["itens", "proximo"],
+                  "properties": {
+                    "itens": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["id_pedido", "data_pedido", "valor_total", "email"],
+                        "properties": {
+                          "id_pedido": { "type": "string" },
+                          "data_pedido": { "type": "string", "format": "date-time" },
+                          "valor_total": { "type": "string" },
+                          "email": { "type": "string", "nullable": true }
+                        }
+                      }
+                    },
+                    "proximo": { "type": "string", "nullable": true }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Página inválida" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "403": { "description": "Conta sem acesso administrativo" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Painel indisponível" }
+        }
+      }
+    },
+    "/api/admin/pedidos/{id}/confirmacao": {
+      "put": {
+        "tags": ["Administração"],
+        "summary": "Confirmar um pedido pendente",
+        "security": [{ "supabaseBearer": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "pattern": "^[1-9][0-9]{0,18}$" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Pedido confirmado ou já confirmado" },
+          "400": { "description": "Pedido inválido" },
+          "401": { "description": "Sessão ausente ou inválida" },
+          "403": { "description": "Conta sem acesso administrativo" },
+          "404": { "description": "Pedido não encontrado" },
+          "409": { "description": "Pedido fora do estado pendente" },
+          "500": { "description": "Falha no servidor" },
+          "503": { "description": "Painel indisponível" }
+        }
+      }
+    },
     "/api/admin/colecoes": {
       "get": {
         "tags": [
@@ -2126,6 +2534,12 @@
           "estado_drop": {
             "type": "string",
             "nullable": true
+          },
+          "nivel_minimo": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "nullable": true
           }
         },
         "required": [
@@ -2184,6 +2598,11 @@
           "limite_pecas": {
             "type": "integer"
           },
+          "nivel_minimo": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
           "pecas_restantes": {
             "type": "integer"
           },
@@ -2207,6 +2626,7 @@
           "data_lancamento",
           "data_encerramento",
           "limite_pecas",
+          "nivel_minimo",
           "pecas_restantes",
           "estado",
           "capa_url"
@@ -2304,6 +2724,9 @@
           "valor_total": {
             "type": "string"
           },
+          "valor_desconto": {
+            "type": "string"
+          },
           "itens": {
             "type": "array",
             "items": {
@@ -2333,6 +2756,7 @@
           "data_pedido",
           "status",
           "valor_total",
+          "valor_desconto",
           "itens"
         ]
       },
@@ -2357,6 +2781,11 @@
                 "limite_pecas": {
                   "type": "integer"
                 },
+                "nivel_minimo": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
                 "versao": {
                   "type": "integer",
                   "minimum": 1
@@ -2377,6 +2806,7 @@
                 "nome_colecao",
                 "ativa",
                 "limite_pecas",
+                "nivel_minimo",
                 "versao",
                 "tem_capa",
                 "lancamento",
@@ -2421,6 +2851,12 @@
           "chave_solicitacao": {
             "type": "string",
             "format": "uuid"
+          },
+          "codigo_recompensa": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-z0-9-]{1,64}$",
+            "description": "Código de um desconto previamente resgatado e ainda disponível."
           },
           "itens": {
             "type": "array",
@@ -2467,6 +2903,12 @@
           "limite": {
             "type": "integer",
             "minimum": 0
+          },
+          "nivel_minimo": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 1
           },
           "ativa": {
             "type": "boolean"
@@ -2520,6 +2962,11 @@
           "limite": {
             "type": "integer",
             "minimum": 0
+          },
+          "nivel_minimo": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
           },
           "ativa": {
             "type": "boolean"

@@ -84,37 +84,65 @@
     matchMedia('(max-width: 860px)').addEventListener('change', () => alternarMenu(false));
   }
 
-  const favoritosPerfil = $('#favoritos');
-  if (favoritosPerfil) {
-    const perfil = $('[data-perfil]');
-    const resumo = favoritosPerfil.parentElement;
+  const perfil = $('[data-perfil]');
+  if (perfil) {
+    const favoritos = $('#favoritos', perfil);
+    const conquistas = $('#conquistas', perfil);
+    const recompensas = $('#recompensas', perfil);
+    const titulos = $('#titulos', perfil);
+    const pontos = $('[data-pontos-perfil]', perfil);
+    const resumo = $('[data-resumo-perfil]', perfil);
     const principal = $('main', perfil);
-    const favoritosMenu = $('a[href="#favoritos"]', perfil);
-    const visaoGeral = $('a[href="perfil.html"]', perfil);
+    const menuPerfil = $('.lateral nav', perfil);
+    const links = {
+      favoritos: $('a[href="#favoritos"]', menuPerfil),
+      conquistas: $('a[href="#conquistas"]', menuPerfil),
+      recompensas: $('a[href="#recompensas"]', menuPerfil),
+      titulos: $('a[href="#titulos"]', menuPerfil),
+      geral: $('a[href="perfil.html"]', menuPerfil),
+    };
 
-    function mostrarFavoritosPerfil() {
-      const ativo = location.hash === '#favoritos';
-      (ativo ? principal : resumo).append(favoritosPerfil);
-      perfil.classList.toggle('perfil-favoritos', ativo);
-      favoritosMenu.classList.toggle('on', ativo);
-      visaoGeral.classList.toggle('on', !ativo);
-      if (ativo) favoritosMenu.setAttribute('aria-current', 'location');
-      else favoritosMenu.removeAttribute('aria-current');
+    function mostrarAbaPerfil() {
+      const hash = location.hash;
+      let aba = 'geral';
+      if (hash === '#favoritos') aba = 'favoritos';
+      if (hash === '#conquistas') aba = 'conquistas';
+      if (hash === '#recompensas') aba = 'recompensas';
+      if (hash === '#titulos' || hash === '#titulo-titulos') aba = 'titulos';
+      perfil.dataset.aba = aba;
+
+      const destinoFavoritos = aba === 'favoritos' ? principal : resumo;
+      if (favoritos.parentElement !== destinoFavoritos) destinoFavoritos.append(favoritos);
+      conquistas.hidden = aba !== 'conquistas';
+      titulos.hidden = aba !== 'titulos';
+      const painelComPontos = { recompensas, titulos }[aba];
+      if (pontos.parentElement !== (painelComPontos || resumo)) {
+        if (painelComPontos) $('.cartao-t', painelComPontos).after(pontos);
+        else resumo.prepend(pontos);
+      }
+
+      for (const [nome, link] of Object.entries(links)) {
+        link.classList.toggle('on', aba === nome);
+        if (aba === nome) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      }
     }
 
-    mostrarFavoritosPerfil();
+    mostrarAbaPerfil();
     window.addEventListener('hashchange', () => {
-      const estavaEmFavoritos = perfil.classList.contains('perfil-favoritos');
-      mostrarFavoritosPerfil();
-      if (location.hash === '#favoritos') {
-        favoritosPerfil.focus({ preventScroll: true });
-        favoritosPerfil.scrollIntoView({ block: 'start' });
-      } else if (estavaEmFavoritos) {
-        document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start' });
+      const abaAnterior = perfil.dataset.aba;
+      mostrarAbaPerfil();
+      const destino = document.getElementById(location.hash.slice(1));
+      if (perfil.dataset.aba !== 'geral') {
+        destino?.focus({ preventScroll: true });
+        destino?.scrollIntoView({ block: 'start' });
+      } else if (abaAnterior !== 'geral') {
+        (destino || principal).scrollIntoView({ block: 'start' });
       }
     });
-    favoritosMenu.addEventListener('click', () => {
-      if (location.hash === '#favoritos') favoritosPerfil.focus({ preventScroll: true });
+    menuPerfil.addEventListener('click', evento => {
+      const hash = evento.target.closest('a')?.hash;
+      if (hash && hash === location.hash) document.getElementById(hash.slice(1))?.focus({ preventScroll: true });
     });
   }
 
@@ -133,6 +161,8 @@
   const rascunho = lerCarrinho();
   let carrinho = rascunho.itens;
   let tentativa = rascunho.tentativa;
+  let codigoDesconto = rascunho.codigoDesconto;
+  let descontos = [];
   let finalizando = false;
   const textoSeguro = texto => texto.replace(/[&<>"']/g, caractere => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -147,7 +177,9 @@
         && typeof item.img === 'string' && /^--img-prod-[a-z\d-]+$/i.test(item.img)
         && Number.isFinite(item.preco) && Number.isInteger(item.q) && item.q > 0
       ) : [];
-      return { itens, tentativa: dados?.tentativa };
+      const codigoDesconto = typeof dados?.codigoDesconto === 'string' && /^[a-z0-9-]{1,64}$/.test(dados.codigoDesconto)
+        ? dados.codigoDesconto : null;
+      return { itens, tentativa: dados?.tentativa, codigoDesconto };
     } catch {
       return { itens: [] };
     }
@@ -155,7 +187,7 @@
 
   function salvarCarrinho() {
     try {
-      sessionStorage.setItem(chaveCarrinho, JSON.stringify({ itens: carrinho, tentativa }));
+      sessionStorage.setItem(chaveCarrinho, JSON.stringify({ itens: carrinho, tentativa, codigoDesconto }));
     } catch {
       return;
     }
@@ -194,6 +226,11 @@
     <aside class="gaveta" id="g-cart" aria-label="Carrinho" aria-hidden="true">
       <div class="g-topo">${ic('cart')}<div><h2>Carrinho</h2><small id="cart-n"></small></div><button class="circle fechar" data-fechar aria-label="Fechar">${ic('close')}</button></div>
       <div class="g-lista" id="cart-lista"></div>
+      <div id="cart-recompensas" class="cart-recompensas" hidden>
+        <label for="cart-desconto">Desconto por pontos</label>
+        <select id="cart-desconto"><option value="">Sem desconto</option></select>
+        <a href="perfil.html#recompensas">Ver recompensas</a>
+      </div>
       <div class="totais" id="cart-tot"></div>
       <p class="auth-retorno" id="cart-retorno" role="status" hidden></p>
       <button class="btn-cheio" id="finalizar-compra" type="button">${ic('bag')} Finalizar compra ${ic('arrow')}</button>
@@ -203,9 +240,11 @@
   const alvos = { busca: $('#busca'), fav: $('#g-fav'), cart: $('#g-cart') };
   let acionadorBusca;
   function abrir(k) {
+    const jaAberto = alvos[k].classList.contains('on');
     Object.values(alvos).forEach(e => { e.classList.remove('on'); e.setAttribute('aria-hidden', 'true'); });
     alvos[k].classList.add('on'); alvos[k].setAttribute('aria-hidden', 'false'); veu.classList.add('on');
     if (k === 'busca') $('#busca-in').focus();
+    if (k === 'cart' && !jaAberto) carregarDescontos();
   }
   function fechar() {
     if (alvos.busca.classList.contains('on')) acionadorBusca?.focus();
@@ -228,6 +267,9 @@
     iniciarFavoritos();
   });
   liga('Carrinho', () => abrir('cart'));
+  document.addEventListener('click', evento => {
+    if (evento.target.closest('[data-abrir-carrinho]')) abrir('cart');
+  });
 
   const campoBusca = $('#busca-in');
   const listaBusca = $('#busca-res');
@@ -360,6 +402,39 @@
     abrir('cart');
   }
 
+  function atualizarDescontos() {
+    const seletor = $('#cart-desconto');
+    const opcoes = descontos.map(item => new Option(item.titulo, item.codigo));
+    if (codigoDesconto && !descontos.some(item => item.codigo === codigoDesconto)) {
+      opcoes.push(new Option('Desconto selecionado', codigoDesconto));
+    }
+    seletor.replaceChildren(new Option('Sem desconto', ''), ...opcoes);
+    seletor.value = codigoDesconto || '';
+  }
+
+  async function carregarDescontos() {
+    try {
+      const { obterAuth } = await import('./sessao.mjs');
+      const auth = await obterAuth();
+      const { data } = await auth.getSession();
+      if (!data?.session) {
+        descontos = [];
+      } else {
+        const resposta = await fetch('/api/gamificacao', {
+          cache: 'no-store',
+          headers: { Authorization: 'Bearer ' + data.session.access_token },
+        });
+        if (!resposta.ok) throw new Error('Recompensas indisponíveis');
+        const dados = await resposta.json();
+        descontos = dados.recompensas.filter(item => item.desconto_percentual && item.resgatada && !item.usada);
+      }
+    } catch {
+      descontos = [];
+    }
+    atualizarDescontos();
+    renderCart();
+  }
+
   function renderCart() {
     const n = carrinho.reduce((s, c) => s + c.q, 0);
     const bloqueado = finalizando ? 'disabled' : '';
@@ -370,8 +445,16 @@
           <div class="qtd"><button data-q="-1" data-id="${c.id}" aria-label="Diminuir" ${bloqueado}>${ic('minus')}</button><span>${c.q}</span><button data-q="1" data-id="${c.id}" aria-label="Aumentar" ${bloqueado}>${ic('plus')}</button></div></div>
         <div class="fim"><button data-rm="${c.id}" aria-label="Remover" ${bloqueado}>${ic('close')}</button><span class="preco">${moeda(c.preco * c.q)}</span></div>
       </div>`).join('') : '<p class="vazio">Seu carrinho está vazio.</p>';
-    const total = carrinho.reduce((soma, item) => soma + item.preco * item.q, 0);
-    $('#cart-tot').innerHTML = `<div class="total"><span>Total dos produtos</span><b>${moeda(total)}</b></div>`;
+    const subtotal = carrinho.reduce((soma, item) => soma + Math.round(item.preco * 100) * item.q, 0);
+    const percentual = descontos.find(item => item.codigo === codigoDesconto)?.desconto_percentual ?? 0;
+    const desconto = Math.round(subtotal * percentual / 100);
+    $('#cart-recompensas').hidden = !n;
+    $('#cart-desconto').disabled = finalizando;
+    $('#cart-tot').innerHTML = desconto
+      ? `<div><span>Subtotal</span><b>${moeda(subtotal / 100)}</b></div>
+         <div><span>Desconto estimado</span><b>−${moeda(desconto / 100)}</b></div>
+         <div class="total"><span>Total estimado</span><b>${moeda((subtotal - desconto) / 100)}</b></div>`
+      : `<div class="total"><span>Total dos produtos</span><b>${moeda(subtotal / 100)}</b></div>`;
     $('#finalizar-compra').disabled = finalizando || !n;
     $$('[data-q]').forEach(botao => botao.onclick = () => {
       const item = carrinho.find(atual => atual.id === botao.dataset.id);
@@ -412,7 +495,8 @@
 
       const itens = carrinho.map(item => ({ id_produto: item.idProduto, quantidade: item.q }))
         .sort((a, b) => a.id_produto - b.id_produto);
-      const assinatura = JSON.stringify([data.session.user.id, itens]);
+      const assinatura = JSON.stringify(codigoDesconto
+        ? [data.session.user.id, itens, codigoDesconto] : [data.session.user.id, itens]);
       if (tentativa?.assinatura !== assinatura || typeof tentativa.chave !== 'string') {
         tentativa = { assinatura, chave: crypto.randomUUID() };
         salvarCarrinho();
@@ -421,7 +505,7 @@
       const resposta = await fetch('/api/pedidos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.session.access_token },
-        body: JSON.stringify({ chave_solicitacao: tentativa.chave, itens }),
+        body: JSON.stringify({ chave_solicitacao: tentativa.chave, itens, codigo_recompensa: codigoDesconto ?? null }),
       });
 
       if (resposta.status === 401) {
@@ -438,6 +522,7 @@
       if (!resultado.id_pedido) throw new Error('Resposta sem pedido');
       carrinho = [];
       tentativa = null;
+      codigoDesconto = null;
       salvarCarrinho();
       location.assign('perfil.html#pedidos');
     } catch {
@@ -449,6 +534,12 @@
   }
 
   $('#finalizar-compra').addEventListener('click', finalizarCompra);
+  $('#cart-desconto').addEventListener('change', evento => {
+    codigoDesconto = evento.target.value || null;
+    mostrarRetorno('');
+    renderCart();
+  });
+  atualizarDescontos();
   renderCart();
   if ($('[data-shop], [data-produto], [data-perfil]')) iniciarFavoritos();
   if (new URLSearchParams(location.search).get('carrinho') === '1' && carrinho.length) abrir('cart');

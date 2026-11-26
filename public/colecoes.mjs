@@ -45,6 +45,12 @@ import { capaColecao } from './capas-colecoes.mjs';
     estado.textContent = rotulos[drop.estado];
     card.append(titulo, estado);
 
+    if (drop.nivel_minimo > 1) {
+      const acesso = document.createElement('small');
+      acesso.textContent = 'Compra a partir do nível ' + drop.nivel_minimo;
+      card.append(acesso);
+    }
+
     const data = new Date(drop.data_lancamento);
     if (drop.data_lancamento && Number.isFinite(data.getTime())) {
       const lancamento = document.createElement('time');

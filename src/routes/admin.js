@@ -23,7 +23,7 @@ function dataLocal(valor) {
 
 function validarColecao(corpo, id) {
   const { nome, lancamento, encerramento, limite, ativa, produtos, mover, versao, capa,
-    remover_capa: remover, chave_criacao: chave } = corpo ?? {};
+    remover_capa: remover, chave_criacao: chave, nivel_minimo: nivelMinimo } = corpo ?? {};
   const inicio = dataLocal(lancamento);
   const fim = encerramento == null || encerramento === '' ? null : dataLocal(encerramento);
   if (typeof nome !== 'string' || !nome.trim() || Array.from(nome.trim()).length > 120
@@ -35,11 +35,14 @@ function validarColecao(corpo, id) {
       || new Set(produtos).size !== produtos.length || (capa && remover)) {
     throw new ErroPainel(400, 'Confira os produtos selecionados e a capa.');
   }
+  if (nivelMinimo !== undefined && (!inteiro(nivelMinimo) || nivelMinimo > 100)) {
+    throw new ErroPainel(400, 'Escolha um nível mínimo entre 1 e 100.');
+  }
   if (!id && (typeof chave !== 'string' || !uuid.test(chave))) {
     throw new ErroPainel(400, 'Recarregue o painel para criar a coleção.');
   }
   return {
-    nome: nome.trim(), inicio, fim, limite, ativa, produtos, mover: mover === true, versao, chave,
+    nome: nome.trim(), inicio, fim, limite, ativa, produtos, mover: mover === true, versao, chave, nivelMinimo,
     capa: capa == null ? null : validarCapa(capa), remover: remover === true,
   };
 }
@@ -61,13 +64,14 @@ admin.use(async (req, res, next) => {
 
 admin.get('/acesso', (req, res) => res.status(204).end());
 admin.use('/votacoes', require('./admin-votacoes'));
+admin.use('/pedidos', require('./admin-pedidos'));
 admin.get('/colecoes', async (req, res) => {
   try {
     const [[dados]] = await consulta(`
       select
         (select coalesce(jsonb_agg(to_jsonb(c) order by c.id_colecao desc), '[]'::jsonb)
          from (
-           select id_colecao, nome_colecao, ativa, limite_pecas, versao, capa is not null as tem_capa,
+           select id_colecao, nome_colecao, ativa, limite_pecas, nivel_minimo, versao, capa is not null as tem_capa,
              to_char(data_lancamento at time zone 'America/Sao_Paulo', 'YYYY-MM-DD"T"HH24:MI:SS') as lancamento,
              to_char(data_encerramento at time zone 'America/Sao_Paulo', 'YYYY-MM-DD"T"HH24:MI:SS') as encerramento
            from public.colecao
@@ -126,18 +130,18 @@ async function salvarColecao(id, dados, transaction) {
           limite_pecas = $4, ativa = $5,
           capa = case when $8 or $6::bytea is not null then $6 else capa end,
           capa_tipo = case when $8 or $7::text is not null then $7 else capa_tipo end,
-          versao = versao + 1
+          nivel_minimo = coalesce($10, nivel_minimo), versao = versao + 1
       where id_colecao = $9
-    `, [...campos, dados.remover, id], transaction);
+    `, [...campos, dados.remover, id, dados.nivelMinimo ?? null], transaction);
   } else {
     const [[criada]] = await consulta(`
       insert into public.colecao (
-        nome_colecao, data_lancamento, data_encerramento, limite_pecas, ativa, capa, capa_tipo, chave_criacao
+        nome_colecao, data_lancamento, data_encerramento, limite_pecas, ativa, capa, capa_tipo, chave_criacao, nivel_minimo
       )
       values ($1, $2::timestamp at time zone 'America/Sao_Paulo', $3::timestamp at time zone 'America/Sao_Paulo',
-        $4, $5, $6, $7, $8::uuid)
+        $4, $5, $6, $7, $8::uuid, $9)
       returning id_colecao
-    `, [...campos, dados.chave], transaction);
+    `, [...campos, dados.chave, dados.nivelMinimo ?? 1], transaction);
     destino = criada.id_colecao;
   }
 

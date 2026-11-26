@@ -59,6 +59,10 @@
       || (produto.estoque != null && Number(produto.estoque) <= 0 ? 'Sem estoque' : '');
   }
 
+  function requisitoDeNivel(produto) {
+    return produto.nivel_minimo > 1 ? 'Compra a partir do nível ' + produto.nivel_minimo : '';
+  }
+
   function adicionarAoCarrinho(produto, compravel) {
     document.dispatchEvent(
       new CustomEvent('driplab:add-to-cart', { detail: { ...produto, compravel } })
@@ -116,11 +120,12 @@
 
     informacoes.append(nome, preco);
     const estado = estadoProduto(produto);
-    if (estado) {
-      const aviso = document.createElement('small');
-      aviso.className = 'produto-indisponivel';
-      aviso.textContent = estado;
-      informacoes.append(aviso);
+    const aviso = estado || requisitoDeNivel(produto);
+    if (aviso) {
+      const legenda = document.createElement('small');
+      legenda.className = 'produto-indisponivel';
+      legenda.textContent = aviso;
+      informacoes.append(legenda);
     }
 
     const adicionar = document.createElement('button');
@@ -293,7 +298,7 @@
         preencherTexto('colecao', produto.nome_colecao);
         preencherTexto('preco', formatarPreco(produto.preco));
         preencherTexto('descricao', produto.descricao_produto);
-        preencherTexto('estado', estado || (estoque > 0 ? disponibilidade : 'Disponível'));
+        preencherTexto('estado', estado || requisitoDeNivel(produto) || (estoque > 0 ? disponibilidade : 'Disponível'));
         botao.disabled = Boolean(estado);
         favorito.dataset.favorito = produto.id_produto;
         favorito.setAttribute('aria-label', `Favorito: ${produto.nome_produto}`);

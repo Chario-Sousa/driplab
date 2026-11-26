@@ -77,6 +77,7 @@ function abrirEditor() {
   campos.lancamento.value = selecionada?.lancamento ?? '';
   campos.encerramento.value = selecionada?.encerramento ?? '';
   campos.limite.value = selecionada?.limite_pecas ?? '';
+  campos.nivel_minimo.value = selecionada?.nivel_minimo ?? 1;
   campos.ativa.checked = selecionada?.ativa ?? false;
   capaAtual.hidden = !selecionada?.tem_capa;
   removerCapa.hidden = !selecionada?.tem_capa;
@@ -169,6 +170,7 @@ form.addEventListener('submit', async evento => {
       lancamento: campos.lancamento.value,
       encerramento: campos.encerramento.value || null,
       limite: campos.limite.valueAsNumber,
+      nivel_minimo: campos.nivel_minimo.valueAsNumber,
       ativa: campos.ativa.checked,
       produtos: [...lista.querySelectorAll('input:checked')].map(input => Number(input.value)),
       mover: campos.mover.checked,

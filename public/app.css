@@ -155,6 +155,10 @@
 .totais div{display:flex;justify-content:space-between}
 .totais .total{font-size:1.1rem;font-weight:700}
 .totais .total b{color:var(--orange)}
+.cart-recompensas{display:grid;gap:.4rem;font-size:.8rem}
+.cart-recompensas[hidden]{display:none}
+.cart-recompensas select{width:100%;color:inherit;background:#151515;border:1px solid var(--line);border-radius:.6rem;padding:.55rem}
+.cart-recompensas a{color:var(--orange);text-decoration:underline;justify-self:start}
 .btn-cheio{display:flex;align-items:center;justify-content:center;gap:.8rem;height:52px;border:0;border-radius:12px;background:var(--orange);color:#000;font:700 .8rem var(--body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:.2s}
 .btn-cheio:hover{filter:brightness(1.1)}
 .btn-borda{display:flex;align-items:center;justify-content:center;gap:.8rem;height:48px;border:1px solid var(--orange);border-radius:12px;background:none;color:#fff;font:600 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
@@ -228,6 +232,49 @@
 .favorito-miniatura img{display:block;width:100%;height:100%;object-fit:contain}
 [data-favoritos-tentar][hidden],[data-favoritos-perfil][hidden],[data-favoritos-login][hidden]{display:none}
 #favoritos{scroll-margin-top:6rem}
-.perfil-favoritos main>.cartao:not(#favoritos){display:none}
+.perfil[data-aba="favoritos"] main>.cartao:not(#favoritos),
+.perfil[data-aba="conquistas"] main>.cartao:not(#conquistas),
+.perfil[data-aba="recompensas"] main>.cartao:not(#recompensas),
+.perfil[data-aba="titulos"] main>.cartao:not(#titulos),
+.perfil:is([data-aba="conquistas"],[data-aba="recompensas"],[data-aba="titulos"]) [data-resumo-perfil],
+#conquistas[hidden],#titulos[hidden]{display:none}
+@media(min-width:901px){
+  .perfil:is([data-aba="conquistas"],[data-aba="recompensas"],[data-aba="titulos"]) main{grid-column:2/-1}
+}
 #favoritos .auth-retorno:empty,.favoritos-painel .auth-retorno:empty{display:none}
 .perfil [data-admin-link][hidden]{display:none}
+.gamificacao-titulo{margin-top:.5rem;color:var(--orange);font-size:.9rem}
+.gamificacao-titulo-acoes{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem}
+.gamificacao-titulo-acoes [hidden]{display:none}
+.gamificacao-titulo-acoes .btn{min-height:2.25rem}
+.gamificacao-nivel{display:grid;gap:.4rem;max-width:26rem}
+.gamificacao-nivel[hidden],.perfil [data-gamificacao-recarregar][hidden]{display:none}
+.gamificacao-nivel progress{width:100%;height:.65rem;accent-color:var(--orange)}
+.gamificacao-saldo{color:var(--orange);font-family:var(--display);font-size:1.35rem;margin-bottom:.5rem}
+.perfil [data-regras-pontos]{color:var(--muted)}
+.gamificacao-lista{display:grid;gap:.65rem}
+.gamificacao-lista li{display:grid;gap:.3rem;min-width:0;padding:.65rem;border:1px solid var(--line);border-radius:9px}
+.gamificacao-lista strong{font-size:.85rem;overflow-wrap:anywhere}
+.gamificacao-lista small{color:var(--muted);font-size:.75rem}
+.gamificacao-lista .btn{justify-self:start;margin-top:.25rem}
+.gamificacao-lista .btn:disabled{opacity:.65;cursor:default;transform:none}
+.gamificacao-desbloqueada{color:var(--orange)}
+#conquistas,#recompensas,#titulos,#titulo-titulos{scroll-margin-top:6rem}
+#conquistas [data-gamificacao-status]:empty{display:none}
+.conquistas-progresso{margin-bottom:.8rem;color:var(--muted);font-size:.85rem}
+.conquistas-grade{grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}
+.conquistas-grade li{padding:.85rem}
+:is(#recompensas,#titulos) [data-pontos-perfil]{margin-bottom:1rem;padding:.9rem 1rem;border-radius:12px}
+:is(#recompensas,#titulos) [data-pontos-perfil] .cartao-t{margin-bottom:.4rem}
+:is(#recompensas,#titulos) [data-pontos-perfil] .ico{width:1.2rem;height:1.2rem}
+:is(#recompensas,#titulos) [data-pontos-perfil] .todos{display:none}
+.recompensas-retorno:empty{display:none}
+#titulo-descontos{margin:0 0 .65rem;font-size:.85rem}
+.recompensas-ajuda{margin:0 0 .65rem;color:var(--muted);font-size:.75rem}
+.gamificacao-lista .recompensa{gap:.5rem;padding:.85rem;background:rgba(255,255,255,.025)}
+.recompensa strong{font-size:.95rem}
+.recompensa small{line-height:1.4}
+.recompensa .recompensa-status{color:#fff;font-weight:600}
+.recompensa[data-destaque]{border-color:rgba(255,143,31,.45)}
+.recompensa[data-destaque] .recompensa-status{color:var(--orange)}
+.recompensa .btn{min-height:2.75rem;max-width:100%;white-space:normal;text-align:left}

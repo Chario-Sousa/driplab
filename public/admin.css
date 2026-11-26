@@ -46,6 +46,12 @@
 .admin-capa-opcao h3{font-size:.95rem;overflow-wrap:anywhere}
 .admin-capa-opcao img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}
 .admin-capa-opcao .btn{justify-self:start}
+[data-admin-pedidos] > :is(.admin-retorno:not(:empty),button,a){margin-bottom:1rem}
+.admin-pedidos ul{display:grid;gap:.65rem}
+.admin-pedidos li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.7rem;padding:.8rem;border:1px solid var(--line);border-radius:12px}
+.admin-pedidos li div{min-width:0;display:grid;gap:.2rem;overflow-wrap:anywhere}
+.admin-pedidos .btn{min-height:2.5rem;justify-self:start}
+.admin-pedidos .btn:disabled{opacity:.6}
 @media(max-width:730px){
   .admin-colunas{grid-template-columns:minmax(0,1fr)}
 }
