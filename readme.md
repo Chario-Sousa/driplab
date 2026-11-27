@@ -112,7 +112,7 @@ Com a confirmação de e-mail ativada, use um endereço da equipe para testar co
 
 Abra o catálogo, adicione um produto, entre na sua conta e clique em **Finalizar compra**. O pedido de demonstração é confirmado e aparece em **Meus pedidos**. Estoque, preços e identidade do cliente são conferidos pelo servidor.
 
-Na confirmação, a conta do cliente recebe 50 pontos e 50 XP. A primeira confirmação também libera o título **Estreante DripLab**. Uma conta administrativa pode abrir **Perfil → Gerenciar pedidos** para confirmar pedidos anteriores que ainda estejam pendentes.
+Na confirmação, a conta do cliente recebe 50 pontos e 50 XP. A primeira confirmação também libera o título **Estreante DripLab**. Uma conta administrativa pode abrir **Perfil → Administração → Gerenciar pedidos** para confirmar pedidos anteriores que ainda estejam pendentes.
 
 `POST /api/pedidos` recebe `chave_solicitacao` (UUID) e `itens` com `id_produto` e `quantidade`. Reenvie a mesma chave ao repetir a tentativa com os mesmos itens. `GET /api/pedidos` retorna o histórico do usuário autenticado. As duas rotas exigem o token de acesso do Supabase Auth no cabeçalho `Authorization: Bearer`.
 
@@ -120,7 +120,7 @@ Na confirmação, a conta do cliente recebe 50 pontos e 50 XP. A primeira confir
 
 `GET /api/drops` retorna as datas e as peças restantes de cada drop anunciado. A página inicial usa esses dados para mostrar quando abre ou encerra a venda.
 
-Defina o início, o encerramento opcional e o limite total de unidades em **Perfil → Gerenciar coleções**. O painel usa o horário de Brasília. Pedidos pendentes e confirmados ocupam o limite compartilhado da coleção.
+Defina o início, o encerramento opcional e o limite total de unidades em **Perfil → Administração → Gerenciar coleções**. O painel usa o horário de Brasília. Pedidos pendentes e confirmados ocupam o limite compartilhado da coleção.
 
 ### Gamificação
 
@@ -134,7 +134,7 @@ Em **Perfil → Títulos**, resgate títulos com pontos ou desbloqueie títulos 
 
 Use **Usar título** para exibi-lo no perfil. A troca e a remoção preservam os títulos disponíveis e o saldo de pontos. O atalho abaixo do nome abre a aba de títulos.
 
-Em **Perfil → Gerenciar coleções**, o administrador pode definir o nível mínimo para comprar em cada drop. Os produtos ficam visíveis no catálogo, e o sistema confere o nível ao registrar o pedido.
+Em **Perfil → Administração → Gerenciar coleções**, o administrador pode definir o nível mínimo para comprar em cada drop. Os produtos ficam visíveis no catálogo, e o sistema confere o nível ao registrar o pedido.
 
 ## Execução local com o MySQL original
 
@@ -211,4 +211,4 @@ Acesse no navegador:
 2. Abra [Coleções](https://driplab-lovat.vercel.app/colecoes.html), selecione um drop e mostre a Shop filtrada.
 3. Entre na sua conta, abra **Perfil → Meus pedidos** e mostre um pedido de teste já registrado. Mostre também os favoritos salvos no perfil.
 4. Abra **Comunidade** pelo menu principal e mostre a enquete, a contagem, o voto registrado e os comentários da votação. Na Shop filtrada por coleção, mostre os comentários daquele drop.
-5. Na conta administrativa, mostre **Gerenciar coleções** e **Gerenciar votações**. Para verificar a integração com o banco, abra [a rota de saúde](https://driplab-lovat.vercel.app/api/health).
+5. Na conta administrativa, abra **Perfil → Administração** para mostrar os painéis de produtos, coleções, votações e pedidos. Para verificar a integração com o banco, abra [a rota de saúde](https://driplab-lovat.vercel.app/api/health).

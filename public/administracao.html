@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administração — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
+  <a class="admin-voltar" href="perfil.html">Voltar ao perfil</a>
+</header>
+<main class="admin-layout" data-administracao>
+  <h1>Administração</h1>
+  <p class="admin-retorno" data-auth-retorno role="status">Verificando acesso…</p>
+  <a class="btn sm" href="login.html?voltar=administracao" data-admin-entrar hidden>Entrar na conta</a>
+  <button class="btn sm" type="button" data-admin-tentar hidden>Tentar novamente</button>
+  <nav class="admin-atalhos" aria-label="Ferramentas de administração" hidden>
+    <a class="admin-atalho" href="admin-produtos.html">
+      <strong>Gerenciar produtos</strong>
+      <span>Cadastro, preços, fotos e estoque.</span>
+    </a>
+    <a class="admin-atalho" href="admin.html">
+      <strong>Gerenciar coleções</strong>
+      <span>Capas, datas de lançamento e produtos de cada drop.</span>
+    </a>
+    <a class="admin-atalho" href="admin-votacoes.html">
+      <strong>Gerenciar votações</strong>
+      <span>Enquetes da comunidade e histórico de resultados.</span>
+    </a>
+    <a class="admin-atalho" href="admin-pedidos.html">
+      <strong>Gerenciar pedidos</strong>
+      <span>Consulta e confirmação de pedidos pendentes.</span>
+    </a>
+  </nav>
+</main>
+<script src="auth.js" defer></script>
+<script src="rodape.js" defer></script>
+</body>
+</html>

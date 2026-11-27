@@ -80,6 +80,15 @@
 .admin-confirmacao form{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
 .admin-perigo{border-color:#ff9b92;color:#ffb5ae;background:#391715}
 .admin-perigo:hover{border-color:#ff9b92;background:#ff9b92;color:#240b09}
+.admin-atalhos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:.85rem}
+.admin-atalho{
+  display:grid;align-content:start;gap:.5rem;padding:1.2rem;min-width:0;
+  border:1px solid var(--line);border-radius:16px;background:#111;
+}
+.admin-atalho strong{color:var(--orange);font-size:1rem}
+.admin-atalho span{color:var(--muted);font-size:.85rem}
+.admin-atalho:is(:hover,:focus-visible){border-color:var(--orange);background:#1c140d}
+[data-administracao] .admin-retorno:not([hidden]){margin-bottom:1rem}
 .admin-layout textarea{resize:vertical}
 .admin-layout .admin-produto-campos{border:0;padding:0;gap:1rem}
 .admin-foto-produto{background:var(--fundo-foto-produto)}

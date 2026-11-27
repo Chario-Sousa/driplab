@@ -1,6 +1,7 @@
 (async () => {
   const formulario = document.querySelector('form[data-auth]');
   const perfil = document.querySelector('[data-perfil]');
+  const administracao = document.querySelector('[data-administracao]');
   const retorno = document.querySelector('[data-auth-retorno]');
 
   const mensagens = {
@@ -81,6 +82,7 @@
           ['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html'], ['admin', 'admin.html'],
           ['votacao', 'comunidade.html'], ['admin-votacoes', 'admin-votacoes.html'],
           ['admin-produtos', 'admin-produtos.html'],
+          ['administracao', 'administracao.html'],
           ['comentarios', 'comunidade.html#comentarios'],
         ]);
         if (/^[1-9]\d*$/.test(colecao) && Number(colecao) <= 2147483647) {
@@ -168,19 +170,45 @@
     }
   }
 
+  async function verificarAcessoAdmin() {
+    const { data, error } = await auth.getSession();
+    if (error) throw error;
+    if (!data.session) return 401;
+    const resposta = await fetch('/api/admin/acesso', {
+      headers: { Authorization: 'Bearer ' + data.session.access_token },
+      cache: 'no-store',
+    });
+    return resposta.status;
+  }
+
   async function mostrarLinkAdmin() {
-    const links = perfil.querySelectorAll('[data-admin-link]');
-    if (!links.length) return;
+    const link = perfil.querySelector('[data-admin-link]');
+    if (!link) return;
+    link.hidden = await verificarAcessoAdmin().catch(() => null) !== 204;
+  }
+
+  async function abrirAdministracao() {
+    const atalhos = administracao.querySelector('.admin-atalhos');
+    const entrar = administracao.querySelector('[data-admin-entrar]');
+    const tentar = administracao.querySelector('[data-admin-tentar]');
+    tentar.hidden = true;
+    informar('Verificando acesso…');
     try {
-      const { data } = await auth.getSession();
-      if (!data.session) return;
-      const resposta = await fetch('/api/admin/acesso', {
-        headers: { Authorization: 'Bearer ' + data.session.access_token },
-        cache: 'no-store',
-      });
-      links.forEach(link => { link.hidden = resposta.status !== 204; });
+      const status = await verificarAcessoAdmin();
+      if (status === 204) {
+        atalhos.hidden = false;
+        informar('');
+      } else if (status === 401) {
+        entrar.hidden = false;
+        informar('Entre com sua conta de administrador.');
+      } else if (status === 403) {
+        informar('Esta conta não tem acesso à administração.', true);
+      } else {
+        throw new Error();
+      }
     } catch {
-      links.forEach(link => { link.hidden = true; });
+      informar('Não foi possível verificar o acesso. Tente novamente.', true);
+      tentar.hidden = false;
     }
   }
 
@@ -260,4 +288,8 @@
     formulario.querySelector('[type="submit"]').disabled = false;
   }
   if (perfil) abrirPerfil();
+  if (administracao) {
+    administracao.querySelector('[data-admin-tentar]').addEventListener('click', abrirAdministracao);
+    abrirAdministracao();
+  }
 })();
