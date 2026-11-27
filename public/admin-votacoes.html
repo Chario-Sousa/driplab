@@ -22,12 +22,18 @@
 
   <div class="admin-colunas" data-conteudo hidden>
     <aside class="admin-bloco">
-      <h2>Última votação</h2>
+      <h2>Votações</h2>
+      <small data-visibilidade-pendente hidden>O histórico, a ocultação e a exclusão ficam disponíveis após a atualização do servidor e do banco.</small>
+      <label data-selecao hidden>Votação
+        <select name="votacao"></select>
+      </label>
       <p data-votacao-atual></p>
       <button class="btn sm" type="button" data-encerrar hidden>Encerrar votação</button>
+      <button class="btn sm" type="button" data-visibilidade hidden>Ocultar votação</button>
+      <button class="btn sm admin-perigo" type="button" data-excluir hidden>Excluir definitivamente</button>
       <a class="admin-voltar" href="comunidade.html">Ver página pública →</a>
     </aside>
-    <form class="admin-bloco admin-form" aria-labelledby="nova-votacao">
+    <form class="admin-bloco admin-form" data-nova-votacao aria-labelledby="nova-votacao">
       <h2 id="nova-votacao">Nova votação</h2>
       <label>Pergunta
         <input name="titulo" required maxlength="160" placeholder="Qual coleção você quer ver no próximo drop?">
@@ -44,7 +50,17 @@
       <div class="admin-capas-grade" data-capas-grade></div>
     </section>
   </div>
+  <dialog class="admin-confirmacao" data-confirmacao aria-labelledby="confirmacao-titulo" aria-describedby="confirmacao-texto">
+    <h2 id="confirmacao-titulo">Excluir votação definitivamente?</h2>
+    <p data-confirmacao-votacao></p>
+    <p id="confirmacao-texto">As opções, capas, votos e comentários serão apagados. Esta ação é irreversível.</p>
+    <form method="dialog">
+      <button class="btn sm" value="cancelar" autofocus>Cancelar</button>
+      <button class="btn sm admin-perigo" value="excluir">Excluir definitivamente</button>
+    </form>
+  </dialog>
 </main>
 <script type="module" src="votacoes.mjs"></script>
+<script src="rodape.js" defer></script>
 </body>
 </html>

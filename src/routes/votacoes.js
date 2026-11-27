@@ -21,6 +21,7 @@ votacoes.get('/', bancoDisponivel, async (req, res) => {
     const [[votacao]] = await sequelize.query(`
       with atual as (
         select id_votacao, titulo, encerrada_em from public.votacao
+        where oculta_em is null
         order by (encerrada_em is null) desc, criada_em desc, id_votacao
         limit 1
       ), resultados as (
@@ -55,8 +56,9 @@ votacoes.get('/:id/opcoes/:opcao/capa', bancoDisponivel, validarId, async (req, 
 
   try {
     const [[imagem]] = await sequelize.query(`
-      select capa, capa_tipo from public.opcao_votacao
-      where id_votacao = $1::uuid and id_opcao = $2 and capa is not null
+      select o.capa, o.capa_tipo from public.opcao_votacao o
+      join public.votacao v using (id_votacao)
+      where o.id_votacao = $1::uuid and o.id_opcao = $2 and o.capa is not null and v.oculta_em is null
     `, { bind: [req.params.id, Number(req.params.opcao)] });
     if (!imagem) return res.sendStatus(404);
     res.set('Content-Type', imagem.capa_tipo);
@@ -70,11 +72,13 @@ votacoes.get('/:id/opcoes/:opcao/capa', bancoDisponivel, validarId, async (req, 
 
 votacoes.get('/:id/meu-voto', autenticar, bancoDisponivel, validarId, async (req, res) => {
   try {
-    const [[voto]] = await sequelize.query(
-      'select id_opcao from public.voto where id_votacao = $1::uuid and id_usuario = $2::uuid',
-      { bind: [req.params.id, req.idUsuario] }
-    );
-    res.json({ id_opcao: voto?.id_opcao ?? null });
+    const [[voto]] = await sequelize.query(`
+      select voto.id_opcao from public.votacao v
+      left join public.voto voto on voto.id_votacao = v.id_votacao and voto.id_usuario = $2::uuid
+      where v.id_votacao = $1::uuid and v.oculta_em is null
+    `, { bind: [req.params.id, req.idUsuario] });
+    if (!voto) return res.status(404).json({ erro: 'Votação não encontrada.' });
+    res.json({ id_opcao: voto.id_opcao });
   } catch (erro) {
     console.error('Falha ao carregar voto da conta:', erro.name);
     res.status(500).json({ erro: 'Não foi possível consultar seu voto.' });
@@ -91,7 +95,7 @@ votacoes.post('/:id/meu-voto', autenticar, bancoDisponivel, validarId, async (re
     const resultado = await sequelize.transaction(async transaction => {
       const bind = [req.params.id, req.idUsuario];
       const [[votacao]] = await sequelize.query(
-        'select encerrada_em from public.votacao where id_votacao = $1::uuid for share',
+        'select encerrada_em from public.votacao where id_votacao = $1::uuid and oculta_em is null for share',
         { bind: [req.params.id], transaction }
       );
       if (!votacao) return { status: 404, erro: 'Votação não encontrada.' };

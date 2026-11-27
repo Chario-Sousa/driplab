@@ -18,14 +18,16 @@ pedidos.get('/', async (req, res) => {
     const [registros] = await sequelize.query(`
       select p.id_pedido, p.data_pedido, p.status, p.valor_total, p.valor_desconto,
         jsonb_agg(jsonb_build_object(
-          'nome_produto', produto.nome_produto,
+          'nome_produto', i.nome_produto,
           'imagem_url', produto.imagem_url,
+          'produto_removido', i.id_produto_catalogo is null,
+          'id_produto', case when produto.ativo then produto.id_produto end,
           'quantidade', i.quantidade,
           'preco_unitario', i.preco_unitario
         ) order by i.id_produto) as itens
       from public.pedido p
       join public.item_pedido i on i.id_pedido = p.id_pedido
-      join public.produto produto on produto.id_produto = i.id_produto
+      left join public.produto produto on produto.id_produto = i.id_produto_catalogo
       where p.id_usuario = $1::uuid
       group by p.id_pedido
       order by p.data_pedido desc, p.id_pedido desc

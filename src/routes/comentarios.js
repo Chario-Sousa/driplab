@@ -10,6 +10,12 @@ const textoValido = texto => texto && Array.from(texto).length <= 500 && !texto.
 const inteiroPositivo = valor => typeof valor === 'string' && /^[1-9]\d*$/.test(valor)
   && Number(valor) <= 2147483647;
 
+function votacaoVisivel(coluna, parametro, bloquear = false) {
+  if (coluna !== 'id_votacao') return 'true';
+  return `exists (select 1 from public.votacao v
+    where v.id_votacao = ${parametro}::uuid and v.oculta_em is null${bloquear ? ' for share' : ''})`;
+}
+
 comentarios.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
   if (sequelize?.getDialect() !== 'postgres') {
@@ -35,7 +41,7 @@ async function resolverAlvo(req, res, next) {
     const valor = votacao ? alvo : Number(alvo);
     const tabela = votacao ? 'public.votacao' : drop ? 'public.colecao' : 'public.produto';
     const [[registro]] = await sequelize.query(
-      `select 1 from ${tabela} where ${coluna} = $1${drop ? ' and ativa' : ''}`,
+      `select 1 from ${tabela} where ${coluna} = $1${drop ? ' and ativa' : ''}${votacao ? ' and oculta_em is null' : ''}${produto ? ' and ativo' : ''}`,
       { bind: [valor] }
     );
     if (!registro) return res.status(404).json({ erro: 'Conversa indisponível.' });
@@ -59,7 +65,7 @@ comentarios.get('/:tipo/:alvo', autenticarSeInformado, resolverAlvo, async (req,
       select ${camposRetorno}, coalesce(c.id_usuario = $1::uuid, false) as meu
       from public.comentario_comunidade c
       left join public.perfil_avatar a on a.id_usuario = c.id_usuario
-      where c.${coluna} = $2
+      where c.${coluna} = $2 and ${votacaoVisivel(coluna, '$2')}
       ${antes === undefined ? '' : 'and c.id_comentario < $3::integer'}
       order by c.id_comentario desc
       limit ${tamanhoPagina + 1}
@@ -87,7 +93,8 @@ comentarios.post('/:tipo/:alvo', autenticar, resolverAlvo, async (req, res) => {
     const [[novo]] = await sequelize.query(`
       with criado as (
         insert into public.comentario_comunidade (id_usuario, chave_publicacao, autor, texto, ${coluna})
-        values ($1::uuid, $2::uuid, $3, $4, $5)
+        select $1::uuid, $2::uuid, $3::text, $4::text, $5::${coluna === 'id_votacao' ? 'uuid' : 'integer'}
+        where ${votacaoVisivel(coluna, '$5', true)}
         on conflict (id_usuario, chave_publicacao) do nothing
         returning *
       )
@@ -101,6 +108,7 @@ comentarios.post('/:tipo/:alvo', autenticar, resolverAlvo, async (req, res) => {
       from public.comentario_comunidade c
       left join public.perfil_avatar a on a.id_usuario = c.id_usuario
       where c.id_usuario = $1::uuid and c.chave_publicacao = $2::uuid and c.${coluna} = $3
+        and ${votacaoVisivel(coluna, '$3')}
     `, { bind: [req.idUsuario, chave, valor] });
     if (registro?.texto_original !== conteudo) {
       return res.status(409).json({ erro: 'Essa tentativa de publicação já foi utilizada.' });
@@ -126,6 +134,7 @@ comentarios.patch('/:tipo/:alvo/:id', autenticar, resolverAlvo, async (req, res)
         set texto_original = coalesce(texto_original, texto), texto = $4,
           editado_em = case when texto is distinct from $4 then clock_timestamp() else editado_em end
         where id_comentario = $1::integer and id_usuario = $2::uuid and ${coluna} = $3
+          and ${votacaoVisivel(coluna, '$3', true)}
         returning *
       )
       select ${camposRetorno}, true as meu from alterado c
@@ -149,6 +158,7 @@ comentarios.delete('/:tipo/:alvo/:id', autenticar, resolverAlvo, async (req, res
     const [[removido]] = await sequelize.query(`
       delete from public.comentario_comunidade
       where id_comentario = $1::integer and id_usuario = $2::uuid and ${coluna} = $3
+        and ${votacaoVisivel(coluna, '$3', true)}
       returning id_comentario
     `, { bind: [Number(req.params.id), req.idUsuario, valor] });
     if (!removido) return res.status(404).json({ erro: 'Comentário não encontrado na sua conta.' });

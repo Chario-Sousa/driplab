@@ -10,7 +10,7 @@ async function sessaoAtual() {
   return data.session;
 }
 
-async function consultar(caminho, { token, metodo = 'GET', corpo } = {}) {
+async function consultar(caminho, { token, metodo = 'GET', corpo, imagem = false } = {}) {
   const resposta = await fetch(caminho, {
     method: metodo,
     cache: 'no-store',
@@ -21,6 +21,7 @@ async function consultar(caminho, { token, metodo = 'GET', corpo } = {}) {
     ...(corpo && { body: JSON.stringify(corpo) }),
   });
   if (resposta.status === 204) return null;
+  if (imagem && resposta.ok) return resposta.blob();
   const dados = await resposta.json().catch(() => ({}));
   if (!resposta.ok) {
     const erro = new Error(dados.erro || 'Não foi possível completar a solicitação.');
@@ -141,7 +142,7 @@ function iniciarVotacao(pagina) {
       await carregar('Voto registrado.');
     } catch (erro) {
       if (erro.status === 401) location.href = entrar.href;
-      else if (erro.status === 409) await carregar(erro.message);
+      else if (erro.status === 404 || erro.status === 409) await carregar(erro.message);
       else {
         informar(estado, erro.message, true);
         atualizar.hidden = false;
@@ -158,13 +159,22 @@ function iniciarPainel(pagina) {
   const estado = pagina.querySelector('[data-votacao-estado]');
   const conteudo = pagina.querySelector('[data-conteudo]');
   const atualTexto = pagina.querySelector('[data-votacao-atual]');
+  const selecao = pagina.querySelector('[data-selecao]');
+  const seletor = selecao.querySelector('select');
+  const avisoVisibilidade = pagina.querySelector('[data-visibilidade-pendente]');
   const atualizar = pagina.querySelector('[data-atualizar]');
   const encerrar = pagina.querySelector('[data-encerrar]');
+  const visibilidade = pagina.querySelector('[data-visibilidade]');
+  const excluir = pagina.querySelector('[data-excluir]');
+  const confirmacao = pagina.querySelector('[data-confirmacao]');
+  const tituloConfirmacao = confirmacao.querySelector('[data-confirmacao-votacao]');
   const capas = pagina.querySelector('[data-capas]');
   const gradeCapas = pagina.querySelector('[data-capas-grade]');
-  const form = pagina.querySelector('form');
+  const form = pagina.querySelector('[data-nova-votacao]');
   const abrir = form.querySelector('[type=submit]');
+  let lista = [];
   let atual;
+  let podeGerenciarHistorico = false;
   let chave = crypto.randomUUID();
   let ocupado = false;
 
@@ -182,17 +192,44 @@ function iniciarPainel(pagina) {
     }
   }
 
-  async function carregar() {
-    const dados = await consultar('/api/votacoes');
-    atual = dados.votacao;
+  function situacao(votacao) {
+    if (votacao.oculta_em) return 'Oculta';
+    return votacao.encerrada_em ? 'Encerrada' : 'Aberta';
+  }
+
+  function renderizar() {
+    atual = lista.find(votacao => votacao.id_votacao === seletor.value);
     const aberta = Boolean(atual && !atual.encerrada_em);
-    atualTexto.textContent = atual
-      ? atual.titulo + (aberta ? ' · Aberta' : ' · Encerrada')
-      : 'Nenhuma votação publicada.';
+    atualTexto.textContent = atual ? 'Status: ' + situacao(atual) : 'Nenhuma votação cadastrada.';
     encerrar.hidden = !aberta;
-    form.hidden = aberta;
+    visibilidade.hidden = !atual || !podeGerenciarHistorico;
+    visibilidade.textContent = atual?.oculta_em ? 'Voltar a exibir resultados' : 'Ocultar votação';
+    excluir.hidden = !atual || !podeGerenciarHistorico;
+    form.hidden = lista.some(votacao => !votacao.encerrada_em);
     capas.hidden = !atual;
+    for (const imagem of gradeCapas.querySelectorAll('img[src^="blob:"]')) URL.revokeObjectURL(imagem.src);
     gradeCapas.replaceChildren(...(atual?.opcoes ?? []).map(opcao => editarCapa(atual.id_votacao, opcao)));
+  }
+
+  async function carregar(id = atual?.id_votacao) {
+    try {
+      const dados = await admin('/votacoes');
+      lista = dados.votacoes;
+      podeGerenciarHistorico = true;
+    } catch (erro) {
+      if (erro.status !== 404) throw erro;
+      await admin('/acesso');
+      const { votacao } = await consultar('/api/votacoes');
+      lista = votacao ? [votacao] : [];
+      podeGerenciarHistorico = false;
+    }
+    avisoVisibilidade.hidden = podeGerenciarHistorico;
+    seletor.replaceChildren(...lista.map(votacao => new Option(
+      votacao.titulo + ' · ' + situacao(votacao), votacao.id_votacao
+    )));
+    if (lista.some(votacao => votacao.id_votacao === id)) seletor.value = id;
+    selecao.hidden = !lista.length;
+    renderizar();
     conteudo.hidden = false;
   }
 
@@ -222,7 +259,30 @@ function iniciarPainel(pagina) {
     retorno.setAttribute('role', 'status');
     retorno.hidden = true;
 
+    const caminho = `/votacoes/${id}/opcoes/${opcao.id_opcao}/capa`;
+    let versao = 0;
+    async function carregarCapa() {
+      if (!podeGerenciarHistorico) {
+        previa.src = '/api' + caminho + '?v=' + Date.now();
+        previa.hidden = false;
+        return;
+      }
+      const pedido = ++versao;
+      const arquivoCapa = await admin(caminho, { imagem: true });
+      if (!previa.isConnected || pedido !== versao) return;
+      if (previa.src.startsWith('blob:')) URL.revokeObjectURL(previa.src);
+      previa.src = URL.createObjectURL(arquivoCapa);
+      previa.hidden = false;
+    }
+
     editor.append(titulo, previa, rotulo, salvar, retorno);
+    if (opcao.tem_capa) {
+      carregarCapa().catch(() => {
+        if (!editor.isConnected || versao !== 1) return;
+        retorno.hidden = false;
+        informar(retorno, 'Não foi possível carregar a prévia da capa.', true);
+      });
+    }
     editor.addEventListener('submit', async evento => {
       evento.preventDefault();
       if (salvar.disabled) return;
@@ -235,13 +295,13 @@ function iniciarPainel(pagina) {
 
       salvar.disabled = true;
       informar(retorno, 'Salvando capa…');
-      const caminho = `/votacoes/${id}/opcoes/${opcao.id_opcao}/capa`;
       try {
         await admin(caminho, { metodo: 'PUT', corpo: { capa: await lerCapa(selecionada) } });
-        previa.src = '/api' + caminho + '?v=' + Date.now();
-        previa.hidden = false;
         arquivo.value = '';
-        informar(retorno, 'Capa salva.');
+        await carregarCapa().then(
+          () => informar(retorno, 'Capa salva.'),
+          () => informar(retorno, 'Capa salva. Atualize o painel para ver a prévia.')
+        );
       } catch (erro) {
         informar(retorno, erro.message, true);
       } finally {
@@ -254,8 +314,8 @@ function iniciarPainel(pagina) {
   async function executar(operacao) {
     if (ocupado) return;
     ocupado = true;
-    abrir.disabled = true;
-    encerrar.disabled = true;
+    const controles = [abrir, encerrar, visibilidade, excluir, seletor];
+    for (const controle of controles) controle.disabled = true;
     atualizar.hidden = true;
     informar(estado, 'Carregando…');
     try {
@@ -266,13 +326,11 @@ function iniciarPainel(pagina) {
       atualizar.hidden = false;
     } finally {
       ocupado = false;
-      abrir.disabled = false;
-      encerrar.disabled = false;
+      for (const controle of controles) controle.disabled = false;
     }
   }
 
   async function iniciar() {
-    await admin('/acesso');
     await carregar();
     return '';
   }
@@ -281,7 +339,7 @@ function iniciarPainel(pagina) {
     evento.preventDefault();
     executar(async () => {
       const dados = new FormData(form);
-      await admin('/votacoes', {
+      const criada = await admin('/votacoes', {
         metodo: 'POST',
         corpo: {
           id_votacao: chave,
@@ -291,7 +349,7 @@ function iniciarPainel(pagina) {
       });
       form.reset();
       chave = crypto.randomUUID();
-      await carregar();
+      await carregar(criada.id_votacao);
       return 'Votação publicada.';
     });
   });
@@ -301,6 +359,31 @@ function iniciarPainel(pagina) {
       await admin('/votacoes/' + atual.id_votacao + '/encerramento', { metodo: 'PUT' });
       await carregar();
       return 'Votação encerrada.';
+    });
+  });
+  seletor.addEventListener('change', renderizar);
+  visibilidade.addEventListener('click', () => {
+    if (!atual) return;
+    const oculta = !atual.oculta_em;
+    executar(async () => {
+      await admin('/votacoes/' + atual.id_votacao + '/visibilidade', { metodo: 'PUT', corpo: { oculta } });
+      await carregar();
+      return oculta ? 'Votação ocultada e encerrada.' : 'Resultados da votação visíveis novamente.';
+    });
+  });
+  excluir.addEventListener('click', () => {
+    if (!atual) return;
+    tituloConfirmacao.textContent = atual.titulo;
+    confirmacao.returnValue = '';
+    confirmacao.showModal();
+  });
+  confirmacao.addEventListener('close', () => {
+    if (!atual || confirmacao.returnValue !== 'excluir') return;
+    executar(async () => {
+      await admin('/votacoes/' + atual.id_votacao, { metodo: 'DELETE', corpo: { confirmar: true } });
+      await carregar();
+      (lista.length ? seletor : abrir).focus();
+      return 'Votação excluída definitivamente.';
     });
   });
   atualizar.addEventListener('click', () => executar(iniciar));

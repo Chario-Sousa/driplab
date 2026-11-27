@@ -74,13 +74,16 @@
 .shop-grade .prod{position:relative;min-width:0;padding:.7rem;transition:border-color .2s}
 .shop-grade .prod:hover,.shop-grade .prod:focus-within{border-color:var(--orange)}
 .shop-grade .img{
+  position:relative;
   display:grid;
   width:100%;
   aspect-ratio:1.2;
   place-items:center;
+  overflow:hidden;
   border-radius:14px;
-  background:radial-gradient(circle,#252525,#141414);
+  background:var(--fundo-foto-produto);
 }
+.shop-grade .img img{position:absolute;inset:0;padding:.4rem}
 .shop-grade .row{display:flex;justify-content:space-between;align-items:center;gap:.4rem;margin:.7rem .12rem .2rem}
 .shop-grade b,.shop-grade .row span{display:block;font-size:.9rem;overflow-wrap:anywhere}
 .shop-grade .row span{color:var(--orange)}
@@ -108,7 +111,7 @@ a.produto-link{display:block}
   aspect-ratio:1.2;
   overflow:hidden;
   border-radius:16px;
-  background:radial-gradient(circle,#2a2a2a,#181818);
+  background:var(--fundo-foto-produto);
 }
 .produto-foto img{position:absolute;inset:0;display:block;width:100%;height:100%;padding:clamp(.6rem,2vw,1.5rem);object-fit:contain}
 .produto-info{padding:clamp(.25rem,2vw,1rem)}

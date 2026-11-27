@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerenciar produtos — DripLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab"></a>
+  <a class="admin-voltar" href="perfil.html">Voltar ao perfil</a>
+</header>
+<main class="admin-layout" data-admin-produtos>
+  <h1>Gerenciar produtos</h1>
+  <p class="admin-retorno" data-retorno role="status">Verificando acesso…</p>
+  <button class="btn sm" type="button" data-atualizar hidden>Atualizar lista</button>
+  <div class="admin-colunas" data-conteudo hidden>
+    <aside class="admin-bloco" aria-label="Catálogo">
+      <label>Escolher produto
+        <select data-produto></select>
+      </label>
+      <a class="admin-voltar" href="shop.html">Ver Shop →</a>
+      <a class="admin-voltar" href="admin.html">Gerenciar coleções →</a>
+    </aside>
+
+    <form class="admin-bloco admin-form" aria-labelledby="admin-produto-titulo">
+      <h2 id="admin-produto-titulo">Novo produto</h2>
+      <fieldset class="admin-produto-campos" aria-label="Dados do produto">
+        <label>Nome <input name="nome" maxlength="150" required></label>
+        <label>Descrição <textarea name="descricao" rows="4" maxlength="2000" required></textarea></label>
+        <div class="admin-datas">
+          <label>Preço em reais <input name="preco" inputmode="decimal" placeholder="159,90" required pattern="[0-9]{1,8}([.,][0-9]{1,2})?"></label>
+          <label>Unidades em estoque <input name="estoque" type="number" min="0" max="2147483647" step="1" required></label>
+        </div>
+        <label><span id="admin-produto-categoria">Categoria</span>
+          <select name="categoria" aria-labelledby="admin-produto-categoria" required></select>
+        </label>
+        <p class="admin-retorno" data-colecao hidden></p>
+        <label class="admin-check"><input name="ativo" type="checkbox" checked> Exibir no catálogo</label>
+        <label>Foto (PNG, JPG ou WebP, até 1 MB)
+          <input name="foto" type="file" accept="image/png,image/jpeg,image/webp">
+        </label>
+        <img class="admin-previa admin-foto-produto" data-previa alt="Prévia da foto do produto" hidden>
+        <button class="btn sm admin-remover-capa" type="button" data-remover-foto hidden>Remover foto</button>
+      </fieldset>
+      <div class="admin-acoes-produto">
+        <button class="btn" type="submit">Salvar produto</button>
+        <button class="btn sm admin-perigo" type="button" data-excluir hidden>Excluir definitivamente</button>
+      </div>
+    </form>
+  </div>
+  <dialog class="admin-confirmacao" data-confirmacao aria-labelledby="exclusao-titulo" aria-describedby="exclusao-texto">
+    <h2 id="exclusao-titulo">Excluir produto definitivamente?</h2>
+    <p data-confirmacao-nome></p>
+    <p id="exclusao-texto">A peça será removida do catálogo, dos favoritos e das conversas do produto. Os pedidos continuam no histórico com os dados da compra.</p>
+    <form method="dialog">
+      <button class="btn sm" value="cancelar" autofocus>Cancelar</button>
+      <button class="btn sm admin-perigo" value="excluir">Excluir definitivamente</button>
+    </form>
+  </dialog>
+</main>
+<script type="module" src="admin-produtos.mjs"></script>
+<script src="rodape.js" defer></script>
+</body>
+</html>

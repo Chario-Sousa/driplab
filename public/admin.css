@@ -15,7 +15,7 @@
 .admin-layout label{display:grid;gap:.4rem}
 .admin-voltar{color:var(--orange)}
 .admin-voltar:hover{text-decoration:underline}
-.admin-layout input:not([type="checkbox"]),.admin-layout select{
+.admin-layout input:not([type="checkbox"]),.admin-layout select,.admin-layout textarea{
   width:100%;min-width:0;padding:.65rem;color:inherit;font:inherit;font-size:.85rem;
   background:#1c1c1c;border:1px solid var(--line);border-radius:8px;color-scheme:dark;
 }
@@ -71,6 +71,20 @@
 .admin-capa-opcao h3{font-size:.95rem;overflow-wrap:anywhere}
 .admin-capa-opcao img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}
 .admin-capa-opcao .btn{justify-self:start}
+.admin-confirmacao{
+  width:min(92%,30rem);margin:auto;padding:1.4rem;color:#fff;background:#151515;
+  border:1px solid var(--line);border-radius:16px;overflow-wrap:anywhere;
+}
+.admin-confirmacao::backdrop{background:#000b}
+.admin-confirmacao p{margin:.8rem 0}
+.admin-confirmacao form{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.admin-perigo{border-color:#ff9b92;color:#ffb5ae;background:#391715}
+.admin-perigo:hover{border-color:#ff9b92;background:#ff9b92;color:#240b09}
+.admin-layout textarea{resize:vertical}
+.admin-layout .admin-produto-campos{border:0;padding:0;gap:1rem}
+.admin-foto-produto{background:var(--fundo-foto-produto)}
+.admin-acoes-produto{display:flex;flex-wrap:wrap;gap:.65rem}
+[data-admin-produtos] > :is(.admin-retorno:not(:empty),button){margin-bottom:1rem}
 [data-admin-pedidos] > :is(.admin-retorno:not(:empty),button,a){margin-bottom:1rem}
 .admin-pedidos ul{display:grid;gap:.65rem}
 .admin-pedidos li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.7rem;padding:.8rem;border:1px solid var(--line);border-radius:12px}

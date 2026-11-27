@@ -22,7 +22,9 @@ A DripLab é uma plataforma de streetwear criada para apresentar produtos e cole
 - Carrinho, registro de pedidos com baixa de estoque e histórico no perfil.
 - Drops com datas, contagem regressiva e limite compartilhado de unidades.
 - Painel administrativo para cadastrar e editar coleções, enviar capas e vincular produtos.
+- Cadastro, edição, desativação e exclusão de produtos pelo painel administrativo, com histórico de pedidos preservado.
 - Votação da comunidade com um voto por conta, capas, contagem pública e encerramento pelo painel.
+- Histórico de votações no painel, com ações para ocultar, voltar a exibir resultados e excluir definitivamente.
 - Comentários por votação, drop e produto, com foto de perfil pública e edição ou exclusão pelo autor.
 - Gamificação no perfil com pontos, níveis, conquistas e recompensas de títulos e descontos.
 
@@ -61,6 +63,8 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 - [Migração dos comentários da Comunidade](sql/comentarios_postgres.sql)
 - [Migração da gamificação](sql/gamificacao_postgres.sql)
 - [Migração das fotos de perfil, comentários por produto e imagens de detalhe](sql/refinamento_postgres.sql)
+- [Migração da visibilidade de votações](sql/visibilidade_votacoes_postgres.sql)
+- [Migração da gestão de produtos e do histórico de pedidos](sql/gestao_produtos_postgres.sql)
 - [Criação do banco original no MySQL](sql/criar_banco.sql)
 - [Inserção dos dados de teste no MySQL](sql/inserir_dados.sql)
 
@@ -79,7 +83,7 @@ O catálogo no Supabase usa as tabelas `categoria`, `colecao` e `produto`. As ta
 3. No Supabase, abra **Connect** e copie a URI do **Transaction pooler**. Preencha a senha do banco na URI e use codificação de URL para caracteres especiais da senha.
 4. Adicione `DATABASE_URL` ao arquivo local `.env` com a URI preenchida. Mantenha esse arquivo fora do Git.
 5. Em `public/auth-config.json`, configure `url` com a URL do mesmo projeto Supabase e `chavePublica` com a chave publicável desse projeto. Esse arquivo é servido ao navegador e deve conter apenas a configuração pública.
-6. Execute `sql/fotos_catalogo.sql` para carregar as miniaturas do catálogo e, em seguida, aplique `sql/refinamento_postgres.sql`.
+6. Execute `sql/fotos_catalogo.sql` para carregar as miniaturas do catálogo e, em seguida, aplique `sql/refinamento_postgres.sql`, `sql/visibilidade_votacoes_postgres.sql` e `sql/gestao_produtos_postgres.sql`.
 7. Rode `npm start` e confira [a conexão](http://localhost:3000/api/health) e [os produtos](http://localhost:3000/api/produtos). Depois, abra [o site local](http://localhost:3000/).
 
 Para publicar na Vercel, importe o repositório como um projeto Express e configure `DATABASE_URL` como variável privada no ambiente usado pelo deploy. Teste `/api/health` e `/api/produtos` no endereço publicado antes de validar o catálogo no navegador.

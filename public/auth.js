@@ -80,6 +80,7 @@
         const destinos = new Map([
           ['carrinho', 'index.html?carrinho=1'], ['favoritos', 'shop.html'], ['admin', 'admin.html'],
           ['votacao', 'comunidade.html'], ['admin-votacoes', 'admin-votacoes.html'],
+          ['admin-produtos', 'admin-produtos.html'],
           ['comentarios', 'comunidade.html#comentarios'],
         ]);
         if (/^[1-9]\d*$/.test(colecao) && Number(colecao) <= 2147483647) {
@@ -220,9 +221,18 @@
             imagem.addEventListener('error', () => imagem.remove(), { once: true });
             linha.append(imagem);
           }
-          const descricao = document.createElement('span');
+          const info = document.createElement('div');
+          const descricao = document.createElement(item.id_produto ? 'a' : 'span');
           descricao.textContent = `${item.quantidade} × ${item.nome_produto} · ${moeda.format(Number(item.preco_unitario))}`;
-          linha.append(descricao);
+          if (item.id_produto) descricao.href = 'produto.html?id=' + encodeURIComponent(item.id_produto);
+          info.append(descricao);
+          if (item.produto_removido) {
+            const aviso = document.createElement('small');
+            aviso.className = 'pedido-produto-removido';
+            aviso.textContent = 'Produto removido do catálogo. Os dados da sua compra continuam neste pedido.';
+            info.append(aviso);
+          }
+          linha.append(info);
           itens.append(linha);
         }
         const total = document.createElement('b');

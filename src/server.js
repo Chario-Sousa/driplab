@@ -52,6 +52,7 @@ app.get('/api/produtos', async (req, res) => {
       LEFT JOIN colecao AS co
         ON co.id_colecao = p.fk_colecao_id_colecao
       ${postgres ? 'LEFT JOIN public.disponibilidade_drop AS d ON d.id_colecao = co.id_colecao' : ''}
+      ${postgres ? 'WHERE p.ativo' : ''}
       ORDER BY p.id_produto;
     `);
 
@@ -59,6 +60,26 @@ app.get('/api/produtos', async (req, res) => {
   } catch (erro) {
     console.error('Falha na consulta de produtos:', erro.name);
     res.status(500).json({ erro: 'Não foi possível buscar os produtos.' });
+  }
+});
+
+app.get('/api/produtos/:id/foto', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const { id } = req.params;
+  if (sequelize?.getDialect() !== 'postgres' || !/^[1-9]\d*$/.test(id) || Number(id) > 2147483647) {
+    return res.sendStatus(404);
+  }
+  try {
+    const [[foto]] = await sequelize.query(`
+      select foto, foto_tipo from public.produto where id_produto = $1 and foto is not null
+    `, { bind: [Number(id)] });
+    if (!foto) return res.sendStatus(404);
+    res.set('Content-Type', foto.foto_tipo);
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.send(foto.foto);
+  } catch (erro) {
+    console.error('Falha ao carregar foto de produto:', erro.name);
+    res.sendStatus(500);
   }
 });
 

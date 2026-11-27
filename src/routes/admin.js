@@ -65,6 +65,7 @@ admin.use(async (req, res, next) => {
 admin.get('/acesso', (req, res) => res.status(204).end());
 admin.use('/votacoes', require('./admin-votacoes'));
 admin.use('/pedidos', require('./admin-pedidos'));
+admin.use('/produtos', require('./admin-produtos'));
 admin.get('/colecoes', async (req, res) => {
   try {
     const [[dados]] = await consulta(`
@@ -184,7 +185,7 @@ const lerColecao = json({ limit: '1500kb' });
 admin.post('/colecoes', lerColecao, enviarColecao);
 admin.put('/colecoes/:id', lerColecao, enviarColecao);
 admin.use((erro, req, res, next) => {
-  if (erro.type === 'entity.too.large') return res.status(413).json({ erro: 'A capa deve ter até 1 MB.' });
+  if (erro.type === 'entity.too.large') return res.status(413).json({ erro: 'A imagem deve ter até 1 MB.' });
   if (erro.type === 'entity.parse.failed') return res.status(400).json({ erro: 'Dados inválidos.' });
   next(erro);
 });

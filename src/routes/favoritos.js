@@ -17,7 +17,7 @@ favoritos.get('/', async (req, res) => {
     const [produtos] = await sequelize.query(`
       select p.id_produto, p.nome_produto, p.imagem_url
       from public.favorito f
-      join public.produto p on p.id_produto = f.id_produto
+      join public.produto p on p.id_produto = f.id_produto and p.ativo
       where f.id_usuario = $1::uuid
       order by f.criado_em desc, p.id_produto
     `, { bind: [req.idUsuario] });
@@ -41,7 +41,7 @@ favoritos.put('/:id', async (req, res) => {
   try {
     const [[produto]] = await sequelize.query(`
       with produto as (
-        select id_produto, nome_produto, imagem_url from public.produto where id_produto = $2
+        select id_produto, nome_produto, imagem_url from public.produto where id_produto = $2 and ativo
       ), salvo as (
         insert into public.favorito (id_usuario, id_produto)
         select $1::uuid, id_produto from produto

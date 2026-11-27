@@ -17,7 +17,7 @@
 /* ---------- AUTH (login / cadastro) ---------- */
 .auth-page{min-height:100vh;background:var(--img-fundo-auth,none) center/cover fixed,radial-gradient(circle at 30% 70%,rgba(240,138,36,.18),transparent 45%),#070605}
 .auth-page::before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.2) 50%,rgba(0,0,0,.65));pointer-events:none}
-.auth{position:relative;min-height:100vh;width:min(1320px,92%);margin:auto;display:grid;grid-template-columns:1.1fr 480px;gap:4rem;align-items:center;padding:2rem 0}
+.auth{position:relative;flex:1;width:min(1320px,92%);margin-inline:auto;display:grid;grid-template-columns:1.1fr 480px;gap:4rem;align-items:center;padding:2rem 0}
 .auth-marca{display:flex;flex-direction:column;gap:2.4rem;align-self:stretch;justify-content:space-between;padding:1rem 0}
 .auth-marca .logo img{width:min(320px,100%);height:auto}
 .auth-marca h1{font-size:clamp(1.8rem,3.4vw,2.8rem);margin-bottom:1rem}
@@ -25,9 +25,6 @@
 .beneficios{display:flex;gap:1.6rem;flex-wrap:wrap}
 .beneficios li{display:flex;flex-direction:column;align-items:center;gap:.6rem;width:96px;text-align:center;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .beneficios .ico{width:64px;height:64px;padding:18px;border:1.5px solid var(--orange);border-radius:18px;color:var(--orange);background:var(--glass)}
-.auth-rodape{display:flex;justify-content:space-between;gap:1rem;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.auth-rodape b{display:block;color:#fff;font-weight:500}
-.auth-rodape .seta{color:var(--orange);margin-left:.6rem}
 .painel{padding:2rem;border:1px solid var(--line);border-radius:28px;background:rgba(18,14,10,.78);backdrop-filter:blur(18px);display:grid;gap:1.1rem}
 .painel h2{font-size:1.5rem}
 .painel>p{color:var(--muted);font-size:.85rem;margin-top:-.5rem}
@@ -113,7 +110,9 @@
 [data-lista-pedidos] .pedido{display:grid;justify-items:start;gap:.45rem}
 [data-lista-pedidos] .pedido ul{display:grid;gap:.45rem;line-height:1.6}
 [data-lista-pedidos] .pedido li{display:flex;align-items:center;gap:.6rem}
-[data-lista-pedidos] .pedido li img{width:44px;height:44px;flex:none;object-fit:contain;border-radius:7px;background:var(--glass)}
+[data-lista-pedidos] .pedido li img{width:44px;height:44px;flex:none;object-fit:contain;border-radius:7px;background:var(--fundo-foto-produto)}
+[data-lista-pedidos] .pedido li a:hover{text-decoration:underline}
+[data-lista-pedidos] .pedido-produto-removido{display:block;margin-top:.2rem;color:var(--muted)}
 #finalizar-compra:disabled{opacity:.6;cursor:default}
 .prod .circle:disabled{opacity:.55;cursor:default}
 .produto-indisponivel{display:block;color:var(--muted);font-size:.65rem;margin-top:.25rem}
@@ -143,7 +142,7 @@
 .g-topo .fechar{margin-left:auto}
 .g-lista{flex:1;overflow:auto;display:grid;gap:.8rem;align-content:start}
 .item{display:grid;grid-template-columns:88px 1fr auto;gap:.9rem;padding:.7rem;border:1px solid var(--line);border-radius:16px;font-size:.75rem}
-.item .foto{width:88px;height:100px;border-radius:12px}
+.item .foto{width:88px;height:100px;border-radius:12px;--reserva:var(--fundo-foto-produto)}
 .item b{display:block;font-size:.8rem}
 .item small{display:block;color:var(--muted)}
 .item .preco{font-weight:700;align-self:end}
@@ -188,7 +187,7 @@
   font-size:.8rem;overflow-wrap:anywhere;
 }
 .res:hover,.res:focus-visible{color:var(--orange)}
-.busca-foto{width:56px;height:56px;border-radius:10px;background:#222;overflow:hidden}
+.busca-foto{width:56px;height:56px;border-radius:10px;background:var(--fundo-foto-produto);overflow:hidden}
 .busca-foto img{display:block;width:100%;height:100%;object-fit:contain}
 .res small{display:block;color:var(--muted);font-size:.68rem}
 
@@ -217,7 +216,6 @@
 }
 @media(max-width:480px){
   .auth{gap:1rem}
-  .auth-rodape{flex-wrap:wrap;gap:.5rem 1rem}
   .auth .painel{grid-template-columns:minmax(0,1fr);padding:1.15rem}
   .auth .campo{padding-inline:.65rem;gap:.55rem}
   .auth .campo input{font-size:1rem}
@@ -234,7 +232,7 @@
 .favoritos-lista a:hover{text-decoration:underline}
 .favoritos-lista button{flex:none}
 .favorito-miniatura{
-  display:block;flex:none;width:44px;height:44px;background:#222;border-radius:7px;
+  display:block;flex:none;width:44px;height:44px;background:var(--fundo-foto-produto);border-radius:7px;
 }
 .favorito-miniatura img{display:block;width:100%;height:100%;object-fit:contain}
 [data-favoritos-tentar][hidden],[data-favoritos-perfil][hidden],[data-favoritos-login][hidden]{display:none}

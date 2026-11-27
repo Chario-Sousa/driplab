@@ -74,7 +74,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:1.4rem}
 .prod{min-width:0;display:flex;flex-direction:column;padding:1rem;border-radius:22px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(10px);transition:.25s}
 .prod:hover{transform:translateY(-6px);border-color:var(--orange)}
-.prod .img{display:block;flex:none;height:170px;border-radius:12px;--reserva:radial-gradient(circle,#2a2a2a,#0d0d0d);margin-bottom:1rem}
+.prod .img{display:block;flex:none;height:170px;border-radius:12px;--reserva:var(--fundo-foto-produto);margin-bottom:1rem}
 .prod .row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-top:auto;font-size:.8rem}
 .prod .row>div{min-width:0;overflow-wrap:anywhere}
 .prod .row .circle{flex:none}
@@ -244,21 +244,7 @@ section{padding:6rem 0;border-top:1px solid var(--line)}
   </section>
 </main>
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="row">
-      <a class="logo" href="index.html"><img src="imagens/marca/logo-driplab.png" width="876" height="216" alt="DripLab" loading="lazy"></a>
-      <nav class="menu"><a class="on" href="index.html">Início</a><a href="shop.html">Shop</a><a href="#drops">Novidades</a><a href="colecoes.html">Coleções</a><a href="sobre.html">Sobre</a></nav>
-      <nav class="social" aria-label="Redes sociais">
-        <a href="https://www.instagram.com/" aria-label="Instagram"><img src="imagens/instagram.svg" alt=""></a>
-        <a href="https://www.tiktok.com/" aria-label="TikTok"><img src="imagens/tiktok.svg" alt=""></a>
-        <a href="https://www.youtube.com/" aria-label="YouTube"><img src="imagens/youtube.svg" alt=""></a>
-        <a href="https://x.com/" aria-label="X"><img src="imagens/x.svg" alt=""></a>
-      </nav>
-    </div>
-    <div class="legal"><span>© 2026 <b class="accent" style="font-weight:400">DripLab.</b> Todos os direitos reservados.</span><span>DRIP LAB &nbsp;/&nbsp; STREETWEAR DIGITAL-FIRST</span></div>
-  </div>
-</footer>
+<script src="rodape.js" defer></script>
 
 <script>
 

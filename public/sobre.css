@@ -1,19 +1,24 @@
-.sobre-layout{width:min(1350px,94%);margin:1.4rem auto 1.25rem;display:grid;gap:1.25rem}
-.sobre-pagina .header .circle{transition-property:background-color,border-color,color}
+.sobre-layout{width:min(1160px,92%);margin:clamp(1.25rem,3vw,2rem) auto;display:grid;gap:1rem}
 .sobre-card{min-width:0;border:1px solid var(--line);border-radius:16px;background:#111}
-.sobre-hero{display:grid;grid-template-columns:minmax(7rem,13.5%) minmax(0,34rem);align-items:center;gap:clamp(1rem,2.3vw,2.1rem);min-height:250px;padding:clamp(1.05rem,2.5vw,2rem);background:linear-gradient(135deg,#171411,#101010 47%)}
-.sobre-hero h1{margin:.45rem 0 .65rem;font-size:clamp(1.55rem,3.6vw,3.25rem)}
-.sobre-hero-texto>p:not(.eyebrow){max-width:43ch;color:#e3ddd9;font-size:.9rem}
-.sobre-hero-texto .btn{margin-top:.9rem}
-.sobre-hero-grafismo{display:block;width:min(100%,9rem);height:auto}
-.sobre-historia{display:grid;grid-template-columns:minmax(0,45fr) minmax(0,48fr) minmax(0,38fr);gap:1.25rem}
-.sobre-base{grid-template-columns:minmax(0,48fr) minmax(0,51fr) minmax(0,32fr)}
-.sobre-origem{display:grid;align-items:start;justify-items:end;min-height:15rem;padding:.7rem;background:linear-gradient(145deg,#141414,#101010 70%)}
-.sobre-origem span{padding:.25rem .55rem;border-radius:999px;background:var(--orange);color:#14100d;font-size:.67rem;font-weight:700}
+.sobre-hero{
+  display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:center;
+  gap:clamp(1rem,3vw,2rem);padding:clamp(1.15rem,4vw,2.75rem);
+  background:radial-gradient(ellipse at 82% 50%,#2e1b0e,#111 62%);
+}
+.sobre-hero h1{margin:.55rem 0 .75rem;font-size:clamp(1.8rem,4.6vw,3.5rem)}
+.sobre-hero-texto>p:not(.eyebrow){max-width:52ch;color:#e3ddd9;font-size:.95rem}
+.sobre-hero-texto .btn{margin-top:1rem}
+.sobre-hero-grafismo{display:block;justify-self:center;width:min(100%,16rem);height:auto}
+.sobre-historia,.sobre-base{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem}
+.sobre-base{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+#nossa-historia{scroll-margin-top:6rem}
+.sobre-historia-topo{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+.sobre-selo{padding:.25rem .6rem;border-radius:999px;background:var(--orange);color:#14100d;font-size:.72rem;font-weight:700}
 .sobre-texto{display:grid;align-content:start;gap:.7rem;padding:clamp(1rem,2.25vw,1.65rem)}
-.sobre-texto h2{font-size:clamp(1.15rem,1.95vw,1.65rem);line-height:1.18;overflow-wrap:anywhere}
+.sobre-texto h2{font-size:clamp(1.15rem,2vw,1.75rem);line-height:1.18;overflow-wrap:anywhere}
 .sobre-texto h2.eyebrow{font-size:.76rem}
 .sobre-texto p:not(.eyebrow),.sobre-valores dd,.sobre-linha span,.sobre-dados dd{color:var(--muted);font-size:.85rem}
+.sobre-texto>p:not(.eyebrow){max-width:65ch;font-size:.9rem}
 .sobre-texto .btn{justify-self:start;margin-top:.35rem}
 .sobre-linha{--espaco:.65rem;--recuo:1.05rem;--centro:.56rem;list-style:none;display:grid;gap:var(--espaco);padding-left:var(--recuo)}
 .sobre-linha li{position:relative;display:grid;gap:.05rem}
@@ -28,47 +33,22 @@
 .sobre-valores div{position:relative;padding-left:2rem}
 .sobre-valores img{position:absolute;left:0;top:.1rem}
 .sobre-valores dt{font-size:.85rem;font-weight:700}
-.sobre-valores-linha{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
-.sobre-valores-linha section+section{border-left:1px solid rgba(255,255,255,.10);padding-inline:clamp(.8rem,1.3vw,1.2rem)}
-.sobre-dados{display:grid;gap:.65rem}
+.sobre-valores-linha{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.sobre-valores-linha section+section{border-left:1px solid rgba(255,255,255,.10)}
+.sobre-dados{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem .75rem}
 .sobre-dados div{position:relative;padding-left:3rem}
 .sobre-dados dt{display:grid;font-weight:700;font-size:.78rem;text-transform:uppercase}
 .sobre-dados strong{color:var(--orange);font-size:.95rem}
 .sobre-dado-icone{position:absolute;left:0;top:.05rem;display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(240,138,36,.45);border-radius:50%}
-.sobre-zona{display:grid;justify-items:end;align-items:end;min-height:13rem;padding:1.35rem 1.65rem;background:radial-gradient(ellipse at right bottom,#22160e,#111 64%)}
-.sobre-zona img{display:block;width:min(100%,7.5rem);height:auto}
-.sobre-pagina .footer{width:min(1350px,94%);margin:0 auto 1.4rem;padding:.35rem .8rem;border:1px solid var(--line);border-radius:13px;background:#111}
-.sobre-pagina .footer .wrap{width:100%}
-.sobre-pagina .footer small{color:var(--muted);font-size:.72rem}
-@media(min-width:951px){
-  .sobre-pagina .header{width:min(1350px,94%);margin-top:1.875rem}
-  .sobre-layout{margin-top:1.875rem}
-  .sobre-hero{padding-block:1.2rem}
-  .sobre-hero h1{font-size:clamp(2rem,3.2vw,2.75rem);line-height:1;margin:.35rem 0 .5rem}
-  .sobre-hero-texto>p:not(.eyebrow){max-width:48ch;line-height:1.4}
-  .sobre-hero-texto .btn{margin-top:.65rem}
-  .sobre-historia>.sobre-card{min-height:250px}
-  .sobre-base>.sobre-card{min-height:240px}
-  .sobre-historia .sobre-texto{gap:.55rem;padding-block:1.2rem}
-  .sobre-dados{gap:.5rem}
-  .sobre-dados dt{line-height:1.15}
-  .sobre-dados dd,.sobre-valores dd,.sobre-linha span{line-height:1.28}
-  .sobre-linha{--espaco:.48rem}
-  .sobre-linha strong{line-height:1.2}
-}
-@media(max-width:950px){
-  .sobre-historia,.sobre-base{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .sobre-historia>.sobre-texto:last-child{grid-column:1/-1}
-}
-@media(max-width:580px){
-  .sobre-layout{margin-top:1.25rem}
+.sobre-proposito-grafismo{display:block;justify-self:end;width:min(100%,7rem);height:auto}
+@media(max-width:850px){
   .sobre-historia,.sobre-base{grid-template-columns:minmax(0,1fr)}
-  .sobre-hero{grid-template-columns:minmax(0,1fr);gap:1.25rem}
-  .sobre-hero-texto{grid-row:1}
-  .sobre-hero-grafismo{justify-self:end;width:min(100%,7rem);margin-right:.35rem}
-  .sobre-origem{min-height:3.1rem}
+}
+@media(max-width:540px){
+  .sobre-hero{grid-template-columns:minmax(0,1fr);gap:.65rem}
+  .sobre-hero-grafismo{justify-self:end;width:min(100%,8.5rem)}
 }
 @media(max-width:440px){
-  .sobre-valores-linha{grid-template-columns:minmax(0,1fr)}
+  .sobre-valores-linha,.sobre-dados{grid-template-columns:minmax(0,1fr)}
   .sobre-valores-linha section+section{border-left:0;border-top:1px solid rgba(255,255,255,.10)}
 }
